@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style type="text/css">
+        h3 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 700;
+            text-indent: 20px;
+        }
+
+        .c2 {
+            text-indent: 40px;
+        }
+    </style>
+</head>
+<body style="margin: 10px;">
+<div style="text-align: right;font-size: 20px;font-weight: 800;">
+    <i>v1.0.0-RELEASE</i>
+</div>
+<div>
+    <h3>一、插件介绍</h3>
+    <div>
+        <h4>1. 插件描述</h4>
+        <p class="c2">
+            TemplateJ是一个重复工作解决方案。
+        </p>
+        <p class="c2">
+            基于freemarker模板引擎，一键解决开发过程中的重复劳动。
+        </p>
+    </div>
+    <div>
+        <h4>2. 插件功能</h4>
+        <div>
+            <ul>
+                <li style="margin-top: 5px;margin-bottom: 5px;">
+                    <p>
+                        基于freemarker模板引擎。
+                    </p>
+                </li>
+                <li style="margin-top: 5px;margin-bottom: 5px;">
+                    <p>
+                        提供通用模板内容生成功能。
+                    </p>
+                </li>
+                <li style="margin-top: 5px;margin-bottom: 5px;">
+                    <p>
+                        提供自定义模板配置功能。
+                    </p>
+                </li>
+                <li style="margin-top: 5px;margin-bottom: 5px;">
+                    <p>
+                        支持单表/多表同时生成功能。
+                    </p>
+                </li>
+                <li style="margin-top: 5px;margin-bottom: 5px;">
+                    <p>
+                        对于MySQL数据库有较好的支持性。
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div>
+    <h3>二、插件配置</h3>
+    <div class="c1">
+        <ol>
+            <li style="margin-top: 5px;">
+                <p style="margin-bottom: 10px;">
+                    插件主界面展示，如下所示：
+                </p>
+                <img src="/images/main_config.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    效果预览功能。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：选择需要预览的模板文件。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：点击效果预览按钮。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：选择需要进行效果预览的数据表，或者根据数据表全名进行搜索预览（如选中了数节点，会遍历该选中节点的子节点进行查询匹配）。
+                </p>
+                <img src="/images/preview.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    复制模板组/模板文件。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：选择需要复制的模板文件（不选择有效模板文件，默认复制当前选择的整个模板组）。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：点击复制按钮。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：给复制的模板组/模板文件命名，或使用默认名称。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤4：点击【是Y】按钮，确认进行复制操作。
+                </p>
+                <img src="/images/copy.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    新增模板组/模板文件。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：点击新增按钮。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：选择新增类型【模板组/模板文件】。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    选择新增模板文件时，将会在当前选中的模板组下创建新的模板文件。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：命名文件，勾选新增类型时会生成默认文件名称和文件拓展名，可自行修改。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤4：点击【是Y】按钮，确认进行新增操作。
+                </p>
+                <img src="/images/add.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    删模板组/模板文件。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：选择需要进行删除的模板组/模板文件（不选择有效模板文件，默认删除当前选择的模板组）。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：点击删除按钮。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：点击【是Y】按钮，确认进行删除操作（谨慎操作，非默认模板不可逆）。
+                </p>
+                <img src="/images/remove.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    数据类型映射器。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：点击数据类型映射器按钮。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：
+                </p>
+                <ol type="I">
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        【2.1】点击单元格，可对该单元格内容进行编辑。
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【2.2】点击新增按钮，新增行。
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【2.3】点击删除按钮，删除选中的行。
+                        </p>
+                    </li>
+                </ol>
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：点击【是Y】按钮，确认修改映射关系。
+                </p>
+                <img src="/images/type_mapper.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    模板全局引用配置。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：点击全局配置按钮。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：配置全局引用内容。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：点击【Ok】按钮，确认保存全局引用配置内容。
+                </p>
+                <img src="/images/global_config.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    插件重置
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：点击【重置】按钮。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：点击【是Y】按钮，确认进行插件重置（谨慎操作，重置将恢复成插件初始配置状态，自定义配置内容将无法找回）。
+                </p>
+                <img src="/images/reset.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    点击【帮助】按钮，将显示本页面。
+                </p>
+            </li>
+        </ol>
+    </div>
+</div>
+<div>
+    <h3>三、模板生成</h3>
+    <div class="c1">
+        <ol>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    在【Intellij IDEA】工具右侧，选择【Database】工具，选择一个连接的数源。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    选择一张/多张数据表，然后鼠标右键，选择【TemplateJ Generate】，打开生成器的UI界面。
+                </p>
+                <img src="/images/generate_action.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    步骤1：选择用于生成的模板组。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：选择生成的模块（兼容多模块工程）。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：包路径选择器，选择包路径信息。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤4：保存位置选择器，选择文件生成后保存的位置信息。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤5：根据选中的模板组，刷新显示该模板组下可供选择的模板文件。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤6：勾选【全选】，选择模板文件列表中显示的所有模板项。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤7：勾选【关闭提示】，不再显示模板生成过程中的报错信息。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤8：点击【Ok】按钮，确认开始进行模板生成。
+                </p>
+                <img src="/images/generate_ui.png"/>
+            </li>
+            <li style="margin-top: 5px;">
+                <p style="margin-bottom: 10px;">
+                    模板生成器效果展示
+                </p>
+                <img src="/images/generate.png"/>
+            </li>
+            <li style="margin-top: 5px;">
+                <p style="margin-bottom: 5px;">
+                    包选择器效果展示
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    <i>
+                        【Tips】:反显内容无法编辑。
+                    </i>
+                </p>
+                <img src="/images/package_choose.png"/>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    保存位置选择器效果展示
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    <i>
+                        【Tips】:反显内容可以手动编辑。
+                    </i>
+                </p>
+                <img src="/images/save_path_choose.png"/>
+            </li>
+            <li style="margin-top: 5px;">
+                <p style="margin-bottom: 10px;">
+                    文件生成后会自动刷新工程，显示文件目录。生成工程目录结构如下所示：
+                </p>
+                <img src="/images/generate_result.png"/>
+            </li>
+        </ol>
+    </div>
+</div>
+<div>
+    <h3>四、作者</h3>
+    <div>
+        <ul>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    Author:lightbc
+                </p>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    Blog:<a href="https://www.cnblogs.com/lightbc/">https://www.cnblogs.com/lightbc/</a>
+                </p>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    GitHub:<a href="https://github.com/lightbc">https://github.com/lightbc</a>
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
