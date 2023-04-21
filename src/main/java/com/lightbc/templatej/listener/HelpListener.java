@@ -8,11 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,12 +37,9 @@ public class HelpListener {
      * @param button 帮助按钮
      */
     public void help(JButton button) {
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                HTML_CONTENT = FileUtil.loadContent(HELP);
-                showHelp();
-            }
+        button.addActionListener(e -> {
+            HTML_CONTENT = FileUtil.loadContent(HELP);
+            showHelp();
         });
     }
 
@@ -55,14 +49,8 @@ public class HelpListener {
     private synchronized void showHelp() {
         DialogUtil dialogUtil = new DialogUtil();
         Map<String, ImageCache> map = cache();
-        try {
-            JScrollPane pane = getComponent(map);
-            dialogUtil.showHelpDialog(Message.HELP.getTitle(), pane);
-        } catch (MalformedURLException e) {
-            StringWriter writer = new StringWriter();
-            e.printStackTrace(new PrintWriter(writer));
-            dialogUtil.showTipsDialog(null, writer.toString(), "显示错误");
-        }
+        JScrollPane pane = getComponent(map);
+        dialogUtil.showHelpDialog(Message.HELP.getTitle(), pane);
     }
 
     /**
@@ -72,18 +60,15 @@ public class HelpListener {
      */
     private void addHyperLinkListener(JEditorPane editorPane) {
         // 超链接事件监听
-        editorPane.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
-                    return;
-                }
-                // 超链接
-                String href = e.getDescription();
-                // 判断是否时网络链接，网络链接浏览器打开
-                if (isNetAddress(href)) {
-                    openNetHyperLink(href);
-                }
+        editorPane.addHyperlinkListener(e -> {
+            if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+                return;
+            }
+            // 超链接
+            String href = e.getDescription();
+            // 判断是否时网络链接，网络链接浏览器打开
+            if (isNetAddress(href)) {
+                openNetHyperLink(href);
             }
         });
     }
@@ -93,14 +78,14 @@ public class HelpListener {
      *
      * @return map
      */
-    public Map<String, ImageCache> cache() {
-        Map<String, ImageCache> map = null;
+    private Map<String, ImageCache> cache() {
         // 缓存图片工具
         IMAGE_CACHE = new ImageCache();
+        Map<String, ImageCache> map = null;
         if (HTML_CONTENT != null && !"".equals(HTML_CONTENT.trim())) {
             // 获取文档内容里的所有图片路径
             List<String> src = getImagesPath(HTML_CONTENT);
-            if (src != null && src.size() > 0) {
+            if (src.size() > 0) {
                 map = new HashMap<>();
                 for (String s : src) {
                     if (s.lastIndexOf("/") != -1) {
@@ -115,7 +100,7 @@ public class HelpListener {
                         // 获取已缓存文件
                         File file = PluginUtil.getCacheFile(path);
                         ImageCache cache = new ImageCache();
-                        Image image = null;
+                        Image image;
                         try {
                             URL url = file.toURI().toURL();
                             image = Toolkit.getDefaultToolkit().createImage(url);
@@ -156,7 +141,8 @@ public class HelpListener {
      * @param map 缓存图片替换
      * @return JScrollPane
      */
-    private synchronized JScrollPane getComponent(Map<String, ImageCache> map) throws MalformedURLException {
+    @SuppressWarnings("UndesirableClassUsage")
+    private synchronized JScrollPane getComponent(Map<String, ImageCache> map) {
         // 替换获取到的【help.html】中的图片路径内容成本地缓存路径
         if (HTML_CONTENT != null && !"".equals(HTML_CONTENT.trim()) && map != null && map.size() > 0) {
             for (String key : map.keySet()) {
@@ -164,7 +150,7 @@ public class HelpListener {
                 if (cache != null && cache.size() > 0) {
                     for (Object cKey : cache.keySet()) {
                         if (cKey instanceof URL) {
-                            HTML_CONTENT = HTML_CONTENT.replace(key, ((URL) cKey).toString());
+                            HTML_CONTENT = HTML_CONTENT.replace(key, cKey.toString());
                         }
                     }
                 }
@@ -187,12 +173,7 @@ public class HelpListener {
         scrollPane.setPreferredSize(new Dimension(1000, 500));
         JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
         // 解决初始化时滚动条不在顶部的问题
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                scrollBar.setValue(0);
-            }
-        });
+        SwingUtilities.invokeLater(() -> scrollBar.setValue(0));
         return scrollPane;
     }
 
@@ -202,9 +183,9 @@ public class HelpListener {
      * @param htmlContent HTML内容
      * @return list<string>
      */
-    public static List<String> getImagesPath(String htmlContent) {
+    private static List<String> getImagesPath(String htmlContent) {
         List<String> src = new ArrayList<>();
-        String img = "";
+        String img;
         Pattern p_image;
         Matcher m_image;
         String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
@@ -228,10 +209,7 @@ public class HelpListener {
      * @return boolean
      */
     private boolean isNetAddress(String path) {
-        if (path.startsWith("http://") || path.startsWith("https://")) {
-            return true;
-        }
-        return false;
+        return path.startsWith("http://") || path.startsWith("https://");
     }
 
     static class ImageCache extends Hashtable {

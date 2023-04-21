@@ -17,8 +17,6 @@ import com.lightbc.templatej.utils.ProjectUtil;
 import lombok.Data;
 
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -56,10 +54,6 @@ public class PreviewUI {
     // 选择的节点
     private DefaultMutableTreeNode selectTreeNode;
 
-    public PreviewUI() {
-        init();
-    }
-
     public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil) {
         this.groupName = groupName;
         this.templateFileName = templateFileName;
@@ -71,7 +65,7 @@ public class PreviewUI {
     /**
      * 初始化
      */
-    public void init() {
+    private void init() {
         initTree();
         initSearch();
         treeListener();
@@ -93,8 +87,12 @@ public class PreviewUI {
                 super.keyReleased(e);
                 String kw = tableNameSearch.getText();
                 DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) tree.getModel().getRoot();
-                if(selectTreeNode!=null){
-                    treeNode=selectTreeNode;
+                DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+                if (selectNode != null) {
+                    int level = selectNode.getLevel();
+                    if (level != 3) {
+                        treeNode = selectNode;
+                    }
                 }
                 searchTreeNode(kw, treeNode);
             }
@@ -109,13 +107,14 @@ public class PreviewUI {
      */
     private void searchTreeNode(String kw, DefaultMutableTreeNode treeNode) {
         if (treeNode.getChildCount() >= 0) {
-            Enumeration<DefaultMutableTreeNode> childrens = treeNode.children();
+            Enumeration childrens = treeNode.children();
             while (childrens.hasMoreElements()) {
-                DefaultMutableTreeNode children = childrens.nextElement();
+                DefaultMutableTreeNode children = (DefaultMutableTreeNode) childrens.nextElement();
                 if (children.toString().equals(kw.trim())) {
                     tree.setSelectionPath(new TreePath(children));
-                    int level = children.getLevel();
-                    tree.expandRow(level - 1);
+                    DefaultMutableTreeNode d = (DefaultMutableTreeNode) children.getParent();
+                    DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+                    tree.expandRow(root.getIndex(d));
                     return;
                 }
                 // 迭代查询
@@ -143,9 +142,9 @@ public class PreviewUI {
                     DefaultMutableTreeNode node2 = new DefaultMutableTreeNode(key);
                     node1.add(node2);
                     List<String> list = map.get(key);
-                    for (int j = 0; j < list.size(); j++) {
+                    for (String s : list) {
                         // 四级数据表节点
-                        DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(list.get(j));
+                        DefaultMutableTreeNode node3 = new DefaultMutableTreeNode(s);
                         node2.add(node3);
                     }
                 }
@@ -166,12 +165,7 @@ public class PreviewUI {
      * 树形结构事件监听
      */
     private void treeListener() {
-        tree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(TreeSelectionEvent e) {
-                editorShow();
-            }
-        });
+        tree.addTreeSelectionListener(e -> editorShow());
     }
 
     /**
@@ -181,6 +175,8 @@ public class PreviewUI {
         // 当前选择节点
         selectTreeNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         String selectTableName = selectTreeNode.toString();
+        // 数据库名称
+        String schema = selectTreeNode.getParent().toString();
         // 根据当前选择的数据表名，获取对应的数源信息
         Map<String, DbDataSource> dataSourceMap = dataBaseUtil.getDataSourceMap();
         // 获取默认格式的树形结构的顶级节点名称
@@ -194,7 +190,7 @@ public class PreviewUI {
             // 判断当前选择节点的指定父级节点是否为数据库节点
             if (name != null && !"".equals(name.trim()) && !"DataBase".equals(name)) {
                 // 当前选择的数据表
-                DbTable dbTable = dataBaseUtil.getTable(dataSourceMap.get(name), selectTableName);
+                DbTable dbTable = dataBaseUtil.getTable(dataSourceMap.get(name), schema, selectTableName);
                 GenerateJUtil generateJUtil = new GenerateJUtil();
                 // 获取数据模型
                 Map<String, Object> dataModel = generateJUtil.getPreviewDataModel(groupName, dbTable);
@@ -202,8 +198,6 @@ public class PreviewUI {
             }
         } catch (InvocationTargetException e) {
             curContent += "InvocationTargetException[消息内容：" + e.getMessage() + "\n诱发原因：" + e.getCause() + "]\n";
-        } catch (IllegalAccessException e) {
-            curContent += "IllegalAccessException[消息内容：" + e.getMessage() + "\n诱发原因：" + e.getCause() + "]\n";
         } catch (Exception e) {
             curContent += "IllegalAccessException[消息内容：" + e.getMessage() + "\n诱发原因：" + e.getCause() + "]\n";
         } finally {
@@ -232,7 +226,7 @@ public class PreviewUI {
      *
      * @param editor 编辑器对象
      */
-    public void format(Editor editor) {
+    private void format(Editor editor) {
         PsiFile file = null;
         if (editor != null) {
             file = PsiDocumentManager.getInstance(ProjectUtil.getProject()).getPsiFile(editor.getDocument());
@@ -241,6 +235,7 @@ public class PreviewUI {
             }
         }
         LastRunReformatCodeOptionsProvider provider = new LastRunReformatCodeOptionsProvider(PropertiesComponent.getInstance());
+        assert file != null;
         ReformatCodeRunOptions options = provider.getLastRunOptions(file);
         TextRangeType scope = TextRangeType.WHOLE_FILE;
         options.setProcessingScope(scope);

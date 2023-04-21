@@ -19,9 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 模板生成器UI
@@ -32,9 +31,9 @@ public class TemplateJGenerateUI {
     // UI主面板
     private JPanel mainPanel;
     // 模板组下拉选择器
-    private JComboBox groupBox;
+    private JComboBox<String> groupBox;
     // 项目模块选择器
-    private JComboBox moduleBox;
+    private JComboBox<String> moduleBox;
     // 复选框容器面板
     private JPanel checkboxPanel;
     // 包选择器容器面板
@@ -87,7 +86,7 @@ public class TemplateJGenerateUI {
     private void loadGroupItems() {
         List<String> groups = templateUtil.getGroupNames();
         groupBox.setModel(getModel(groups));
-        String groupName = groupBox.getSelectedItem().toString();
+        String groupName = Objects.requireNonNull(groupBox.getSelectedItem()).toString();
         List<String> fileList = templateUtil.getGroupFileNames(groupName);
         loadCheckbox(getCheckFiles(fileList));
     }
@@ -98,7 +97,7 @@ public class TemplateJGenerateUI {
     private void loadProjectModules() {
         List<String> list = ProjectUtil.getProjectModuleNames();
         moduleBox.setModel(getModel(list));
-        String selectModule = moduleBox.getSelectedItem().toString();
+        String selectModule = Objects.requireNonNull(moduleBox.getSelectedItem()).toString();
         Module module = ProjectUtil.getProjectModule(project, selectModule);
         generateRoot = ProjectUtil.getModulePath(module);
     }
@@ -127,6 +126,7 @@ public class TemplateJGenerateUI {
      *
      * @param fileList 模板文件
      */
+    @SuppressWarnings("UndesirableClassUsage")
     private void loadCheckbox(List<String> fileList) {
         if (fileList == null || fileList.size() == 0) {
             log.warn("文件选项为空！");
@@ -136,8 +136,7 @@ public class TemplateJGenerateUI {
         checkboxPanel.removeAll();
         checkboxContainerPanel = new JPanel(new GridLayout(fileList.size(), 1));
         // 向复选框面板组件中添加复选框组件
-        for (int i = 0; i < fileList.size(); i++) {
-            String checkName = fileList.get(i);
+        for (String checkName : fileList) {
             JCheckBox checkBox = new JCheckBox(checkName);
             checkboxContainerPanel.add(checkBox);
         }
@@ -154,10 +153,10 @@ public class TemplateJGenerateUI {
      * @param items 元素
      * @return DefaultComboBoxModel 选择器数据模型
      */
-    private DefaultComboBoxModel getModel(List<String> items) {
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for (int i = 0; i < items.size(); i++) {
-            model.addElement(items.get(i));
+    private DefaultComboBoxModel<String> getModel(List<String> items) {
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+        for (String item : items) {
+            model.addElement(item);
         }
         return model;
     }
@@ -166,16 +165,13 @@ public class TemplateJGenerateUI {
      * 模板组选择事件监听
      */
     private void groupSelectListener() {
-        groupBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String groupName = groupBox.getSelectedItem().toString();
-                List<String> fileList = templateUtil.getGroupFileNames(groupName);
-                loadCheckbox(getCheckFiles(fileList));
-                // 移除勾选
-                allCheck.setSelected(false);
-                generateTips.setSelected(false);
-            }
+        groupBox.addActionListener(e -> {
+            String groupName = Objects.requireNonNull(groupBox.getSelectedItem()).toString();
+            List<String> fileList = templateUtil.getGroupFileNames(groupName);
+            loadCheckbox(getCheckFiles(fileList));
+            // 移除勾选
+            allCheck.setSelected(false);
+            generateTips.setSelected(false);
         });
     }
 
@@ -183,24 +179,16 @@ public class TemplateJGenerateUI {
      * 包选择器事件监听
      */
     private void packageChooseListener() {
-        packagePath.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                packageChoose();
-            }
-        });
+        packagePath.addActionListener(e -> packageChoose());
     }
 
     /**
      * 保存位置组件事件监听
      */
     private void savePathListener() {
-        savePath.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String name = moduleBox.getSelectedItem().toString();
-                savePathChoose(name);
-            }
+        savePath.addActionListener(e -> {
+            String name = Objects.requireNonNull(moduleBox.getSelectedItem()).toString();
+            savePathChoose(name);
         });
     }
 
@@ -208,14 +196,11 @@ public class TemplateJGenerateUI {
      * 模板全选事件监听
      */
     private void allCheckListener() {
-        allCheck.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (allCheck.isSelected()) {
-                    allCheck(true);
-                } else {
-                    allCheck(false);
-                }
+        allCheck.addActionListener(e -> {
+            if (allCheck.isSelected()) {
+                allCheck(true);
+            } else {
+                allCheck(false);
             }
         });
     }
@@ -277,6 +262,7 @@ public class TemplateJGenerateUI {
      * @param name 选择的模块名称
      * @return VirtualFile
      */
+    @SuppressWarnings("deprecation")
     private VirtualFile getDefaultVirtualFile(String name) {
         VirtualFileManager manager = VirtualFileManager.getInstance();
         Module module = ProjectUtil.getProjectModule(project, name);

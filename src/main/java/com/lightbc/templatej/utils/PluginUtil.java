@@ -17,15 +17,13 @@ public class PluginUtil {
      *
      * @return string
      */
-    public static String getPluginSavePath() {
+    static String getPluginSavePath() {
         //通过自己插件的id获取pluginId
         PluginId pluginId = PluginId.getId(ConfigInterface.PLUGIN_ID);
-        if (pluginId != null) {
-            IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
-            File path = plugin.getPath();
-            return path.getAbsolutePath();
-        }
-        return null;
+        IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
+        assert plugin != null;
+        File path = plugin.getPath();
+        return path.getAbsolutePath();
     }
 
     /**
@@ -33,18 +31,14 @@ public class PluginUtil {
      *
      * @param oPath    原文件路径
      * @param savePath 保存路径
-     * @return boolean
      */
-    public static boolean cacheImage(String oPath, String savePath) {
+    public static void cacheImage(String oPath, String savePath) {
         if (savePath != null && oPath != null) {
             try {
                 FileUtil.cacheImage(oPath, savePath);
-                return true;
-            } catch (Exception e) {
-                return false;
+            } catch (Exception ignored) {
             }
         }
-        return false;
     }
 
     /**

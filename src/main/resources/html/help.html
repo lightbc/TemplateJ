@@ -29,10 +29,10 @@
     <div>
         <h4>1. 插件描述</h4>
         <p class="c2">
-            TemplateJ是一个重复工作解决方案。
+            TemplateJ是一个模板生成解决方案。
         </p>
         <p class="c2">
-            基于freemarker模板引擎，一键解决开发过程中的重复劳动。
+            基于freemarker模板引擎，一键解决开发过程中的重复过程。
         </p>
     </div>
     <div>
@@ -75,6 +75,11 @@
             <li style="margin-top: 5px;">
                 <p style="margin-bottom: 10px;">
                     插件主界面展示，如下所示：
+                </p>
+                <p style="margin-bottom: 10px;">
+                    <i>
+                        【Tips】：编辑区域编辑模板后，点击【Apply】按钮，保存修改后的模板内容。
+                    </i>
                 </p>
                 <img src="/images/main_config.png"/>
             </li>
@@ -292,7 +297,281 @@
     </div>
 </div>
 <div>
-    <h3>四、作者</h3>
+    <h3>四、内置工具</h3>
+    <div>
+        <ul>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    【${rootPath}】：获取项目工程根目录路径
+                </p>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    【${packageName}】：获取包路径选择器选择的包路径
+                </p>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    【${tableName}】：获取处理过后的数据表名（大驼峰格式）
+                </p>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    【${generatePath}】：获取生成的模板保存路径（保存路径选择器选择的路径）
+                </p>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;">
+                <p>
+                    【${generate}】：模板生成时的自定义参数实例
+                </p>
+                <ol type="I">
+                    <li>
+                        <p>
+                            【${generate.setSavePath(参数)}】：设置模板保存路径自定义部分
+                        </p>
+                        <p style="margin-top: 5px;margin-bottom: 5px;">
+                            【${generate.getSavePath()}】：获取模板保存路径自定义部分
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            【${generate.setFileName(参数)}】：设置文件名称（含拓展名），默认拓展名java类型
+                        </p>
+                        <p style="margin-top: 5px;margin-bottom: 5px;">
+                            【${generate.getFileName()}】：获取文件名称
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            【${generate.setXmlSavePath(参数)}】：设置xml文件的自定义保存路径（默认资源文件下）
+                        </p>
+                        <p style="margin-top: 5px;">
+                            【${generate.getXmlSavePath()}】：获取xml文件的自定义保存路径
+                        </p>
+                    </li>
+                </ol>
+            </li>
+            <li>
+                <p>
+                    【${table}】：进行模板生成的数据表的表主要信息实例
+                </p>
+                <ol type="I">
+                    <li>
+                        <p>
+                            【${table.setSchemaName(参数)}】：设置数据库名称
+                        </p>
+                        <p style="margin-top: 5px;margin-bottom: 5px;">
+                            【${table.getSchemaName()}】：获取数据库名称
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            【${table.setOriginName(参数)}】：设置原表名
+                        </p>
+                        <p style="margin-top: 5px;margin-bottom: 5px;">
+                            【${table.getOriginName()}】：获取原表名
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            【${table.setName(参数)}】：设置表名
+                        </p>
+                        <p style="margin-top: 5px;margin-bottom: 5px;">
+                            【${table.getName()}】：获取处理过的表名（大驼峰格式）
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            【${table.setComment(参数)}】：设置表注释信息
+                        </p>
+                        <p style="margin-top: 5px;margin-bottom: 5px;">
+                            【${table.getComment()}】：获取表注释信息
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            【${table.setOriginPrimaryKey(参数)}】：设置原表主键名称
+                        </p>
+                        <p style="margin-top: 5px;margin-bottom: 5px;">
+                            【${table.getOriginPrimaryKey()}】：获取原表主键名称（表字段原名称）
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            【${table.setPrimaryKey(参数)}】：设置表主键名称
+                        </p>
+                        <p style="margin-top: 5px;margin-bottom: 5px;">
+                            【${table.getPrimaryKey()}】：获取表主键处理过后的名称（大驼峰格式）
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            【${table.setColumns(参数)}】：设置表数据列信息
+                        </p>
+                        <p style="margin-top: 5px;">
+                            【${table.getColumns()}】：获取表数据列信息实例数组（获取类型：List&lt;ColumnInfo&gt;）
+                        </p>
+                        <p style="margin-top: 5px;">
+                            ${table.getColumns().get(index)}获取单个实例（index：数组下标）
+                        </p>
+                        <ul>
+                            <li>
+                                <p>
+                                    【${table.getColumns().get(index).setOriginColumnName(参数)}】：设置表字段名称
+                                </p>
+                                <p style="margin-top: 5px;margin-bottom: 5px;">
+                                    【${table.getColumns().get(index).getOriginColumnName()}】：获取表字段名称
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    【${table.getColumns().get(index).setColumnName(参数)}】：设置表字段名称
+                                </p>
+                                <p style="margin-top: 5px;margin-bottom: 5px;">
+                                    【${table.getColumns().get(index).getColumnName()}】：获取表字段名称（大驼峰处理后）
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    【${table.getColumns().get(index).setDataType(参数)}】：设置数据字段数据库数据类型
+                                </p>
+                                <p style="margin-top: 5px;margin-bottom: 5px;">
+                                    【${table.getColumns().get(index).getDataType()}】：获取数据字段数据库数据类型
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    【${table.getColumns().get(index).setCharset(参数)}】：设置数据字段数据库字符编码
+                                </p>
+                                <p style="margin-top: 5px;margin-bottom: 5px;">
+                                    【${table.getColumns().get(index).getCharset()}】：获取数据字段数据库字符编码
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    【${table.getColumns().get(index).setColumnComment(参数)}】：设置数据字段数据库备注信息
+                                </p>
+                                <p style="margin-top: 5px;margin-bottom: 5px;">
+                                    【${table.getColumns().get(index).getColumnComment()}】：获取数据字段数据库备注信息
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    【${table.getColumns().get(index).setJavaType(参数)}】：设置数据字段对应的java类型
+                                </p>
+                                <p style="margin-top: 5px;">
+                                    【${table.getColumns().get(index).getJavaType()}】：获取数据字段对应的java类
+                                </p>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p>
+                            【${table.setColumnNames(参数)}】：设置表字段名称（设置类型：List
+                            &lt;String&gt;）
+                        </p>
+                        <p style="margin-top: 5px;margin-bottom: 5px;">
+                            【${table.getColumnNames()}】：获取表字段名称（获取类型：List
+                            &lt;String&gt;）
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            【${table.setColumnType(参数)}】：设置数据类型映射集（设置类型：Map
+                            &lt;String
+                            [javaType],Object[columnType]&gt;）
+                        </p>
+                        <p style="margin-top: 5px;">
+                            【${table.getColumnType()}】：获取数据类型映射集（获取类型：Map
+                            &lt;String
+                            [javaType],Object[columnType]&gt;）
+                        </p>
+                    </li>
+                </ol>
+            </li>
+            <li>
+                <p>
+                    【${tools}】：工具组件实例
+                </p>
+                <ol type="I">
+                    <li style="margin-bottom: 5px;">
+                        <p>
+                            【${tools.toLowerCamelCase(参数)}】：首字母转小写
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.toUpperCamelCase(参数)}】：首字母转大写
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.toLowerCase(参数)}】：转全小写
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.toUpperCase(参数)}】：转全大写
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.removeSuffix(处理参数，后缀参数)}】：移除后缀
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.removePrefix(处理参数，前缀参数)}】：移除前缀
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.replace(处理参数，原字符，替换字符)}】：字符替换
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.append(多个参数【,】分隔)}】：参数拼接
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.substring(参数，开始位置)}】：字符串截取
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.substring(参数，开始位置，结束位置)}】：字符串截取
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.indexOf(参数，指定字符)}】：获取指定字符首次匹配位置下标
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.lastIndexOf(参数，指定字符)}】：获取指定字符最后一次匹配位置下标
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;margin-bottom: 5px;">
+                        <p>
+                            【${tools.getDate(格式化规则[默认：yyyy-MM-dd HH:mm:ss])}】：获取格式化时间
+                        </p>
+                    </li>
+                    <li style="margin-top: 5px;">
+                        <p>
+                            【${tools.serial()}】：获取序列化随机序列号
+                        </p>
+                    </li>
+
+                </ol>
+            </li>
+        </ul>
+    </div>
+</div>
+<div>
+    <h3>五、作者</h3>
     <div>
         <ul>
             <li style="margin-top: 5px;margin-bottom: 5px;">

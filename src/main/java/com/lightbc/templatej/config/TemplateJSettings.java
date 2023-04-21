@@ -50,7 +50,7 @@ public class TemplateJSettings implements PersistentStateComponent<TemplateJSett
     /**
      * 初始化
      */
-    public void init() {
+    private void init() {
         initTemplate();
         initTypeMapper();
     }
@@ -58,7 +58,7 @@ public class TemplateJSettings implements PersistentStateComponent<TemplateJSett
     /**
      * 初始化映射器
      */
-    public void initTypeMapper() {
+    private void initTypeMapper() {
         tableHeader = new Object[]{"columnType", "javaType"};
         defaultTableData= DefaultTemplateParams.getDefaultTableData();
         if (typeMapper == null) {
@@ -69,7 +69,7 @@ public class TemplateJSettings implements PersistentStateComponent<TemplateJSett
     /**
      * 初始化模板
      */
-    public void initTemplate() {
+    private void initTemplate() {
         this.templates=DefaultTemplateParams.getDefaultTemplates();
     }
 

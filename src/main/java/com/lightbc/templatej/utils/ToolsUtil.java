@@ -1,7 +1,5 @@
 package com.lightbc.templatej.utils;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -13,13 +11,6 @@ import java.util.Random;
  */
 public class ToolsUtil {
     private static ToolsUtil toolsUtil;
-    // 作者信息
-    @Getter
-    @Setter
-    private String author;
-    // 生成路径
-    @Setter
-    private String generatePath;
 
     public static ToolsUtil getInstance() {
         if (toolsUtil == null) {

@@ -14,10 +14,7 @@ import lombok.Setter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 数据库工具类
@@ -33,11 +30,11 @@ public class DataBaseUtil {
     @Setter
     private Map<String, DbDataSource> dataSourceMap = new HashMap<>();
 
-    public DataBaseUtil(){
+    public DataBaseUtil() {
         init();
     }
 
-    public void init(){
+    private void init() {
         project = ProjectUtil.getProject();
     }
 
@@ -49,7 +46,7 @@ public class DataBaseUtil {
     public List<String> getDataSourceNames() {
         List<String> list = new ArrayList<>();
         JBIterable<DbDataSource> dataSources = DbUtil.getDataSources(project);
-        if (dataSources != null && dataSources.size() > 0) {
+        if (dataSources.size() > 0) {
             for (DbDataSource dataSource : dataSources) {
                 String name = dataSource.getName();
                 list.add(name);
@@ -69,6 +66,7 @@ public class DataBaseUtil {
         Map<String, List<String>> map = new HashMap<>();
         DbDataSource dataSource = DbUtil.getDataSources(project).get(index);
         // 数据源的元数据信息
+        assert dataSource != null;
         MetaModel metaModel = dataSource.getModel().getMetaModel();
         // 数据服务提供者信息（低版本可能不支持）
         this.provider = metaModel.getDbms().toString();
@@ -97,15 +95,18 @@ public class DataBaseUtil {
      * 获取DataBase连接的数据源的指定表DbTable对象
      *
      * @param dataSource 数据源
+     * @param schema     数据库
      * @param tableName  表名
      * @return DbTable
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    public DbTable getTable(DbDataSource dataSource, String tableName) throws InvocationTargetException, IllegalAccessException {
+    @SuppressWarnings("JavaDoc")
+    public DbTable getTable(DbDataSource dataSource, String schema, String tableName) throws InvocationTargetException, IllegalAccessException {
         // 通过环境的反射工具类，获取指定类中的指定方法
         Method method = ReflectionUtil.getMethod(DbPsiFacade.class, "findElement", DasObject.class);
-        DasTable table = getDasTable(dataSource, tableName);
+        DasTable table = getDasTable(dataSource, schema, tableName);
+        assert method != null;
         return (DbTable) method.invoke(DbPsiFacade.getInstance(project), table);
     }
 
@@ -113,12 +114,13 @@ public class DataBaseUtil {
      * 获取DataBase连接的数据源的指定表DasTable对象
      *
      * @param dataSource 数据源
+     * @param schema     数据库
      * @param tableName  表名
      * @return DasTable
      */
-    public DasTable getDasTable(DbDataSource dataSource, String tableName) {
+    private DasTable getDasTable(DbDataSource dataSource, String schema, String tableName) {
         for (DasTable table : DasUtil.getTables(dataSource)) {
-            if (ObjectKind.TABLE.equals(table.getKind())) {
+            if (Objects.requireNonNull(table.getDasParent()).getName().equals(schema) && ObjectKind.TABLE.equals(table.getKind())) {
                 String dasTableName = table.getName();
                 if (tableName.equals(dasTableName)) {
                     return table;

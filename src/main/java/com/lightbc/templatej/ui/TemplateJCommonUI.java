@@ -4,9 +4,8 @@ import com.lightbc.templatej.interfaces.ConfigInterface;
 import lombok.Data;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -31,10 +30,6 @@ public class TemplateJCommonUI {
     private ButtonGroup group;
     // 配置界面UI
     private TemplateJUI templateJUI;
-
-    public TemplateJCommonUI() {
-
-    }
 
     public TemplateJCommonUI(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
@@ -68,12 +63,12 @@ public class TemplateJCommonUI {
     private void initComboBoxModel() {
         // 初始化模板组选择器
         List<String> groupName = templateJUI.getTemplateUtil().getGroupNames();
-        String selectGroup = templateJUI.getTemplateGroupSelector().getSelectedItem().toString();
+        String selectGroup = Objects.requireNonNull(templateJUI.getTemplateGroupSelector().getSelectedItem()).toString();
         templateGroupSelector.setModel(templateJUI.getModel(new DefaultComboBoxModel(), groupName));
         templateGroupSelector.setSelectedItem(selectGroup);
         // 初始化模板文件选择器
         List<String> files = templateJUI.getTemplateUtil().getGroupFileNames(selectGroup);
-        String selectFile = templateJUI.getTemplateFileSelector().getSelectedItem().toString();
+        String selectFile = Objects.requireNonNull(templateJUI.getTemplateFileSelector().getSelectedItem()).toString();
         templateFileSelector.setModel(templateJUI.getModel(new DefaultComboBoxModel(), files));
         templateFileSelector.setSelectedItem(selectFile);
     }
@@ -85,12 +80,9 @@ public class TemplateJCommonUI {
      * @param b      是否生成拓展名，是-true，否-false
      */
     private void radioTypeListener(JRadioButton button, boolean b) {
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (button.isSelected()) {
-                    rename.setText(getExtRename(b));
-                }
+        button.addActionListener(e -> {
+            if (button.isSelected()) {
+                rename.setText(getExtRename(b));
             }
         });
     }

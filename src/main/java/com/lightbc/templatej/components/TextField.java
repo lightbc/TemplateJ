@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 import javax.swing.JTextField;
-import javax.swing.text.Document;
 
 /**
  * 带占位符的文本输入框组件
@@ -19,22 +18,6 @@ public class TextField extends JTextField {
     private String placeholder;
 
     public TextField() {
-    }
-
-    public TextField(final Document pDoc, final String pText, final int pColumns) {
-        super(pDoc, pText, pColumns);
-    }
-
-    public TextField(final int pColumns) {
-        super(pColumns);
-    }
-
-    public TextField(final String pText) {
-        super(pText);
-    }
-
-    public TextField(final String pText, final int pColumns) {
-        super(pText, pColumns);
     }
 
     @Override

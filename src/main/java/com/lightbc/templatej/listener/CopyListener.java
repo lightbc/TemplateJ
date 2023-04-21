@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 /**
  * 复制模板事件监听
@@ -17,10 +18,6 @@ import java.awt.event.ActionListener;
 public class CopyListener {
     // 配置界面UI
     private TemplateJUI templateJUI;
-
-    public CopyListener() {
-
-    }
 
     public CopyListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
@@ -45,8 +42,8 @@ public class CopyListener {
                     int c = copy(ui.getMainPanel());
                     //确认复制操作
                     if (c == 0) {
-                        String groupName = ui.getTemplateGroupSelector().getSelectedItem().toString();
-                        String fileName = ui.getTemplateFileSelector().getSelectedItem().toString();
+                        String groupName = Objects.requireNonNull(ui.getTemplateGroupSelector().getSelectedItem()).toString();
+                        String fileName = Objects.requireNonNull(ui.getTemplateFileSelector().getSelectedItem()).toString();
                         String rename = ui.getRename().getText();
                         int fileIndex = ui.getTemplateFileSelector().getSelectedIndex();
                         //复制
@@ -84,7 +81,7 @@ public class CopyListener {
     /**
      * 刷新主UI界面
      *
-     * @param templateUtil
+     * @param templateUtil 模板数据处理工具
      */
     private void refresh(TemplateUtil templateUtil) {
         String selectGroup = templateJUI.getSettings().getSelectGroupName();
@@ -99,7 +96,7 @@ public class CopyListener {
      * @param message 消息内容对象
      * @return int
      */
-    public int copy(Object message) {
+    private int copy(Object message) {
         DialogUtil dialog = new DialogUtil();
         return dialog.showOperateDialog(null, message, Message.COPY_TEMPLATE.getTitle());
     }

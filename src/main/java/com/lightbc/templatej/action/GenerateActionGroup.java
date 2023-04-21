@@ -30,6 +30,7 @@ public class GenerateActionGroup extends ActionGroup {
      * @return 动作对象数组
      */
     private AnAction[] getAnActions(@Nullable AnActionEvent anActionEvent) {
+        assert anActionEvent != null;
         PsiElement[] elements = anActionEvent.getData(LangDataKeys.PSI_ELEMENT_ARRAY);
         List<DbTable> tableList = new ArrayList<>();
         if (elements != null && elements.length > 0) {

@@ -23,6 +23,7 @@ public class ProjectUtil {
      *
      * @return Project-项目对象
      */
+    @SuppressWarnings({"finally", "ReturnInsideFinallyBlock"})
     public static Project getProject() {
         // 项目管理器
         ProjectManager projectManager = ProjectManager.getInstance();
@@ -33,7 +34,7 @@ public class ProjectUtil {
             Project[] projects = projectManager.getOpenProjects();
             // 窗体管理器
             WindowManager windowManager = WindowManager.getInstance();
-            if (projects != null && projects.length > 0) {
+            if (projects.length > 0) {
                 for (Project p : projects) {
                     // 判断当前活动窗体的打开项目
                     Window window = windowManager.suggestParentWindow(p);
@@ -57,8 +58,8 @@ public class ProjectUtil {
     public static List<String> getProjectModuleNames() {
         Module[] modules = ModuleManager.getInstance(getProject()).getModules();
         List<String> list = new ArrayList<>();
-        for (int i = 0; i < modules.length; i++) {
-            String name = modules[i].getName();
+        for (Module module : modules) {
+            String name = module.getName();
             list.add(name);
         }
         return list;

@@ -1,6 +1,5 @@
 package com.lightbc.templatej.utils;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
@@ -9,8 +8,6 @@ import lombok.Data;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * 对话框工具类
@@ -42,13 +39,12 @@ public class DialogUtil {
      *
      * @param title     标题
      * @param component 父级组件
-     * @return int 确定-0
      */
-    public int showHelpDialog(String title, JComponent component) {
+    public void showHelpDialog(String title, JComponent component) {
         DialogBuilder builder = getDialogBuilder(title, component);
         builder.addOkAction();
         builder.dispose();
-        return builder.show();
+        builder.show();
     }
 
     /**
@@ -95,7 +91,7 @@ public class DialogUtil {
      */
     public int showConfigDialog(String title, String fileName, String content) {
         EditorUtil util = new EditorUtil(content);
-        JComponent editor = initEditorComponent(util, fileName, 700, 500, true);
+        JComponent editor = initEditorComponent(util, fileName);
         Project project = ProjectUtil.getProject();
         util.highLighter(fileName, project);
         this.editor = util.getEditor();
@@ -112,12 +108,9 @@ public class DialogUtil {
     private void previewDialogBuilder(String title, JComponent component, EditorUtil util) {
         DialogBuilder builder = getDialogBuilder(title, component);
         builder.addCloseButton();
-        builder.addDisposable(new Disposable() {
-            @Override
-            public void dispose() {
-                if (util != null) {
-                    util.releaseEditor();
-                }
+        builder.addDisposable(() -> {
+            if (util != null) {
+                util.releaseEditor();
             }
         });
         builder.dispose();
@@ -136,12 +129,7 @@ public class DialogUtil {
         DialogBuilder builder = getDialogBuilder(title, editor);
         builder.addOkAction();
         builder.addCancelAction();
-        builder.addDisposable(new Disposable() {
-            @Override
-            public void dispose() {
-                util.releaseEditor();
-            }
-        });
+        builder.addDisposable(util::releaseEditor);
         builder.dispose();
         return builder.show();
 
@@ -167,14 +155,11 @@ public class DialogUtil {
      *
      * @param util     编辑功能工具类
      * @param fileName 模板文件名称
-     * @param width    默认宽度
-     * @param height   默认高度
-     * @param b        编辑区域是否可以编辑，可编辑-true，不可编辑-false
      * @return JComponent
      */
-    private JComponent initEditorComponent(EditorUtil util, String fileName, int width, int height, boolean b) {
-        JComponent editor = util.getEditor(fileName, b);
-        Dimension dimension = new Dimension(width, height);
+    private JComponent initEditorComponent(EditorUtil util, String fileName) {
+        JComponent editor = util.getEditor(fileName, true);
+        Dimension dimension = new Dimension(700, 500);
         editor.setPreferredSize(dimension);
         return editor;
     }
@@ -219,12 +204,7 @@ public class DialogUtil {
      */
     private void ok(JButton button, boolean b) {
         if (b) {
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    dispose();
-                }
-            });
+            button.addActionListener(e -> dispose());
         }
     }
 
@@ -234,12 +214,7 @@ public class DialogUtil {
      * @param button 取消按钮
      */
     private void cancel(JButton button) {
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        button.addActionListener(e -> dispose());
     }
 
     /**

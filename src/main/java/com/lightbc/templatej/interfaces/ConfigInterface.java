@@ -8,8 +8,6 @@ public interface ConfigInterface {
     String PLUGIN_ID = "com.lightbc.templatej";
     // 默认的模板名称
     String DEFAULT_FILENAME = "TemplateJ.java";
-    // 应用名称
-    String APPLICATION_NAME = "TemplateJ";
     // 模板文件选择器中的默认选项
     String DEFAULT_GROUP_FILE_VALUE = "---请选择模板---";
     // 模板组value

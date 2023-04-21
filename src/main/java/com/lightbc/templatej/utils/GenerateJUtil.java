@@ -49,10 +49,10 @@ public class GenerateJUtil {
      * @param dataModel        模板引擎的数据模型
      * @param tips             是否关闭提示消息，true-关闭，false-不关闭
      */
-    public void generate(String groupName, String templateFileName, String saveFileName, String savePath, Map<String, Object> dataModel, boolean tips) throws Exception {
+    public void generate(String groupName, String templateFileName, String saveFileName, String savePath, Map<String, Object> dataModel, boolean tips) {
         DialogUtil dialogUtil = new DialogUtil();
         String ext = ConfigInterface.DEFAULT_GENERATE_EXT;
-        if (saveFileName.indexOf(".") != -1) {
+        if (saveFileName.contains(".")) {
             ext = saveFileName.substring(saveFileName.indexOf("."));
         }
         // 获取模板信息
@@ -82,9 +82,7 @@ public class GenerateJUtil {
             if (generate.getFileName() != null && !"".equals(generate.getFileName())) {
                 saveFileName = generate.getFileName();
                 //自定义文件名中如果不包含指定文件拓展名，使用默认文件拓展名
-                if (saveFileName.indexOf(".") == -1) {
-                    saveFileName = saveFileName.concat(ext);
-                }
+                if (!saveFileName.contains(".")) saveFileName = saveFileName.concat(ext);
                 savePath = customPath.concat(File.separator).concat(saveFileName);
             }
         } else {
@@ -115,6 +113,7 @@ public class GenerateJUtil {
      * @param dataModel        模板模型数据
      * @return 生成内容字符串
      */
+    @SuppressWarnings({"finally", "ReturnInsideFinallyBlock"})
     public String generate(String templateFileName, String sourceCode, Map<String, Object> dataModel) {
         StringWriter writer = null;
         try {
@@ -136,6 +135,7 @@ public class GenerateJUtil {
                 e.printStackTrace(new PrintWriter(writer));
                 log.error("模板生成输出流关闭错误：{}-{}", e.getMessage(), e.getCause());
             }
+            assert writer != null;
             return writer.toString().trim();
         }
     }
@@ -144,9 +144,8 @@ public class GenerateJUtil {
      * 获取模板引擎配置信信息
      *
      * @return 模板引擎配置项
-     * @throws Exception
      */
-    private Configuration getConfiguration() throws Exception {
+    private Configuration getConfiguration() {
         Configuration cfg = new Configuration(Configuration.getVersion());
         StringTemplateLoader loader = new StringTemplateLoader();
         cfg.setTemplateLoader(loader);
@@ -162,6 +161,7 @@ public class GenerateJUtil {
      * @return 模板
      * @throws Exception
      */
+    @SuppressWarnings("JavaDoc")
     private Template getTemplate(String fileName, String sourceCode) throws Exception {
         return new Template(fileName, sourceCode, getConfiguration());
     }
@@ -173,9 +173,10 @@ public class GenerateJUtil {
      * @param dt        数据表
      * @return Table
      */
-    public Table getTable(String groupName, DbTable dt) {
+    private Table getTable(String groupName, DbTable dt) {
         Table table = new Table();
         // 获取当前表的所在数据库名称
+        assert dt.getParent() != null;
         table.setSchemaName(dt.getParent().getName());
         // 获取表名
         table.setOriginName(dt.getName());
@@ -232,10 +233,8 @@ public class GenerateJUtil {
         Table t = getTable(groupName, table);
         Project project = ProjectUtil.getProject();
         Module[] modules = ModuleManager.getInstance(project).getModules();
-        String root = null;
-        if (modules != null) {
-            root = ProjectUtil.getModulePath(modules[0]);
-        }
+        String root;
+        root = ProjectUtil.getModulePath(modules[0]);
         return getCommonDataModel(root, ConfigInterface.DEFAULT_PACKAGE_NAME, null, new Generate(), t);
     }
 
@@ -307,18 +306,18 @@ public class GenerateJUtil {
      * @param name 处理字符
      * @return string
      */
-    public String processName(String name) {
+    private String processName(String name) {
         if (name != null && !"".equals(name.trim())) {
             // 处理下划线
-            if (name.indexOf("_") != -1) {
+            if (name.contains("_")) {
                 String[] ns = name.split("_");
-                String nns = "";
-                for (int i = 0; i < ns.length; i++) {
-                    if (!"".equals(ns[i].trim())) {
-                        nns += ToolsUtil.getInstance().toUpperCamelCase(ns[i]);
+                StringBuilder nns = new StringBuilder();
+                for (String n : ns) {
+                    if (!"".equals(n.trim())) {
+                        nns.append(ToolsUtil.getInstance().toUpperCamelCase(n));
                     }
                 }
-                name = nns.trim();
+                name = nns.toString().trim();
             } else {
                 name = ToolsUtil.getInstance().toUpperCamelCase(name);
             }
@@ -332,14 +331,14 @@ public class GenerateJUtil {
      * @param groupName 模板组名称
      * @return Map<String, String>
      */
-    public Map<String, String> typeMapper(String groupName) {
+    private Map<String, String> typeMapper(String groupName) {
         Map<String, String> map = new HashMap<>();
         TemplateJSettings settings = TemplateJSettings.getInstance();
         Map<String, Object[][]> typeMapper = settings.getTypeMapper();
         if (typeMapper == null || typeMapper.size() == 0) {
             typeMapper = DefaultTemplateParams.getDefaultTypeMapper();
         }
-        if (groupName != null && !"".equals(groupName.trim()) && typeMapper != null) {
+        if (groupName != null && !"".equals(groupName.trim())) {
             Object[][] objects = typeMapper.get(groupName);
             if (objects != null) {
                 for (Object[] obj : objects) {
@@ -360,8 +359,9 @@ public class GenerateJUtil {
      * @param s java type
      * @return string
      */
-    public String processTypeMapper(String s) {
-        if (s != null & !"".equals(s.trim())) {
+    private String processTypeMapper(String s) {
+        assert s != null;
+        if (!"".equals(s.trim())) {
             if (s.lastIndexOf(".") != -1) {
                 String name = s.substring(s.lastIndexOf(".") + 1);
                 name = StringUtils.capitalize(name);

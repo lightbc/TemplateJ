@@ -2,7 +2,6 @@ package com.lightbc.templatej.ui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.lightbc.templatej.config.TemplateJSettings;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.utils.DialogUtil;
@@ -13,8 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 
 /**
@@ -42,14 +39,10 @@ public class TypeMapperUI implements Configurable {
     // TemplateJ 主UI 对象
     private TemplateJUI templateJUI;
 
-    public TypeMapperUI() {
-
-    }
-
     public TypeMapperUI(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
         this.settings = TemplateJSettings.getInstance();
-        this.groupName = templateJUI.getTemplateGroupSelector().getSelectedItem().toString();
+        this.groupName = Objects.requireNonNull(templateJUI.getTemplateGroupSelector().getSelectedItem()).toString();
         init();
     }
 
@@ -65,6 +58,7 @@ public class TypeMapperUI implements Configurable {
     /**
      * 初始化数据类型映射表初始显示内容
      */
+    @SuppressWarnings({"BoundFieldAssignment", "UndesirableClassUsage"})
     private void initTable() {
         Object[][] tableData = getGroupTypeMapper();
         if (tableData == null) {
@@ -100,20 +94,12 @@ public class TypeMapperUI implements Configurable {
      */
     private void operateListener() {
         // 新增类型映射事件监听
-        add.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tableModel.addRow(new Object[]{"", ""});
-            }
-        });
+        add.addActionListener(e -> tableModel.addRow(new Object[]{"", ""}));
         // 删除选中的类型映射事件监听
-        del.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int sr = table.getSelectedRow();
-                if (sr != -1) {
-                    tableModel.removeRow(sr);
-                }
+        del.addActionListener(e -> {
+            int sr = table.getSelectedRow();
+            if (sr != -1) {
+                tableModel.removeRow(sr);
             }
         });
     }
@@ -124,7 +110,7 @@ public class TypeMapperUI implements Configurable {
      * @param tableModel 表格数据模型对象
      * @return Object[][]
      */
-    public Object[][] getTableData(DefaultTableModel tableModel) {
+    private Object[][] getTableData(DefaultTableModel tableModel) {
         Vector vectors = tableModel.getDataVector();
         Object[][] objects = new Object[vectors.size()][];
         for (int i = 0; i < vectors.size(); i++) {
@@ -163,11 +149,7 @@ public class TypeMapperUI implements Configurable {
         int c = dialogUtil.showConfirmDialog(null, getMainPanel(), title);
         // 点击确定按钮，保存当前模板组的最新数据类型映射配置信息
         if (c == 0) {
-            try {
-                apply();
-            } catch (ConfigurationException ex) {
-                dialogUtil.showTipsDialog(null, Message.TYPE_MAPPER_ERROR.getMsg(), Message.TYPE_MAPPER_ERROR.getTitle());
-            }
+            apply();
         }
     }
 
@@ -194,7 +176,7 @@ public class TypeMapperUI implements Configurable {
     }
 
     @Override
-    public void apply() throws ConfigurationException {
+    public void apply() {
         // 当前模板组，数据类型映射，最新配置数据持久化
         Object[][] objects = getTableData(getTableModel());
         settings.getTypeMapper().put(groupName, objects);

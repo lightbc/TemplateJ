@@ -11,7 +11,6 @@ public enum Message {
     DEL_DEFAULT_TEMPLATE_FAIL("删除失败", "无法对默认的模板组/模板文件进行删除操作！！！"),
     DEL_CONTINUE("文件删除", "确认继续将删除文件！！！"),
     PREVIEW_CHOICE_TIP("提示", "请选择预览文件"),
-    TYPE_MAPPER_ERROR("映射配置错误", "映射配置报错报错！"),
     DIALOG_LOAD_ERROR("加载错误", "对话框加载失败！"),
     FILE_EXIST("文件重复", "文件已存在!"),
     TEMPLATE_REPEAT_CREATE("重复创建", "文件【%s】已存在，是否覆盖原文件？"),
@@ -28,7 +27,6 @@ public enum Message {
     GLOBAL_CONFIG("配置项-"),
     PREVIEW_TEMPLATE("效果预览"),
     PACKAGE_CHOOSER_TITLE("包路径选择"),
-    SAVE_PATH_CHOOSER_TITLE("保存位置选择"),
     TYPE_MAPPER_OPEN("数据类型映射-"),
     HELP("帮助");
 

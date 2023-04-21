@@ -7,14 +7,14 @@ import java.util.*;
 
 public class DefaultTemplateParams {
     public static final String DEFAULT_NAME = ConfigInterface.GROUP_NAME_VALUE;
-    public static final String GLOBAL_CONFIG = getDefaultGlobalConfig();
+    private static final String GLOBAL_CONFIG = getDefaultGlobalConfig();
 
     /**
      * 获取默认模板数据
      *
-     * @return
+     * @return map
      */
-    public static Map<String, String> getDefaultTemplateData() {
+    private static Map<String, String> getDefaultTemplateData() {
         Map<String, String> map = new HashMap<>();
         String controller = "<#assign savePath=generate.setSavePath(\"/controller\")>\n" +
                 "<#assign fileName=\"${tableName}Controller\">\n" +
@@ -133,6 +133,7 @@ public class DefaultTemplateParams {
                 "    public void ${tools.append(\"set\",\"${methodName}\")} (${javaType} ${tools.toLowerCamelCase(\"${methodName}\")}){\n" +
                 "        this.${tools.toLowerCamelCase(\"${methodName}\")}=${tools.toLowerCamelCase(\"${methodName}\")};\n" +
                 "    }\n" +
+                "\n" +
                 "</#macro>";
         String mapper = "<#assign fileName=\"${tableName}Mapper\">\n" +
                 "<#assign savePath=generate.setSavePath(\"/dao\")>\n" +
@@ -466,7 +467,7 @@ public class DefaultTemplateParams {
         return map;
     }
 
-    public static String getDefaultGlobalConfig() {
+    private static String getDefaultGlobalConfig() {
         return "<#assign author=\"lightbc\">\n" +
                 "<#assign date=tools.getDate(\"yyyy-MM-dd HH:mm:ss\")>\n" +
                 "\n" +

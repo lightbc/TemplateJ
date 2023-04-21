@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 /**
  * 删除模板事件监听
@@ -17,9 +18,6 @@ import java.awt.event.ActionListener;
 public class DelListener {
     // 配置界面UI
     private TemplateJUI templateJUI;
-
-    public DelListener() {
-    }
 
     public DelListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
@@ -44,9 +42,9 @@ public class DelListener {
                     int db = del(ui.getMainPanel());
                     //确认删除操作
                     if (db == 0) {
-                        String groupName = ui.getTemplateGroupSelector().getSelectedItem().toString();
+                        String groupName = Objects.requireNonNull(ui.getTemplateGroupSelector().getSelectedItem()).toString();
                         int groupIndex = ui.getTemplateGroupSelector().getSelectedIndex();
-                        String fileName = ui.getTemplateFileSelector().getSelectedItem().toString();
+                        String fileName = Objects.requireNonNull(ui.getTemplateFileSelector().getSelectedItem()).toString();
                         int fileIndex = ui.getTemplateFileSelector().getSelectedIndex();
                         DialogUtil dialogUtil = new DialogUtil();
                         // 默认模板判断，不能删除
@@ -86,7 +84,7 @@ public class DelListener {
     /**
      * 刷新主UI界面
      *
-     * @param templateUtil
+     * @param templateUtil 模板数据处理工具
      */
     private void refresh(TemplateUtil templateUtil) {
         String selectGroup = templateJUI.getSettings().getSelectGroupName();
@@ -101,7 +99,7 @@ public class DelListener {
      * @param message 消息内容对象
      * @return int
      */
-    public int del(Object message) {
+    private int del(Object message) {
         DialogUtil dialog = new DialogUtil();
         return dialog.showOperateDialog(null, message, Message.DEL_TEMPLATE.getTitle());
     }

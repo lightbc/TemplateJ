@@ -3,7 +3,6 @@ package com.lightbc.templatej.ui;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.config.TemplateJSettings;
 import com.lightbc.templatej.entity.Template;
@@ -17,10 +16,9 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * TemplateJ 模板生成工具主配置UI界面
@@ -67,7 +65,6 @@ public class TemplateJUI implements Configurable {
     // 模板数据处理工具类
     private TemplateUtil templateUtil;
 
-
     public TemplateJUI() {
         init();
     }
@@ -75,7 +72,7 @@ public class TemplateJUI implements Configurable {
     /**
      * 功能初始化加载
      */
-    public void init() {
+    private void init() {
         // 设置分割面板的左组件不显示
         if (splitPne != null) {
             splitPne.getLeftComponent().setVisible(false);
@@ -95,7 +92,7 @@ public class TemplateJUI implements Configurable {
     /**
      * 初始化下拉选择器
      */
-    public void initSelector() {
+    private void initSelector() {
         // 获取选择器选择项
         List<String> groupList = templateUtil.getGroupNames();
         String selectGroupName = settings.getSelectGroupName();
@@ -131,7 +128,7 @@ public class TemplateJUI implements Configurable {
      *
      * @param templateJUI 监听对象
      */
-    public void listener(TemplateJUI templateJUI) {
+    private void listener(TemplateJUI templateJUI) {
         // 重置插件
         resetApp();
         // 模板组选择器选择事件监听
@@ -161,10 +158,10 @@ public class TemplateJUI implements Configurable {
      * @param items 新增元素列表
      * @return 迭代的model
      */
-    public DefaultComboBoxModel getModel(DefaultComboBoxModel model, List<String> items) {
+    DefaultComboBoxModel getModel(DefaultComboBoxModel model, List<String> items) {
         if (items != null) {
-            for (int i = 0; i < items.size(); i++) {
-                model = model(model, items.get(i));
+            for (String item : items) {
+                model(model, item);
             }
         }
         return model;
@@ -175,11 +172,9 @@ public class TemplateJUI implements Configurable {
      *
      * @param model 迭代model对象
      * @param item  新增元素
-     * @return 迭代的model
      */
-    private DefaultComboBoxModel model(DefaultComboBoxModel model, String item) {
+    private void model(DefaultComboBoxModel model, String item) {
         model.addElement(item);
-        return model;
     }
 
     /**
@@ -195,7 +190,7 @@ public class TemplateJUI implements Configurable {
         }
         // 通过选择项下标，设置默认选择项
         if (select instanceof Integer) {
-            defaultSelectByIndex(box, Integer.valueOf(select.toString()));
+            defaultSelectByIndex(box, Integer.parseInt(select.toString()));
         }
     }
 
@@ -226,8 +221,8 @@ public class TemplateJUI implements Configurable {
         int index = templateFileSelector.getSelectedIndex();
         // index>0，选择文件
         if (index > 0) {
-            String groupName = templateGroupSelector.getSelectedItem().toString();
-            String fileName = templateFileSelector.getSelectedItem().toString();
+            String groupName = Objects.requireNonNull(templateGroupSelector.getSelectedItem()).toString();
+            String fileName = Objects.requireNonNull(templateFileSelector.getSelectedItem()).toString();
             String content = templateUtil.getTemplateContent(groupName, fileName);
             refreshEditor(fileName, content);
         } else {
@@ -240,16 +235,13 @@ public class TemplateJUI implements Configurable {
      */
     private void groupListener() {
         //模板组选择器事件监听
-        templateGroupSelector.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 根据选择的模板组，获取该模板组下的模板文件项，并设置模板选择器的选择项
-                String groupName = templateGroupSelector.getSelectedItem().toString();
-                List<String> fileList = templateUtil.getGroupFileNames(groupName);
-                DefaultComboBoxModel fileModel = new TemplateJUI().getModel(new DefaultComboBoxModel(), fileList);
-                templateFileSelector.setModel(fileModel);
-                templateFileSelector.setSelectedIndex(0);
-            }
+        templateGroupSelector.addActionListener(e -> {
+            // 根据选择的模板组，获取该模板组下的模板文件项，并设置模板选择器的选择项
+            String groupName = Objects.requireNonNull(templateGroupSelector.getSelectedItem()).toString();
+            List<String> fileList = templateUtil.getGroupFileNames(groupName);
+            DefaultComboBoxModel fileModel = new TemplateJUI().getModel(new DefaultComboBoxModel(), fileList);
+            templateFileSelector.setModel(fileModel);
+            templateFileSelector.setSelectedIndex(0);
         });
     }
 
@@ -258,17 +250,14 @@ public class TemplateJUI implements Configurable {
      */
     private void fileListener() {
         //模板文件选择器事件监听
-        templateFileSelector.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 根据选择的模板文件，实时更新编辑器的编辑文档内容
-                String groupName = templateGroupSelector.getSelectedItem().toString();
-                String fileName = templateFileSelector.getSelectedItem().toString();
-                templateFileSelector.setSelectedItem(fileName);
-                loadEditorDoc();
-                settings.setSelectGroupName(groupName);
-                settings.setSelectGroupFile(fileName);
-            }
+        templateFileSelector.addActionListener(e -> {
+            // 根据选择的模板文件，实时更新编辑器的编辑文档内容
+            String groupName = Objects.requireNonNull(templateGroupSelector.getSelectedItem()).toString();
+            String fileName = Objects.requireNonNull(templateFileSelector.getSelectedItem()).toString();
+            templateFileSelector.setSelectedItem(fileName);
+            loadEditorDoc();
+            settings.setSelectGroupName(groupName);
+            settings.setSelectGroupFile(fileName);
         });
     }
 
@@ -308,13 +297,13 @@ public class TemplateJUI implements Configurable {
         modifiedEditorContent = editor.getDocument().getText();
         String oldEditorTxt = settings.getContent();
         int index = templateFileSelector.getSelectedIndex();
-        return index > 0 ? !modifiedEditorContent.equals(oldEditorTxt) : false;
+        return index > 0 && !modifiedEditorContent.equals(oldEditorTxt);
     }
 
     @Override
-    public void apply() throws ConfigurationException {
-        String groupName = templateGroupSelector.getSelectedItem().toString();
-        String templateFileName = templateFileSelector.getSelectedItem().toString();
+    public void apply() {
+        String groupName = Objects.requireNonNull(templateGroupSelector.getSelectedItem()).toString();
+        String templateFileName = Objects.requireNonNull(templateFileSelector.getSelectedItem()).toString();
         Template template = templateUtil.getTemplate(groupName);
         Map<String, String> fileContentMap = template.getFileContentMap();
         fileContentMap.put(templateFileName, modifiedEditorContent);
@@ -325,20 +314,17 @@ public class TemplateJUI implements Configurable {
      * 重置插件
      */
     private void resetApp() {
-        reset.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DialogUtil dialogUtil = new DialogUtil();
-                int dialog = dialogUtil.showConfirmDialog(null, Message.RESET_TEMPLATEJ.getMsg(), Message.RESET_TEMPLATEJ.getTitle());
-                if (dialog == 0) {
-                    settings.setContent("");
-                    settings.setTemplates(DefaultTemplateParams.getDefaultTemplates());
-                    settings.setTypeMapper(DefaultTemplateParams.getDefaultTypeMapper());
-                    settings.setSelectGroupName(DefaultTemplateParams.DEFAULT_NAME);
-                    settings.setSelectGroupFile(0);
-                    templateUtil = new TemplateUtil(DefaultTemplateParams.getDefaultTemplates());
-                    initSelector();
-                }
+        reset.addActionListener(e -> {
+            DialogUtil dialogUtil = new DialogUtil();
+            int dialog = dialogUtil.showConfirmDialog(null, Message.RESET_TEMPLATEJ.getMsg(), Message.RESET_TEMPLATEJ.getTitle());
+            if (dialog == 0) {
+                settings.setContent("");
+                settings.setTemplates(DefaultTemplateParams.getDefaultTemplates());
+                settings.setTypeMapper(DefaultTemplateParams.getDefaultTypeMapper());
+                settings.setSelectGroupName(DefaultTemplateParams.DEFAULT_NAME);
+                settings.setSelectGroupFile(0);
+                templateUtil = new TemplateUtil(DefaultTemplateParams.getDefaultTemplates());
+                initSelector();
             }
         });
     }

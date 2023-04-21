@@ -34,10 +34,6 @@ public class EditorUtil {
     private String content;
     private Project project = ProjectUtil.getProject();
 
-
-    public EditorUtil() {
-    }
-
     public EditorUtil(String content) {
         this.content = content;
     }
@@ -157,7 +153,7 @@ public class EditorUtil {
     /**
      * 释放editor
      */
-    public void releaseEditor() {
+    void releaseEditor() {
         if (editor != null) {
             factory.releaseEditor(editor);
         }

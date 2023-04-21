@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
+import java.util.Objects;
 
 /**
  * 新增模板事件监听
@@ -19,10 +20,6 @@ import java.util.Enumeration;
 public class AddListener {
     // 配置界面UI
     private TemplateJUI templateJUI;
-
-    public AddListener() {
-
-    }
 
     public AddListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
@@ -52,12 +49,12 @@ public class AddListener {
                     if (c == 0) {
                         DialogUtil dialogUtil = new DialogUtil();
                         String rename = ui.getRename().getText().trim();
-                        if (rename == null || rename == "") {
+                        if (rename.equals("")) {
                             dialogUtil.showTipsDialog(null, Message.ADD_CHOICE_FAIL.getMsg(), Message.ADD_CHOICE_FAIL.getTitle());
                             return;
                         }
                         int radioType = getRadioType(ui);
-                        String groupName = ui.getTemplateGroupSelector().getSelectedItem().toString();
+                        String groupName = Objects.requireNonNull(ui.getTemplateGroupSelector().getSelectedItem()).toString();
                         TemplateUtil templateUtil = templateJUI.getTemplateUtil();
                         boolean fb = false;
                         // 模板文件是否存在
@@ -100,7 +97,7 @@ public class AddListener {
      * @return 文件类型，文件-1，文件夹-2
      */
 
-    public int getRadioType(TemplateJCommonUI ui) {
+    private int getRadioType(TemplateJCommonUI ui) {
         // 文件类型
         int type = 1;
         String radioType = "";
@@ -122,7 +119,7 @@ public class AddListener {
     /**
      * 刷新主UI界面
      *
-     * @param templateUtil
+     * @param templateUtil 模板数据处理工具类
      */
     private void refresh(TemplateUtil templateUtil) {
         String selectGroup = templateJUI.getSettings().getSelectGroupName();

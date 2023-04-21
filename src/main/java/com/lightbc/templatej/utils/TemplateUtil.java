@@ -13,10 +13,6 @@ import java.util.Map;
 public class TemplateUtil {
     private List<Template> templates;
 
-    public TemplateUtil() {
-
-    }
-
     public TemplateUtil(List<Template> templates) {
         this.templates = templates;
     }
@@ -62,11 +58,10 @@ public class TemplateUtil {
      */
     public String getTemplateContent(String groupName, String groupFileName) {
         if (templates != null) {
-            for (Template template : templates) {
+            for (Template template : templates)
                 if (template.getGroupName().equals(groupName.trim())) {
-                    return template.getFileContentMap().containsKey(groupFileName) ? template.getFileContentMap().get(groupFileName) : "";
+                    return template.getFileContentMap().getOrDefault(groupFileName, "");
                 }
-            }
         }
         return "";
     }
@@ -232,7 +227,7 @@ public class TemplateUtil {
      * @param content  模板内容
      * @param index    操作模板对象原下标
      */
-    public void commonOperate(Template template, String name, String content, int index) {
+    private void commonOperate(Template template, String name, String content, int index) {
         List<String> groupFiles = template.getGroupFiles();
         Map<String, String> fileContentMap = template.getFileContentMap();
         Template t = getNewTemplate(template.getGroupName(), getNewGroupFiles(groupFiles, name), getNewFileContentMap(fileContentMap, name, content), template.getGlobalConfig());
@@ -251,7 +246,7 @@ public class TemplateUtil {
      * @param globalConfig   模板组全局配置信息
      * @return template
      */
-    public Template getNewTemplate(String groupName, List<String> groupFiles, Map<String, String> fileContentMap, String globalConfig) {
+    private Template getNewTemplate(String groupName, List<String> groupFiles, Map<String, String> fileContentMap, String globalConfig) {
         Template template = new Template();
         template.setGroupName(groupName);
         template.setGroupFiles(groupFiles);
@@ -267,12 +262,10 @@ public class TemplateUtil {
      * @param name       模板文件名称
      * @return list<string>
      */
-    public List<String> getNewGroupFiles(List<String> groupFiles, String name) {
+    private List<String> getNewGroupFiles(List<String> groupFiles, String name) {
         List<String> list = new ArrayList<>();
         if (groupFiles != null) {
-            for (String f : groupFiles) {
-                list.add(f);
-            }
+            list.addAll(groupFiles);
         }
         list.add(name);
         return list;
@@ -286,7 +279,7 @@ public class TemplateUtil {
      * @param content        模板文件内容
      * @return map<string, string>
      */
-    public Map<String, String> getNewFileContentMap(Map<String, String> fileContentMap, String name, String content) {
+    private Map<String, String> getNewFileContentMap(Map<String, String> fileContentMap, String name, String content) {
         Map<String, String> map = new HashMap<>();
         if (fileContentMap != null) {
             for (String key : fileContentMap.keySet()) {
@@ -304,7 +297,7 @@ public class TemplateUtil {
      * @return boolean
      */
     public boolean existGroup(String rename) {
-        return getTemplate(rename) != null ? true : false;
+        return getTemplate(rename) != null;
     }
 
     /**

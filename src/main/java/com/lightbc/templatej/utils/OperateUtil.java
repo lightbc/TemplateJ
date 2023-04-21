@@ -4,6 +4,7 @@ import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.ui.TemplateJCommonUI;
 
 import javax.swing.*;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -23,14 +24,13 @@ public class OperateUtil implements ConfigInterface {
     /**
      * 初始化重命名输入框内容
      *
-     * @return this
      */
-    public OperateUtil initRename() {
-        String groupName = ui.getTemplateGroupSelector().getSelectedItem().toString();
+    public void initRename() {
+        String groupName = Objects.requireNonNull(ui.getTemplateGroupSelector().getSelectedItem()).toString();
         int index = ui.getTemplateFileSelector().getSelectedIndex();
-        String fileName = ui.getTemplateFileSelector().getSelectedItem().toString();
+        String fileName = Objects.requireNonNull(ui.getTemplateFileSelector().getSelectedItem()).toString();
         String ext = "";
-        if (fileName.indexOf(".") != -1) {
+        if (fileName.contains(".")) {
             ext = fileName.substring(fileName.indexOf("."));
             fileName = fileName.substring(0, fileName.indexOf("."));
         }
@@ -42,7 +42,6 @@ public class OperateUtil implements ConfigInterface {
         if (index == 0) {
             ui.getRename().setText(groupName.concat(ConfigInterface.DEFAULT_RENAME_SUFFIX));
         }
-        return this;
     }
 
     /**
