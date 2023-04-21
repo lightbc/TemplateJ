@@ -16,7 +16,7 @@
 * 对mysql数据库有较好的兼容性。
 
 ## 功能使用
-![TemplateJ](https://files-cdn.cnblogs.com/files/lightbc/main_config.bmp)
+![TemplateJ](https://blog-static.cnblogs.com/files/lightbc/setting_ui.gif)
 
 ## 博客
 [Blog](https://www.cnblogs.com/lightbc/)
