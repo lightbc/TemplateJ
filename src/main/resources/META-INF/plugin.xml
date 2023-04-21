@@ -6,10 +6,17 @@
 
     <description>
         <![CDATA[
+        <p>中文描述：</p>
         <p>
-        TemplateJ是一个模板生成解决方案。<br/><br/>
-        基于freemarker模板引擎，一键解决开发过程中的重复过程。<br/><br/>
-        对于MySQL数据库有着较好的兼容性。
+        TemplateJ是一个模板生成解决方案。<br/>
+        基于freemarker模板引擎，一键解决开发过程中的重复过程。<br/>
+        对于MySQL数据库有着较好的兼容性。<br/><br/>
+        </p>
+        <P>英文描述：</p>
+        <p>
+        TemplateJ is a template generation solution.<br/>
+        Based on the Freemarker template engine, it solves repetitive processes in the development process with one click.<br/>
+        It has good compatibility with MySQL databases.
         </p>
         ]]>
     </description>
