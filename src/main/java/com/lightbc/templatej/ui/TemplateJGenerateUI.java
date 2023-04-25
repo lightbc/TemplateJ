@@ -262,7 +262,6 @@ public class TemplateJGenerateUI {
      * @param name 选择的模块名称
      * @return VirtualFile
      */
-    @SuppressWarnings("deprecation")
     private VirtualFile getDefaultVirtualFile(String name) {
         VirtualFileManager manager = VirtualFileManager.getInstance();
         Module module = ProjectUtil.getProjectModule(project, name);
@@ -270,7 +269,7 @@ public class TemplateJGenerateUI {
         if (modulePath != null && !"".equals(modulePath)) {
             return manager.findFileByUrl(modulePath);
         }
-        return ProjectUtil.getProject().getBaseDir();
+        return null;
     }
 
     /**
