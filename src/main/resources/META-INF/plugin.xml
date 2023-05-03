@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.lightbc.templatej</id>
     <name>TemplateJ</name>
-    <version>1.0.0-RC</version>
+    <version>1.0.0-RELEASE</version>
     <vendor email="lightbc@163.com" url="https://www.cnblogs.com/lightbc/">lightbc</vendor>
 
     <description>
@@ -12,6 +12,7 @@
         Based on the Freemarker template engine, it solves repetitive processes in the development process with one click.<br/>
         It has good compatibility with MySQL databases.
         </p>
+        <br/>
         <p>中文描述：</p>
         <p>
         TemplateJ是一个模板生成解决方案。<br/>
@@ -23,19 +24,20 @@
 
     <change-notes>
         <![CDATA[
-        <h3>v1.0.0-RC</h3>
+        <h3>v1.0.0-RELEASE</h3>
         <ol>
         <li>提供基于FREEMARKER模板引擎的模板生成。</li>
         <li>提供JAVA WEB接口开发的通用模板。</li>
         <li>提供自定义模板配置。</li>
         <li>提供多表多模板同时生成。</li>
         <li>对mysql数据库有较好的兼容性。</li>
+        <li>高版本兼容。</li>
         </ol>
         ]]>
     </change-notes>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="191.0" until-build="193.0"/>
+    <idea-version since-build="191.*" until-build="211.*"/>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->

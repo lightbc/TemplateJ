@@ -2,10 +2,10 @@ package com.lightbc.templatej.utils;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
-import com.intellij.openapi.extensions.PluginId;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 
 import java.io.File;
+import java.nio.file.Path;
 
 /**
  * 插件工具类
@@ -18,12 +18,36 @@ public class PluginUtil {
      * @return string
      */
     static String getPluginSavePath() {
-        //通过自己插件的id获取pluginId
-        PluginId pluginId = PluginId.getId(ConfigInterface.PLUGIN_ID);
-        IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
-        assert plugin != null;
-        File path = plugin.getPath();
-        return path.getAbsolutePath();
+        IdeaPluginDescriptor[] plugins = PluginManager.getPlugins();
+        for (IdeaPluginDescriptor plugin : plugins) {
+            if (ConfigInterface.PLUGIN_ID.equals(plugin.getPluginId().getIdString())) {
+                return adaptVersion(plugin);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 版本适应
+     *
+     * @param plugin idea插件描述
+     * @return 缓存路径
+     */
+    private static String adaptVersion(IdeaPluginDescriptor plugin) {
+        ReflectUtil util = new ReflectUtil();
+        String path = null;
+        try {
+            Path filePath = (Path) util.getMethod(IdeaPluginDescriptor.class, "getPluginPath").invoke(plugin, new Object[]{});
+            path = filePath.toFile().getAbsolutePath();
+        } catch (Exception e) {
+            try {
+                File file = (File) util.getMethod(IdeaPluginDescriptor.class, "getPath").invoke(plugin, new Object[]{});
+                path = (String) util.getMethod(File.class, "getAbsolutePath").invoke(file, new Object[]{});
+            } catch (Exception e1) {
+            }
+        } finally {
+            return path;
+        }
     }
 
     /**
