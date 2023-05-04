@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.lightbc.templatej.components.TextField;
+import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.renderer.CustomJTreeRenderer;
 import com.lightbc.templatej.utils.DataBaseUtil;
@@ -53,12 +54,14 @@ public class PreviewUI {
     private DataBaseUtil dataBaseUtil;
     // 选择的节点
     private DefaultMutableTreeNode selectTreeNode;
+    private boolean autoPreview;
 
-    public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil) {
+    public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil, boolean autoPreview) {
         this.groupName = groupName;
         this.templateFileName = templateFileName;
         this.sourceCode = sourceCode;
         this.dataBaseUtil = dataBaseUtil;
+        this.autoPreview = autoPreview;
         init();
     }
 
@@ -66,10 +69,14 @@ public class PreviewUI {
      * 初始化
      */
     private void init() {
-        initTree();
-        initSearch();
-        treeListener();
-        refreshEditor(templateFileName, content);
+        if (autoPreview) {
+            show();
+        } else {
+            initTree();
+            initSearch();
+            treeListener();
+            refreshEditor(templateFileName, content);
+        }
     }
 
     /**
@@ -169,6 +176,16 @@ public class PreviewUI {
     }
 
     /**
+     * 预览自定义模板效果
+     */
+    private void show() {
+        GenerateJUtil generateJUtil = new GenerateJUtil();
+        Map<String, Object> dataModel = generateJUtil.getCommonDataModel(null, ConfigInterface.DEFAULT_PACKAGE_NAME, null, new Generate(), null);
+        String curContent = generateJUtil.generate(templateFileName, sourceCode, dataModel);
+        refreshEditor(templateFileName, curContent);
+    }
+
+    /**
      * 编辑器内容显示
      */
     private void editorShow() {
@@ -216,8 +233,12 @@ public class PreviewUI {
         JComponent editorComponent = editorUtil.getEditor(fileName, false);
         format(editorUtil.getEditor());
         splitPane.setRightComponent(editorComponent);
-        splitPane.setDividerLocation(200);
-        splitPane.setDividerSize(1);
+        if (autoPreview) {
+            splitPane.getLeftComponent().setVisible(false);
+        } else {
+            splitPane.setDividerLocation(200);
+            splitPane.setDividerSize(1);
+        }
         editorUtil.highLighter(fileName, ProjectUtil.getProject());
     }
 

@@ -19,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -58,6 +60,7 @@ public class TemplateJGenerateUI {
     // 模板数据处理工具类
     private TemplateUtil templateUtil;
     private Project project;
+    private Map<String, Module> moduleMap;
 
     public TemplateJGenerateUI() {
         init();
@@ -74,6 +77,7 @@ public class TemplateJGenerateUI {
         loadProjectModules();
         loadPackage();
         loadSavePath();
+        moduleSelectListener();
         groupSelectListener();
         packageChooseListener();
         savePathListener();
@@ -95,11 +99,9 @@ public class TemplateJGenerateUI {
      * 加载模块选择器选项
      */
     private void loadProjectModules() {
-        List<String> list = ProjectUtil.getProjectModuleNames();
+        moduleMap = ProjectUtil.getModuleMap();
+        List<String> list = new ArrayList<>(moduleMap.keySet());
         moduleBox.setModel(getModel(list));
-        String selectModule = Objects.requireNonNull(moduleBox.getSelectedItem()).toString();
-        Module module = ProjectUtil.getProjectModule(project, selectModule);
-        generateRoot = ProjectUtil.getModulePath(module);
     }
 
     /**
@@ -159,6 +161,18 @@ public class TemplateJGenerateUI {
             model.addElement(item);
         }
         return model;
+    }
+
+    /**
+     * 模块选择器选择事件监听
+     */
+    private void moduleSelectListener() {
+        generateRoot = ProjectUtil.getModulePath(getSelectModule());
+        savePath.setText(generateRoot);
+        moduleBox.addActionListener(e -> {
+            generateRoot = ProjectUtil.getModulePath(getSelectModule());
+            savePath.setText(generateRoot);
+        });
     }
 
     /**
@@ -224,7 +238,7 @@ public class TemplateJGenerateUI {
      * 包选择器
      */
     private void packageChoose() {
-        PackageChooserDialog chooserDialog = new PackageChooserDialog(Message.PACKAGE_CHOOSER_TITLE.getTitle(), project);
+        PackageChooserDialog chooserDialog = new PackageChooserDialog(Message.PACKAGE_CHOOSER_TITLE.getTitle(), getSelectModule());
         chooserDialog.show();
         PsiPackage psiPackage = chooserDialog.getSelectedPackage();
         // 反显选择的包路径
@@ -281,6 +295,16 @@ public class TemplateJGenerateUI {
     private List<String> getCheckFiles(List<String> files) {
         files.remove(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
         return files;
+    }
+
+    /**
+     * 获取选择模块
+     *
+     * @return module
+     */
+    private Module getSelectModule() {
+        String moduleName = Objects.requireNonNull(moduleBox.getSelectedItem()).toString();
+        return moduleMap.get(moduleName);
     }
 
 }

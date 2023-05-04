@@ -1,6 +1,7 @@
 package com.lightbc.templatej.listener;
 
 import com.lightbc.templatej.enums.Message;
+import com.lightbc.templatej.interfaces.TemplateJInterface;
 import com.lightbc.templatej.ui.PreviewUI;
 import com.lightbc.templatej.ui.TemplateJUI;
 import com.lightbc.templatej.utils.*;
@@ -46,9 +47,10 @@ public class PreviewListener {
                     return;
                 }
                 // 获取完整模板信息（全局配置+单个模板）
-                String sourceCode = globalConfig.concat(templateCode);
+                PropertiesUtil util = new PropertiesUtil();
+                String sourceCode = TemplateUtil.getSourceCode(globalConfig, templateCode, util);
                 // 预览
-                preview(groupName, templateFileName, sourceCode);
+                preview(groupName, templateFileName, sourceCode, util);
             } else {
                 dialogUtil.showTipsDialog(null, Message.PREVIEW_CHOICE_TIP.getMsg(), Message.PREVIEW_CHOICE_TIP.getTitle());
             }
@@ -61,8 +63,9 @@ public class PreviewListener {
      * @param groupName        模板组名称
      * @param templateFileName 模板文件名称
      * @param sourceCode       模板内容
+     * @param util             插件属性工具
      */
-    private void preview(String groupName, String templateFileName, String sourceCode) {
+    private void preview(String groupName, String templateFileName, String sourceCode, PropertiesUtil util) {
         DialogUtil dialogUtil = new DialogUtil();
         // 获取database已连接数据库连接信息
         DataBaseUtil dataBaseUtil = new DataBaseUtil();
@@ -72,7 +75,8 @@ public class PreviewListener {
             return;
         }
         // 显示效果预览组件
-        PreviewUI previewUI = new PreviewUI(groupName, templateFileName, sourceCode, dataBaseUtil);
+        boolean auto = Boolean.parseBoolean(util.getValue(TemplateJInterface.AUTO_PREVIEW));
+        PreviewUI previewUI = new PreviewUI(groupName, templateFileName, sourceCode, dataBaseUtil, auto);
         dialogUtil.showPreviewDialog(Message.PREVIEW_TEMPLATE.getTitle(), previewUI.getMainPanel(), previewUI.getEditorUtil());
     }
 }

@@ -59,7 +59,7 @@ public class GenerateJUtil {
         TemplateUtil templateUtil = new TemplateUtil(TemplateJSettings.getInstance().getTemplates());
         String templateCode = templateUtil.getTemplateContent(groupName, templateFileName);
         String globalConfig = templateUtil.getGlobalConfig(groupName);
-        String sourceCode = globalConfig.concat(templateCode);
+        String sourceCode = TemplateUtil.getSourceCode(globalConfig, templateCode, new PropertiesUtil());
         // 生成字符串内容
         String generateContent = generate(templateFileName, sourceCode, dataModel);
         //template根据模板生成指定内容后，获取template处理后的数据模型，用于文件生成后续步骤
@@ -268,14 +268,14 @@ public class GenerateJUtil {
      * @param t            数据表处理后对象
      * @return Map<String, Object>
      */
-    private Map<String, Object> getCommonDataModel(String root, String packageName, String generatePath, Generate generate, Table t) {
+    public Map<String, Object> getCommonDataModel(String root, String packageName, String generatePath, Generate generate, Table t) {
         Map<String, Object> map = new HashMap<>();
         ToolsUtil toolsUtil = new ToolsUtil();
         map.put("rootPath", root);
         map.put("tools", toolsUtil);
         map.put("packageName", packageName);
         map.put("table", t);
-        map.put("tableName", t.getName());
+        map.put("tableName", t != null ? t.getName() : null);
         map.put("generatePath", generatePath);
         map.put("generate", generate);
         return map;

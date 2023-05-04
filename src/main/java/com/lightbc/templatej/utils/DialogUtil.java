@@ -176,7 +176,6 @@ public class DialogUtil {
     public void showCustomDialog(String title, JComponent component, JComponent parentComponent, Dimension dimension, boolean b) {
         dialog = new JDialog();
         dialog.setLayout(new BorderLayout());
-        dialog.setResizable(false);
         dialog.setTitle(title);
         dialog.setSize(dimension);
         dialog.setLocationRelativeTo(parentComponent);

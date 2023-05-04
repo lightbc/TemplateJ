@@ -1,6 +1,7 @@
 package com.lightbc.templatej.utils;
 
 import com.lightbc.templatej.entity.Template;
+import com.lightbc.templatej.interfaces.TemplateJInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -317,4 +318,73 @@ public class TemplateUtil {
         return false;
     }
 
+    /**
+     * 获取模板中的属性配置信息
+     *
+     * @param content 模板内容
+     * @return map
+     */
+    private static Map<String, String> getTemplateJParams(String content) {
+        Map<String, String> map = null;
+        if (!"".equals(content.trim())) {
+            map = new HashMap<>();
+            boolean b = content.contains("\n");
+            if (b) {
+                String[] cts = content.split("\n");
+                for (String s : cts) {
+                    s = s.trim();
+                    if (!"".equals(s.trim()) && s.startsWith("##")) {
+                        String param = s.substring(2).trim();
+                        if (param.contains(":")) {
+                            String[] params = param.split(":");
+                            map.put(params[0].trim().toUpperCase(), params[1].trim());
+                        }
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 根据模板文件中的属性设置，重新设置属性默认值
+     *
+     * @param templateCode 模板内容
+     * @param util         属性工具类
+     */
+    private static void setSettingProperties(String templateCode, PropertiesUtil util) {
+        Map<String, String> map = getTemplateJParams(templateCode);
+        if (map != null) {
+            for (String key : map.keySet()) {
+                util.set(key, map.get(key));
+            }
+        }
+    }
+
+    /**
+     * 获取模板代码
+     *
+     * @param globalConfig 全局配置
+     * @param templateCode 模板内容
+     * @param util         属性工具类
+     * @return string
+     */
+    public static String getSourceCode(String globalConfig, String templateCode, PropertiesUtil util) {
+        setSettingProperties(templateCode, util);
+        boolean b = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL)) || Boolean.parseBoolean(util.getValue(TemplateJInterface.AUTO_PREVIEW));
+        if (b) {
+            if (!"".equals(templateCode.trim()) && templateCode.contains("\n")) {
+                String[] tcs = templateCode.split("\n");
+                StringBuilder builder = new StringBuilder();
+                for (String s : tcs) {
+                    s = s.trim();
+                    if (!s.startsWith("##")) {
+                        builder.append(s).append("\n");
+                    }
+                }
+                return builder.toString().trim();
+            }
+        }
+        return globalConfig.concat(templateCode).trim();
+    }
 }

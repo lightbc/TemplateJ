@@ -45,7 +45,7 @@ public class GenerateAction extends AnAction {
         // 对话框事件监听
         dialogActionListener(dialogUtil);
         // 打开生成器UI界面对话框
-        dialogUtil.showCustomDialog(this.getTemplateText(), generateUI.getMainPanel(), null, new Dimension(500, 340), false);
+        dialogUtil.showCustomDialog(this.getTemplateText(), generateUI.getMainPanel(), null, new Dimension(600, 400), false);
     }
 
     /**
