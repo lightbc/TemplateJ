@@ -321,7 +321,10 @@ public class TemplateJGenerateUI {
      */
     private String findModuleSources() {
         Module module = getSelectModule();
-        VirtualFile moduleFile = Objects.requireNonNull(module.getModuleFile()).getParent();
+        String modulePath = ProjectUtil.getModulePath(module);
+        File file = new File(modulePath);
+        assert file.exists();
+        VirtualFile moduleFile = VfsUtil.findFileByIoFile(file, true);
         VirtualFile findFile = VfsUtil.findRelativeFile(moduleFile, "src", "main", "java");
         assert findFile != null && findFile.isDirectory();
         return findFile.getPath();
