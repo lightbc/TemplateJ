@@ -286,7 +286,7 @@ public class TemplateUtil {
             for (String key : fileContentMap.keySet()) {
                 map.put(key, fileContentMap.get(key));
             }
-            map.put(name, fileContentMap.get(content));
+            map.put(name, content);
         }
         return map;
     }
