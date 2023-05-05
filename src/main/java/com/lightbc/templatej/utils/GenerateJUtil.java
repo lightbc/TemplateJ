@@ -250,7 +250,7 @@ public class GenerateJUtil {
      */
     public Map<String, Object> getDataModel(String groupName, DbTable table, String fileName, TemplateJGenerateUI generateUI, String generatePath) {
         Table t = getTable(groupName, table);
-        String root = generateUI.getGenerateRoot();
+        String root = ProjectUtil.getModulePath(generateUI.getSelectModule());
         String packageName = generateUI.getPackagePath().getText();
         Generate generate = new Generate();
         fileName = t.getName().concat(fileName.substring(fileName.indexOf(".")));

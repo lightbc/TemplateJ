@@ -6,6 +6,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiPackage;
@@ -19,10 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
 
 /**
  * 模板生成器UI
@@ -110,7 +113,6 @@ public class TemplateJGenerateUI {
     private void loadPackage() {
         packagePanel.setLayout(new BorderLayout());
         packagePath = new TextFieldWithBrowseButton();
-        packagePath.setEditable(false);
         packagePanel.add(packagePath, BorderLayout.CENTER);
     }
 
@@ -172,6 +174,7 @@ public class TemplateJGenerateUI {
         moduleBox.addActionListener(e -> {
             generateRoot = ProjectUtil.getModulePath(getSelectModule());
             savePath.setText(generateRoot);
+            packagePath.setText("");
         });
     }
 
@@ -245,6 +248,10 @@ public class TemplateJGenerateUI {
         if (psiPackage != null) {
             String pkName = psiPackage.getQualifiedName();
             packagePath.setText(pkName);
+            if (!"".equals(pkName.trim())) {
+                generateRoot = getCompletePath();
+                savePath.setText(generateRoot);
+            }
         }
     }
 
@@ -302,9 +309,37 @@ public class TemplateJGenerateUI {
      *
      * @return module
      */
-    private Module getSelectModule() {
+    public Module getSelectModule() {
         String moduleName = Objects.requireNonNull(moduleBox.getSelectedItem()).toString();
         return moduleMap.get(moduleName);
+    }
+
+    /**
+     * 查找模块资源目录
+     *
+     * @return string
+     */
+    private String findModuleSources() {
+        Module module = getSelectModule();
+        VirtualFile moduleFile = Objects.requireNonNull(module.getModuleFile()).getParent();
+        VirtualFile findFile = VfsUtil.findRelativeFile(moduleFile, "src", "main", "java");
+        assert findFile != null && findFile.isDirectory();
+        return findFile.getPath();
+    }
+
+    /**
+     * 获取完整的保存路径
+     *
+     * @return string
+     */
+    private String getCompletePath() {
+        String moduleSourcesPath = findModuleSources();
+        String pPath = packagePath.getText();
+        if (!"".equals(pPath.trim())) {
+            String nPackagePath = pPath.replaceAll("\\.", Matcher.quoteReplacement("/"));
+            return moduleSourcesPath.concat("/").concat(nPackagePath);
+        }
+        return moduleSourcesPath;
     }
 
 }
