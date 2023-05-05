@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -124,8 +125,14 @@ public class AddListener {
     private void refresh(TemplateUtil templateUtil) {
         String selectGroup = templateJUI.getSettings().getSelectGroupName();
         Object selectGroupFile = templateJUI.getSettings().getSelectGroupFile();
-        templateJUI.selector(templateJUI.getTemplateGroupSelector(), templateUtil.getGroupNames(), selectGroup);
-        templateJUI.selector(templateJUI.getTemplateFileSelector(), templateUtil.getGroupFileNames(selectGroup), selectGroupFile);
+        List<String> groupList = templateUtil.getGroupNames();
+        List<String> fileList = templateUtil.getGroupFileNames(selectGroup);
+        if (fileList != null) {
+            fileList.remove(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
+            fileList.add(0, ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
+        }
+        templateJUI.selector(templateJUI.getTemplateGroupSelector(), groupList, selectGroup);
+        templateJUI.selector(templateJUI.getTemplateFileSelector(), fileList, selectGroupFile);
     }
 
     /**
