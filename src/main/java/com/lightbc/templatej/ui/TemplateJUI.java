@@ -211,7 +211,9 @@ public class TemplateJUI implements Configurable {
      * @param index 选择项下标
      */
     private void defaultSelectByIndex(JComboBox box, int index) {
-        box.setSelectedIndex(index);
+        if (box != null && box.getModel().getSize() > 0) {
+            box.setSelectedIndex(index);
+        }
     }
 
     /**

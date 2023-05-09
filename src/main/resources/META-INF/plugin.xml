@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.lightbc.templatej</id>
     <name>TemplateJ</name>
-    <version>1.1.0-RELEASE</version>
+    <version>1.1.1-RELEASE</version>
     <vendor email="lightbc@163.com" url="https://www.cnblogs.com/lightbc/">lightbc</vendor>
 
     <description>
@@ -24,20 +24,10 @@
 
     <change-notes>
         <![CDATA[
-        <h3>v1.1.0-RELEASE</h3>
+        <h3>v1.1.1-RELEASE</h3>
         <ol>
-        <li>上传模块配置文件</li>
-        <li>修改插件适应的初始版本</li>
-        <li>新增模板生成插件自定义配置选项</li>
-        <li>新增英文属性文件</li>
-        <li>新增处理模板文件中的插件自定配置项信息功能</li>
-        <li>新增获取当前操作系统的默认系统语言</li>
-        <li>新增属性文件处理工具类，key值不敏感</li>
-        <li>优化项目工具类</li>
-        <li>插件功能组件优化，UI界面优化</li>
-        <li>新增单个模板直接预览/生成功能</li>
-        <li>模板生成保存路径选取功能优化</li>
-        <li>已知问题修改</li>
+        <li>已知问题修复优化。</li>
+        <li>修复生成器模板组选择功能逻辑问题。</li>
         </ol>
         ]]>
     </change-notes>

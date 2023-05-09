@@ -132,10 +132,6 @@ public class TemplateJGenerateUI {
      */
     @SuppressWarnings("UndesirableClassUsage")
     private void loadCheckbox(List<String> fileList) {
-        if (fileList == null || fileList.size() == 0) {
-            log.warn("文件选项为空！");
-            return;
-        }
         // 移除复选面板的子组件
         checkboxPanel.removeAll();
         checkboxContainerPanel = new JPanel(new GridLayout(fileList.size(), 1));
