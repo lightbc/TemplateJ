@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.lightbc.templatej</id>
     <name>TemplateJ</name>
-    <version>1.1.1-RELEASE</version>
+    <version>1.1.2-RELEASE</version>
     <vendor email="lightbc@163.com" url="https://www.cnblogs.com/lightbc/">lightbc</vendor>
 
     <description>
@@ -24,10 +24,11 @@
 
     <change-notes>
         <![CDATA[
-        <h3>v1.1.1-RELEASE</h3>
+        <h3>v1.1.2-RELEASE</h3>
         <ol>
         <li>已知问题修复优化。</li>
-        <li>修复生成器模板组选择功能逻辑问题。</li>
+        <li>上传插件图标。</li>
+        <li>修改版本信息。</li>
         </ol>
         ]]>
     </change-notes>
