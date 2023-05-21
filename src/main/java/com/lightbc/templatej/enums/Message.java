@@ -28,7 +28,9 @@ public enum Message {
     PREVIEW_TEMPLATE("效果预览"),
     PACKAGE_CHOOSER_TITLE("包路径选择"),
     TYPE_MAPPER_OPEN("数据类型映射-"),
-    HELP("帮助");
+    HELP("帮助"),
+    CACHE_ERROR("缓存失败"),
+    ERROR_URL("网址打开错误");
 
 
     // 消息标题

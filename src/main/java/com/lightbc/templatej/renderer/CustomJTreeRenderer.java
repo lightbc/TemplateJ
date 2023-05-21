@@ -72,6 +72,10 @@ public class CustomJTreeRenderer extends DefaultTreeCellRenderer {
             if ("oracle".equals(provider.toLowerCase())) {
                 return AllIcons.Providers.Oracle;
             }
+            // Microsoft SQL Server
+            if ("mssql".equals(provider.toLowerCase())) {
+                return AllIcons.Providers.SqlServer;
+            }
         }
         return AllIcons.Modules.SourceRoot;
     }

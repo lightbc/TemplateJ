@@ -112,7 +112,7 @@ public class HelpListener {
                             DialogUtil dialogUtil = new DialogUtil();
                             StringWriter writer = new StringWriter();
                             e.printStackTrace(new PrintWriter(writer));
-                            dialogUtil.showTipsDialog(null, writer.toString(), "缓存失败");
+                            dialogUtil.showTipsDialog(null, writer.toString(), Message.CACHE_ERROR.getTitle());
                         }
                     }
                 }
@@ -131,7 +131,7 @@ public class HelpListener {
         try {
             Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + path);
         } catch (IOException e) {
-            dialogUtil.showTipsDialog(null, e, "网址打开错误");
+            dialogUtil.showTipsDialog(null, e, Message.ERROR_URL.getTitle());
         }
     }
 
