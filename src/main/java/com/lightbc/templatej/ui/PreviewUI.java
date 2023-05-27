@@ -95,11 +95,8 @@ public class PreviewUI {
                 String kw = tableNameSearch.getText();
                 DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) tree.getModel().getRoot();
                 DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-                if (selectNode != null) {
-                    int level = selectNode.getLevel();
-                    if (level != 3) {
-                        treeNode = selectNode;
-                    }
+                if (selectNode != null && selectNode.getChildCount() > 0) {
+                    treeNode = selectNode;
                 }
                 searchTreeNode(kw, treeNode);
             }
@@ -113,7 +110,7 @@ public class PreviewUI {
      * @param treeNode 树结构根节点
      */
     private void searchTreeNode(String kw, DefaultMutableTreeNode treeNode) {
-        if (treeNode.getChildCount() >= 0) {
+        if (treeNode != null && treeNode.getChildCount() >= 0) {
             Enumeration childrens = treeNode.children();
             while (childrens.hasMoreElements()) {
                 DefaultMutableTreeNode children = (DefaultMutableTreeNode) childrens.nextElement();
@@ -191,21 +188,25 @@ public class PreviewUI {
     private void editorShow() {
         // 当前选择节点
         selectTreeNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+        if (selectTreeNode == null) {
+            return;
+        }
         String selectTableName = selectTreeNode.toString();
-        // 数据库名称
-        String schema = selectTreeNode.getParent().toString();
         // 根据当前选择的数据表名，获取对应的数源信息
         Map<String, DbDataSource> dataSourceMap = dataBaseUtil.getDataSourceMap();
         // 获取默认格式的树形结构的顶级节点名称
         String name = null;
+        String schema = null;
         if (selectTreeNode.getChildCount() == 0) {
             name = selectTreeNode.getParent().getParent().toString();
+            // 数据库名称
+            schema = selectTreeNode.getParent().toString();
         }
         // 当前生成的预览内容
         String curContent = "";
         try {
             // 判断当前选择节点的指定父级节点是否为数据库节点
-            if (name != null && !"".equals(name.trim()) && !"DataBase".equals(name)) {
+            if (name != null && schema != null && !"".equals(name.trim()) && !"DataBase".equals(name)) {
                 // 当前选择的数据表
                 DbTable dbTable = dataBaseUtil.getTable(dataSourceMap.get(name), schema, selectTableName);
                 GenerateJUtil generateJUtil = new GenerateJUtil();
