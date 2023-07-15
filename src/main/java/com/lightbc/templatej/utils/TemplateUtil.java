@@ -58,13 +58,18 @@ public class TemplateUtil {
      * @return string
      */
     public String getTemplateContent(String groupName, String groupFileName) {
-        if (templates != null) {
-            for (Template template : templates)
-                if (template.getGroupName().equals(groupName.trim())) {
-                    return template.getFileContentMap().getOrDefault(groupFileName, "");
-                }
+        String content = "";
+        try {
+            if (templates != null) {
+                for (Template template : templates)
+                    if (template.getGroupName().equals(groupName.trim())) {
+                        content = template.getFileContentMap().getOrDefault(groupFileName, "");
+                    }
+            }
+        } catch (Exception e) {
+        } finally {
+            return content;
         }
-        return "";
     }
 
     /**

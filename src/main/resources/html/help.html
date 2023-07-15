@@ -4,14 +4,7 @@
     <meta charset="utf-8">
     <title></title>
     <style type="text/css">
-        h3 {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
         h4 {
-            font-size: 16px;
-            font-weight: 700;
             text-indent: 20px;
         }
 
@@ -22,12 +15,12 @@
 </head>
 <body style="margin: 10px;">
 <div style="text-align: right;font-size: 20px;font-weight: 800;">
-    <i>v1.1.4-RELEASE</i>
+    <i>v1.2.0-RELEASE</i>
 </div>
 <div>
     <h2>
         <i style="color: yellow;">
-            注：红色标记内容位当前版本新增功能。
+            注：红色标记内容为当前版本新增功能。
         </i>
     </h2>
 </div>
@@ -39,7 +32,7 @@
             TemplateJ是一个模板生成解决方案。
         </p>
         <p class="c2">
-            基于freemarker模板引擎，一键解决开发过程中的重复过程。
+            基于FreeMarker模板引擎，一键解决开发过程中的重复过程。
         </p>
     </div>
     <div>
@@ -48,12 +41,22 @@
             <ul>
                 <li style="margin-top: 5px;margin-bottom: 5px;">
                     <p>
-                        基于freemarker模板引擎。
+                        基于FreeMarker模板引擎。
                     </p>
                 </li>
                 <li style="margin-top: 5px;margin-bottom: 5px;">
                     <p>
                         提供通用模板内容生成功能。
+                    </p>
+                </li>
+                <li style="margin-top: 5px;margin-bottom: 5px;color:red;">
+                    <p>
+                        提供模板导入/导出功能。
+                    </p>
+                </li>
+                <li style="margin-top: 5px;margin-bottom: 5px;color:red;">
+                    <p>
+                        提供重命名模板组/模板文件名称功能。
                     </p>
                 </li>
                 <li style="margin-top: 5px;margin-bottom: 5px;">
@@ -76,7 +79,7 @@
     </div>
 </div>
 <div>
-    <h3>二、插件配置</h3>
+    <h3>二、插件使用</h3>
     <div class="c1">
         <ol>
             <li style="margin-top: 5px;">
@@ -92,7 +95,7 @@
             </li>
             <li style="margin-top: 5px;margin-bottom: 5px;">
                 <p>
-                    效果预览功能。
+                    效果预览功能
                 </p>
                 <p style="margin-top: 5px;margin-bottom: 5px;">
                     步骤1：选择需要预览的模板文件。
@@ -107,7 +110,7 @@
             </li>
             <li style="margin-top: 5px;margin-bottom: 5px;">
                 <p>
-                    复制模板组/模板文件。
+                    复制模板组/模板文件
                 </p>
                 <p style="margin-top: 5px;margin-bottom: 5px;">
                     步骤1：选择需要复制的模板文件（不选择有效模板文件，默认复制当前选择的整个模板组）。
@@ -125,7 +128,7 @@
             </li>
             <li style="margin-top: 5px;margin-bottom: 5px;">
                 <p>
-                    新增模板组/模板文件。
+                    新增模板组/模板文件
                 </p>
                 <p style="margin-top: 5px;margin-bottom: 5px;">
                     步骤1：点击新增按钮。
@@ -146,7 +149,7 @@
             </li>
             <li style="margin-top: 5px;margin-bottom: 5px;">
                 <p>
-                    删模板组/模板文件。
+                    删模板组/模板文件
                 </p>
                 <p style="margin-top: 5px;margin-bottom: 5px;">
                     步骤1：选择需要进行删除的模板组/模板文件（不选择有效模板文件，默认删除当前选择的模板组）。
@@ -161,7 +164,7 @@
             </li>
             <li style="margin-top: 5px;margin-bottom: 5px;">
                 <p>
-                    数据类型映射器。
+                    数据类型映射器
                 </p>
                 <p style="margin-top: 5px;margin-bottom: 5px;">
                     步骤1：点击数据类型映射器按钮。
@@ -193,7 +196,7 @@
             </li>
             <li style="margin-top: 5px;margin-bottom: 5px;">
                 <p>
-                    模板全局引用配置。
+                    模板全局引用配置
                 </p>
                 <p style="margin-top: 5px;margin-bottom: 5px;">
                     步骤1：点击全局配置按钮。
@@ -222,6 +225,76 @@
                 <p>
                     点击【帮助】按钮，将显示本页面。
                 </p>
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;color:red;">
+                <p>
+                    重命名模板组/模板文件名称
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：选择模板组/模板文件（选择有效的模板文件，则修改选择的模板文件名称）。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：点击重命名按钮。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：给选择的模板组/模板文件输入新的名称。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤4：点击【是(Y)】按钮确认修改。
+                </p>
+                <img src="/images/rename.png">
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;color:red;">
+                <p>
+                    模板导入
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：点击导入模板按钮，进入模板导入UI界面。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：选择导入的模板路径（可选择单个文件夹/单个文件导入，选择单个文件夹时会将该文件夹下的文件默认成需要导入的模板文件）。
+                </p>
+                <img src="/images/template_import_1.png">
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    命名导入的模板文件的模板组名称，选择需要导入的模板文件，选择需要导入的全局配置文件。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    （默认会将导入的文件夹下的【模板组名称.tj】文件认定为该模板组的全局配置文件）。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤4：点击【Ok】按钮，导入模板。
+                </p>
+                <img src="/images/template_import_2.png">
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;color:red;">
+                <p>
+                    模板导出
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：点击导出模板按钮，进入模板导出UI界面。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    选择需要导出的模板组。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    选择需要导出的模板文件。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    选择是否导出该模板组的全局配置文件。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    选择模板导出的位置。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：点击【Ok】按钮，导出模板。
+                </p>
+                <img src="/images/template_export.png">
             </li>
         </ol>
     </div>
@@ -606,14 +679,12 @@
                 </p>
             </li>
             <li style="margin-top: 5px;margin-bottom: 5px;">
-                <p>
-                    Blog:<a href="https://www.cnblogs.com/lightbc/">https://www.cnblogs.com/lightbc/</a>
-                </p>
-            </li>
-            <li style="margin-top: 5px;margin-bottom: 5px;">
-                <p>
-                    GitHub:<a href="https://github.com/lightbc">https://github.com/lightbc</a>
-                </p>
+                <span>
+                    <a href="https://www.cnblogs.com/lightbc/">Blog</a>
+                </span>
+                <span style="margin-left: 50px;">
+                    <a href="https://github.com/lightbc">GitHub</a>
+                </span>
             </li>
         </ul>
     </div>

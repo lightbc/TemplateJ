@@ -19,6 +19,22 @@ public enum Message {
     TEMPLATE_CONTENT_EMPTY("提示", "模板内容不能为空！"),
     GLOBAL_CONFIG_EMPTY("提示", "模板组全局配置为空！"),
     RESET_TEMPLATEJ("重置", "是否确认重置？重置后你的自定义配置信息将会被移除！"),
+    RENAME_IS_BLANK("提示", "新名称不能为空！"),
+    RENAME_GROUP_EXIST("提示", "此名称的模板组已存在！"),
+    RENAME_GROUP_FILE_EXIST("提示", "此名称的模板文件已存在！"),
+    RENAME_DEFAULT_TEMPLATE_FAIL("重命名错误", "无法对默认的模板组/模板文件进行重命名操作！！！"),
+    OPERATE_TEMPLATE_NOT_EXIST("警告", "操作的模板对象不存在！"),
+    NO_SELECT_GROUP("提示", "未选择模板组！"),
+    NO_SELECT_TEMPLATE_FILE("提示", "未选择需要导出的模板文件！"),
+    NO_SELECT_EXPORT_PATH("提示", "模板导出路径为空！"),
+    EXPORT_SUCCESS("提示", "模板导出成功！"),
+    NO_SELECT_IMPORT_PATH("提示", "请选择需要导入的模板路径（文件夹/文件）！"),
+    NO_DEFAULT_GROUP_NAME("提示", "请输入默认的模板组名称！"),
+    NO_SELECT_IMPORT_TEMPLATE_FILE("提示", "未选择需要导入的模板文件！"),
+    IMPORT_SUCCESS("提示", "模板导入成功！"),
+    IMPORT_GROUP_EXIST("提示", "导入的模板组已经存在，请修改模板组名称后重试！"),
+    IMPORT_TEMPLATE_FILE_NO_EXIST("提示", "选择的文件无效/文件夹目录下无有效的文件存在！"),
+    IMPORT_IS_NOT_GLOBAL_CONFIG("提示", "选择的文件非指定格式（格式：模板组名称.tj）！"),
 
     // 配置标题
     ADD_TEMPLATE("新增模板"),
@@ -30,7 +46,8 @@ public enum Message {
     TYPE_MAPPER_OPEN("数据类型映射-"),
     HELP("帮助"),
     CACHE_ERROR("缓存失败"),
-    ERROR_URL("网址打开错误");
+    ERROR_URL("网址打开错误"),
+    RENAME_TITLE("重命名（模板组/模板文件）名称");
 
 
     // 消息标题

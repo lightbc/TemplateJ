@@ -13,7 +13,7 @@ import java.io.*;
 public class FileUtil {
     private static final String[] IMAGE_TYPES = new String[]{".png", ".jpg", ".jpeg", ".gif"};
 
-    FileUtil() {
+    public FileUtil() {
 
     }
 
@@ -43,7 +43,7 @@ public class FileUtil {
      *
      * @param path 文件路径
      */
-    void createFile(String path) {
+    public void createFile(String path) {
         try {
             create(path, 1);
         } catch (IOException e) {
@@ -56,7 +56,7 @@ public class FileUtil {
      *
      * @param path 文件夹路径
      */
-    void createDirs(String path) {
+    public void createDirs(String path) {
         try {
             create(path, 2);
         } catch (IOException e) {
@@ -92,13 +92,61 @@ public class FileUtil {
     }
 
     /**
+     * 读取文件内容
+     *
+     * @param path 文件路径
+     * @return string 文件内容
+     */
+    public synchronized String read(String path) {
+        if (path == null || "".equals(path.trim())) {
+            throw new NotExistException("文件读取路径为空！");
+        }
+        File file = new File(path);
+        if (file.isDirectory()) {
+            throw new NotExistException("读取路径非文件格式!");
+        }
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+        BufferedReader br = null;
+        StringBuilder builder = new StringBuilder();
+        try {
+            fis = new FileInputStream(file);
+            isr = new InputStreamReader(fis, ConfigInterface.ENCODE_VALUE);
+            br = new BufferedReader(isr);
+            String line;
+            while ((line = br.readLine()) != null) {
+                builder.append(line).append("\n");
+            }
+        } catch (FileNotFoundException e) {
+            log.error("读取文件未找到：{}", e.getMessage());
+        } catch (IOException e) {
+            log.error("读取文件报错：{}", e.getMessage());
+        } finally {
+            try {
+                if (br != null) {
+                    br.close();
+                }
+                if (isr != null) {
+                    isr.close();
+                }
+                if (fis != null) {
+                    fis.close();
+                }
+            } catch (IOException e) {
+                log.error("文件输入流关闭报错：{}", e.getMessage());
+            }
+            return builder.toString();
+        }
+    }
+
+    /**
      * 文件写入内容
      *
      * @param path    写入文件路径
      * @param content 写入内容
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    synchronized void write(String path, String content) {
+    public synchronized void write(String path, String content) {
         if (path == null || "".equals(path.trim())) {
             throw new NotExistException("文件写入路径为空！");
         }

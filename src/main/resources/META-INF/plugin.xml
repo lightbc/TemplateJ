@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.lightbc.templatej</id>
     <name>TemplateJ</name>
-    <version>1.1.4-RELEASE</version>
+    <version>1.2.0-RELEASE</version>
     <vendor email="lightbc@163.com" url="https://www.cnblogs.com/lightbc/">lightbc</vendor>
 
     <description>
@@ -9,14 +9,14 @@
         <P>English Description：</p>
         <p>
         TemplateJ is a template generation solution.<br/>
-        Based on the Freemarker template engine, it solves repetitive processes in the development process with one click.<br/>
+        Based on the FreeMarker template engine, it solves repetitive processes in the development process with one click.<br/>
         It has good compatibility with MySQL databases.
         </p>
         <br/>
         <p>中文描述：</p>
         <p>
         TemplateJ是一个模板生成解决方案。<br/>
-        基于freemarker模板引擎，一键解决开发过程中的重复过程。<br/>
+        基于FreeMarker模板引擎，一键解决开发过程中的重复过程。<br/>
         对于MySQL数据库有着较好的兼容性。<br/><br/>
         </p>
         ]]>
@@ -24,10 +24,22 @@
 
     <change-notes>
         <![CDATA[
-        <h3>v1.1.4-RELEASE</h3>
+        <h3>v1.2.0-RELEASE</h3>
         <ol>
-        <li>已知问题的修复优化。</li>
-        <li>描述文件描述内容的修改。</li>
+        <li>Add template import/export function.</li>
+        <li>Add template group/template file renaming function.</li>
+        <li>UI style optimization.</li>
+        <li>Add relevant function prompt information.</li>
+        <li>Repair and optimize other known issues.</li>
+        </ol>
+
+        <h3>v1.2.0-RELEASE</h3>
+        <ol>
+        <li>新增模板导入/导出功能。</li>
+        <li>新增模板组/模板文件重命名功能。</li>
+        <li>UI样式优化。</li>
+        <li>新增相关功能提示信息。</li>
+        <li>其它已知问题修复优化。</li>
         </ol>
         ]]>
     </change-notes>

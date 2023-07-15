@@ -34,4 +34,10 @@ public interface ConfigInterface {
     String TABLE_NAME_SEARCH_PLACEHOLDER = "请输入查询的表名";
     // 插件缓存数据目录
     String PLUGIN_CACHE_DIR = "cache";
+    // 模板导入
+    String TEMPLATE_IMPORT = "模板导入";
+    // 模板导出
+    String TEMPLATE_EXPORT = "模板导出";
+    // 插件默认文件拓展名
+    String PLUGIN_DEFAULT_EXT = ".tj";
 }

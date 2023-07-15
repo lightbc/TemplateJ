@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.*;
@@ -68,11 +69,12 @@ public class TypeMapperUI implements Configurable {
         mainPanel.setLayout(new BorderLayout());
         table = new JTable(tableModel);
         // 设置行高
-        table.setRowHeight(22);
-        //内容居中显示
-       /* DefaultTableCellRenderer renderer=new DefaultTableCellRenderer();
-        renderer.setHorizontalAlignment(JLabel.CENTER);
-        table.setDefaultRenderer(Object.class,renderer);*/
+        table.setRowHeight(24);
+        // 设置表格内容整体为左对齐
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(JLabel.LEFT);
+        table.setDefaultRenderer(Object.class, renderer);
+        table.getTableHeader().setDefaultRenderer(renderer);
         scrollPane = new JScrollPane(table);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(operatePanel, BorderLayout.EAST);

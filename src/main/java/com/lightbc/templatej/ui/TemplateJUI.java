@@ -64,6 +64,7 @@ public class TemplateJUI implements Configurable {
     private TemplateJSettings settings;
     // 模板数据处理工具类
     private TemplateUtil templateUtil;
+    private JButton editName;
 
     public TemplateJUI() {
         init();
@@ -77,9 +78,6 @@ public class TemplateJUI implements Configurable {
         if (splitPne != null) {
             splitPne.getLeftComponent().setVisible(false);
         }
-        //不显示导入/导出按钮
-        importButton.setVisible(false);
-        exportButton.setVisible(false);
         // 获取系统级别持久化功能对象
         settings = TemplateJSettings.getInstance();
         templateUtil = new TemplateUtil(settings.getTemplates());
@@ -92,7 +90,7 @@ public class TemplateJUI implements Configurable {
     /**
      * 初始化下拉选择器
      */
-    private void initSelector() {
+    public void initSelector() {
         // 获取选择器选择项
         List<String> groupList = templateUtil.getGroupNames();
         String selectGroupName = settings.getSelectGroupName();
@@ -145,10 +143,16 @@ public class TemplateJUI implements Configurable {
         new PreviewListener(templateJUI).preview();
         // 模板组全局配置事件监听
         new GroupConfigListener(templateJUI).config();
-//        // 帮助功能事件监听
+        // 帮助功能事件监听
         new HelpListener().help(help);
         // 数据类型映射器功能事件监听
         new TypeMapperListener(templateJUI).typMapper();
+        // 模板导入功能事件监听
+        new ImportListener(templateJUI).importTemplate();
+        // 模板导出功能事件监听
+        new ExportListener(templateJUI).exportTemplate();
+        // 重命名点击事件监听
+        new EditNameListener(templateJUI).editName();
     }
 
     /**
@@ -335,6 +339,8 @@ public class TemplateJUI implements Configurable {
      * 初始化功能图标，使用系统自带的图标（2019.1）
      */
     private void initIcons() {
+        // 编辑（模板组/模板文件）名称图标
+        editName.setIcon(AllIcons.Actions.Edit);
         // 复制按钮图标
         copy.setIcon(AllIcons.General.CopyHovered);
         // 新增按钮图标
