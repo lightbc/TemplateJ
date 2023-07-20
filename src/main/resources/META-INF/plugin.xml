@@ -26,16 +26,16 @@
         <![CDATA[
         <h3>v1.2.1-RELEASE</h3>
         <ol>
-        <li>代码重构，代码优化，移除冗余代码。</li>
-        <li>UI界面调整。</li>
-        <li>已知问题修复。</li>
+        <li>Code refactoring, code optimization, removal of redundant code.</li>
+        <li>UI interface adjustment.</li>
+        <li>Fixed known issues.</li>
         </ol>
 
         <h3>v1.2.1-RELEASE</h3>
         <ol>
-        <li>Code refactoring, code optimization, removal of redundant code.</li>
-        <li>UI interface adjustment.</li>
-        <li>Fixed known issues.</li>
+        <li>代码重构，代码优化，移除冗余代码。</li>
+        <li>UI界面调整。</li>
+        <li>已知问题修复。</li>
         </ol>
         ]]>
     </change-notes>
