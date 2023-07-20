@@ -3,6 +3,7 @@ package com.lightbc.templatej.utils;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.lightbc.templatej.interfaces.ConfigInterface;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -73,7 +74,7 @@ public class PluginUtil {
      */
     public static File getCacheFile(String path) {
         File file = null;
-        if (path != null && !"".equals(path.trim())) {
+        if (StringUtils.isNotBlank(path)) {
             file = new File(path);
             if (file.exists()) {
                 return file;

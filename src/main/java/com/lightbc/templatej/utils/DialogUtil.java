@@ -90,8 +90,8 @@ public class DialogUtil {
      * @return int ok：0，cancel：1
      */
     public int showConfigDialog(String title, String fileName, String content) {
-        EditorUtil util = new EditorUtil(content);
-        JComponent editor = initEditorComponent(util, fileName);
+        EditorUtil util = new EditorUtil();
+        JComponent editor = initEditorComponent(util, fileName, content);
         Project project = ProjectUtil.getProject();
         util.highLighter(fileName, project);
         this.editor = util.getEditor();
@@ -155,10 +155,11 @@ public class DialogUtil {
      *
      * @param util     编辑功能工具类
      * @param fileName 模板文件名称
+     * @param content  文档内容
      * @return JComponent
      */
-    private JComponent initEditorComponent(EditorUtil util, String fileName) {
-        JComponent editor = util.getEditor(fileName, true);
+    private JComponent initEditorComponent(EditorUtil util, String fileName, String content) {
+        JComponent editor = util.getEditor(fileName, content, true);
         Dimension dimension = new Dimension(700, 500);
         editor.setPreferredSize(dimension);
         return editor;
@@ -174,25 +175,25 @@ public class DialogUtil {
      * @param b               OK按钮点击是否自动关闭，是：true，否：false
      */
     public void showCustomDialog(String title, JComponent component, JComponent parentComponent, Dimension dimension, boolean b) {
-        dialog = new JDialog();
-        dialog.setLayout(new BorderLayout());
-        dialog.setTitle(title);
-        dialog.setSize(dimension);
-        dialog.setLocationRelativeTo(parentComponent);
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.dialog = new JDialog();
+        this.dialog.setLayout(new BorderLayout());
+        this.dialog.setTitle(title);
+        this.dialog.setSize(dimension);
+        this.dialog.setLocationRelativeTo(parentComponent);
+        this.dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         JPanel center = new JPanel(new BorderLayout());
-        if (okBtn == null || cancelBtn == null) {
+        if (this.okBtn == null || this.cancelBtn == null) {
             showTipsDialog(null, Message.DIALOG_LOAD_ERROR.getMsg(), Message.DIALOG_LOAD_ERROR.getTitle());
             return;
         }
         // 设置原默认的对话框确认按钮
-        dialog.getRootPane().setDefaultButton(okBtn);
+        this.dialog.getRootPane().setDefaultButton(this.okBtn);
         center.add(component, BorderLayout.CENTER);
-        dialog.add(center, BorderLayout.CENTER);
-        dialog.setModal(true);
-        ok(okBtn, b);
-        cancel(cancelBtn);
-        dialog.setVisible(true);
+        this.dialog.add(center, BorderLayout.CENTER);
+        this.dialog.setModal(true);
+        ok(this.okBtn, b);
+        cancel(this.cancelBtn);
+        this.dialog.setVisible(true);
     }
 
     /**
@@ -220,8 +221,8 @@ public class DialogUtil {
      * 关闭资源
      */
     public void dispose() {
-        if (dialog != null) {
-            dialog.dispose();
+        if (this.dialog != null) {
+            this.dialog.dispose();
         }
     }
 

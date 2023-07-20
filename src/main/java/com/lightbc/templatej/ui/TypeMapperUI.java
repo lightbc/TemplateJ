@@ -2,6 +2,7 @@ package com.lightbc.templatej.ui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.options.Configurable;
+import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.config.TemplateJSettings;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.utils.DialogUtil;
@@ -39,11 +40,14 @@ public class TypeMapperUI implements Configurable {
     private String groupName;
     // TemplateJ 主UI 对象
     private TemplateJUI templateJUI;
+    // 类型映射器数据
+    private Object[][] typeMapper;
 
     public TypeMapperUI(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
         this.settings = TemplateJSettings.getInstance();
-        this.groupName = Objects.requireNonNull(templateJUI.getTemplateGroupSelector().getSelectedItem()).toString();
+        this.groupName = templateJUI.getCommonUI().getGroupName();
+        this.typeMapper = this.templateJUI.getTemplateUtil().getTemplate(this.groupName).getTypeMapper();
         init();
     }
 
@@ -61,24 +65,21 @@ public class TypeMapperUI implements Configurable {
      */
     @SuppressWarnings({"BoundFieldAssignment", "UndesirableClassUsage"})
     private void initTable() {
-        Object[][] tableData = getGroupTypeMapper();
-        if (tableData == null) {
-            tableData = settings.getDefaultTableData();
-        }
-        tableModel = new DefaultTableModel(tableData, settings.getTableHeader());
-        mainPanel.setLayout(new BorderLayout());
-        table = new JTable(tableModel);
+        this.typeMapper = this.typeMapper != null ? this.typeMapper : DefaultTemplateParams.getDefaultTableData();
+        this.tableModel = new DefaultTableModel(this.typeMapper, DefaultTemplateParams.getDefaultTableHeader());
+        this.mainPanel.setLayout(new BorderLayout());
+        this.table = new JTable(this.tableModel);
         // 设置行高
-        table.setRowHeight(24);
+        this.table.setRowHeight(24);
         // 设置表格内容整体为左对齐
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setHorizontalAlignment(JLabel.LEFT);
-        table.setDefaultRenderer(Object.class, renderer);
-        table.getTableHeader().setDefaultRenderer(renderer);
-        scrollPane = new JScrollPane(table);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(operatePanel, BorderLayout.EAST);
-        mainPanel.setVisible(true);
+        this.table.setDefaultRenderer(Object.class, renderer);
+        this.table.getTableHeader().setDefaultRenderer(renderer);
+        this.scrollPane = new JScrollPane(this.table);
+        this.mainPanel.add(this.scrollPane, BorderLayout.CENTER);
+        this.mainPanel.add(this.operatePanel, BorderLayout.EAST);
+        this.mainPanel.setVisible(true);
     }
 
     /**
@@ -86,9 +87,9 @@ public class TypeMapperUI implements Configurable {
      */
     private void initIcons() {
         // 新增图标
-        add.setIcon(AllIcons.General.Add);
+        this.add.setIcon(AllIcons.General.Add);
         // 删除图标
-        del.setIcon(AllIcons.General.Remove);
+        this.del.setIcon(AllIcons.General.Remove);
     }
 
     /**
@@ -96,12 +97,13 @@ public class TypeMapperUI implements Configurable {
      */
     private void operateListener() {
         // 新增类型映射事件监听
-        add.addActionListener(e -> tableModel.addRow(new Object[]{"", ""}));
+        this.add.addActionListener(e -> this.tableModel.addRow(new Object[]{"", ""}));
         // 删除选中的类型映射事件监听
-        del.addActionListener(e -> {
-            int sr = table.getSelectedRow();
+        this.del.addActionListener(e -> {
+            int sr = this.table.getSelectedRow();
+            // 删除选择的行
             if (sr != -1) {
-                tableModel.removeRow(sr);
+                this.tableModel.removeRow(sr);
             }
         });
     }
@@ -128,26 +130,11 @@ public class TypeMapperUI implements Configurable {
     }
 
     /**
-     * 加载当前的模板组类型映射系统持久化数据
-     *
-     * @return Object[][]
-     */
-    private Object[][] getGroupTypeMapper() {
-        if (groupName != null && !"".equals(groupName.trim())) {
-            Map<String, Object[][]> typeMapper = settings.getTypeMapper();
-            if (typeMapper != null && typeMapper.containsKey(groupName)) {
-                return typeMapper.get(groupName);
-            }
-        }
-        return null;
-    }
-
-    /**
      * 打开类型映射器
      */
-    public void typMapper() {
+    public void typeMapper() {
         DialogUtil dialogUtil = new DialogUtil();
-        String title = Message.TYPE_MAPPER_OPEN.getTitle().concat(groupName);
+        String title = Message.TYPE_MAPPER_OPEN.getTitle().concat(this.groupName);
         int c = dialogUtil.showConfirmDialog(null, getMainPanel(), title);
         // 点击确定按钮，保存当前模板组的最新数据类型映射配置信息
         if (c == 0) {
@@ -164,23 +151,20 @@ public class TypeMapperUI implements Configurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        return mainPanel;
+        return this.mainPanel;
     }
 
     @Override
     public boolean isModified() {
         // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
-        Map<String, Object[][]> otm = settings.getTypeMapper();
         Object[][] objects = getTableData(getTableModel());
-        Map<String, Object[][]> ntm = new HashMap<>();
-        ntm.put(groupName, objects);
-        return !otm.equals(ntm);
+        return !this.typeMapper.equals(objects);
     }
 
     @Override
     public void apply() {
         // 当前模板组，数据类型映射，最新配置数据持久化
         Object[][] objects = getTableData(getTableModel());
-        settings.getTypeMapper().put(groupName, objects);
+        this.templateJUI.getTemplateUtil().getTemplate(this.groupName).setTypeMapper(objects);
     }
 }

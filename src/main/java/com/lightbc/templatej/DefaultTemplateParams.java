@@ -496,26 +496,27 @@ public class DefaultTemplateParams {
      */
     public static List<Template> getDefaultTemplates() {
         List<Template> templates = new ArrayList<>();
+        // 默认模板对象
         Template template = new Template();
+        // 默认模板组名称
         template.setGroupName(DEFAULT_NAME);
+        // 默认模板文件
         String[] groupFiles = ConfigInterface.GROUP_FILE_VALUE;
+        // 数据类型转换
         List<String> templateFiles = new ArrayList<>(Arrays.asList(groupFiles));
         template.setGroupFiles(templateFiles);
+        // 默认文件映射的默认内容
         template.setFileContentMap(getDefaultTemplateData());
+        // 默认模板组的全局配置
         template.setGlobalConfig(GLOBAL_CONFIG);
+        // 默认模板组数据类型映射集
+        template.setTypeMapper(getDefaultTableData());
         templates.add(template);
         return templates;
     }
 
-    /**
-     * 获取默认映射器数据
-     *
-     * @return map
-     */
-    public static Map<String, Object[][]> getDefaultTypeMapper() {
-        Map<String, Object[][]> map = new HashMap<>();
-        map.put(DEFAULT_NAME, getDefaultTableData());
-        return map;
+    public static Object[] getDefaultTableHeader() {
+        return new Object[]{"columnType", "javaType"};
     }
 
     /**

@@ -12,13 +12,13 @@ import com.lightbc.templatej.listener.*;
 import com.lightbc.templatej.utils.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.List;
+import java.awt.*;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * TemplateJ 模板生成工具主配置UI界面
@@ -26,10 +26,6 @@ import java.util.Objects;
 @Data
 @Slf4j
 public class TemplateJUI implements Configurable {
-    // 模板组下拉选择器
-    private JComboBox templateGroupSelector;
-    // 模板文件下拉选择器
-    private JComboBox templateFileSelector;
     // 主UI界面
     private JPanel mainPanel;
     // 复制功能按钮
@@ -44,8 +40,6 @@ public class TemplateJUI implements Configurable {
     private JButton importButton;
     // 导出功能按钮
     private JButton exportButton;
-    private JLabel templateFile;
-    private JLabel templateGroup;
     // 编辑器UI面板
     private JPanel editorPanel;
     private JSplitPane splitPne;
@@ -59,12 +53,17 @@ public class TemplateJUI implements Configurable {
     // 编辑器
     private Editor editor;
     // 编辑器修改内容
-    private String modifiedEditorContent;
+    private String modified;
     // 系统级别持久化设置
-    private TemplateJSettings settings;
+    private volatile TemplateJSettings settings;
     // 模板数据处理工具类
-    private TemplateUtil templateUtil;
+    private volatile TemplateUtil templateUtil;
+    // 重命名按钮
     private JButton editName;
+    // 选择器组件面板
+    private JPanel selectorPanel;
+    // 通用组件
+    private TemplateJCommonUI commonUI;
 
     public TemplateJUI() {
         init();
@@ -74,163 +73,84 @@ public class TemplateJUI implements Configurable {
      * 功能初始化加载
      */
     private void init() {
-        // 设置分割面板的左组件不显示
-        if (splitPne != null) {
-            splitPne.getLeftComponent().setVisible(false);
-        }
-        // 获取系统级别持久化功能对象
-        settings = TemplateJSettings.getInstance();
-        templateUtil = new TemplateUtil(settings.getTemplates());
-
+        this.settings = TemplateJSettings.getInstance();
+        this.templateUtil = new TemplateUtil(this.settings.getTemplates());
+        // 加载主界面上的各个子组件
+        initSelectorPanel();
+        initEditorPanel();
+        // 加载图标
         initIcons();
-        initSelector();
-        listener(this);
+        // 初始化监听事件
+        initListener();
     }
 
     /**
-     * 初始化下拉选择器
+     * 初始化选择器面板
      */
-    public void initSelector() {
-        // 获取选择器选择项
-        List<String> groupList = templateUtil.getGroupNames();
-        String selectGroupName = settings.getSelectGroupName();
-        List<String> fileList = templateUtil.getGroupFileNames(selectGroupName);
-        if (fileList != null) {
-            fileList.remove(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
-            fileList.add(0, ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
-        }
-        // 构建选择器
-        selector(templateGroupSelector, groupList, settings.getSelectGroupName());
-        selector(templateFileSelector, fileList, settings.getSelectGroupFile());
-
+    private void initSelectorPanel() {
+        this.commonUI = new TemplateJCommonUI(this.settings, this.templateUtil);
+        this.selectorPanel.setLayout(new BorderLayout());
+        JPanel commonSelector = this.commonUI.getMainPanel();
+        this.selectorPanel.add(commonSelector, BorderLayout.CENTER);
+        this.commonUI.showSelector();
+        this.commonUI.enable();
     }
 
     /**
-     * 构建选择器
-     *
-     * @param box    选择器
-     * @param list   选择项
-     * @param select 默认选择项
+     * 初始化编辑区域面板
      */
-    public void selector(JComboBox box, List<String> list, Object select) {
-        DefaultComboBoxModel model = getModel(new DefaultComboBoxModel(), list);
-        //添加下拉选择器的model，并设置默认选择项
-        if (model != null) {
-            box.setModel(model);
-            defaultSelect(box, select);
+    private void initEditorPanel() {
+        // 设置分割面板的左组件不显示
+        if (this.splitPne != null) {
+            this.splitPne.getLeftComponent().setVisible(false);
         }
     }
 
     /**
      * 事件监听
-     *
-     * @param templateJUI 监听对象
      */
-    private void listener(TemplateJUI templateJUI) {
+    private void initListener() {
         // 重置插件
-        resetApp();
+        resetPlugin();
         // 模板组选择器选择事件监听
         groupListener();
         // 模板文件选择器选择事件监听
         fileListener();
         // 复制功能事件监听
-        new CopyListener(templateJUI).copy();
+        new CopyListener(this);
         // 新增功能事件监听
-        new AddListener(templateJUI).add();
+        new AddListener(this);
         // 删除功能事件监听
-        new DelListener(templateJUI).del();
-        // 预览功能事件监听
-        new PreviewListener(templateJUI).preview();
-        // 模板组全局配置事件监听
-        new GroupConfigListener(templateJUI).config();
-        // 帮助功能事件监听
-        new HelpListener().help(help);
-        // 数据类型映射器功能事件监听
-        new TypeMapperListener(templateJUI).typMapper();
-        // 模板导入功能事件监听
-        new ImportListener(templateJUI).importTemplate();
-        // 模板导出功能事件监听
-        new ExportListener(templateJUI).exportTemplate();
+        new DelListener(this);
         // 重命名点击事件监听
-        new EditNameListener(templateJUI).editName();
-    }
-
-    /**
-     * 获取下拉选择器model
-     *
-     * @param model 迭代model对象
-     * @param items 新增元素列表
-     * @return 迭代的model
-     */
-    DefaultComboBoxModel getModel(DefaultComboBoxModel model, List<String> items) {
-        if (items != null) {
-            for (String item : items) {
-                model(model, item);
-            }
-        }
-        return model;
-    }
-
-    /**
-     * 获取下拉选择器的model
-     *
-     * @param model 迭代model对象
-     * @param item  新增元素
-     */
-    private void model(DefaultComboBoxModel model, String item) {
-        model.addElement(item);
-    }
-
-    /**
-     * 设置默认选择项
-     *
-     * @param box    选择器组件
-     * @param select 选择内容
-     */
-    private void defaultSelect(JComboBox box, Object select) {
-        // 通过选择项名称，设置默认选择项
-        if (select instanceof String) {
-            defaultSelectByName(box, select.toString());
-        }
-        // 通过选择项下标，设置默认选择项
-        if (select instanceof Integer) {
-            defaultSelectByIndex(box, Integer.parseInt(select.toString()));
-        }
-    }
-
-    /**
-     * 通过名称设置默认选择项
-     *
-     * @param box    选择器
-     * @param select 选择项
-     */
-    private void defaultSelectByName(JComboBox box, String select) {
-        box.setSelectedItem(select);
-    }
-
-    /**
-     * 通过选择下标设置默认选择项
-     *
-     * @param box   选择器
-     * @param index 选择项下标
-     */
-    private void defaultSelectByIndex(JComboBox box, int index) {
-        if (box != null && box.getModel().getSize() > 0) {
-            box.setSelectedIndex(index);
-        }
+        new EditNameListener(this);
+        // 预览功能事件监听
+        new PreviewListener(this);
+        // 模板组全局配置事件监听
+        new GroupConfigListener(this);
+        // 数据类型映射器功能事件监听
+        new TypeMapperListener(this);
+        // 模板导入功能事件监听
+        new ImportListener(this);
+        // 模板导出功能事件监听
+        new ExportListener(this);
+        // 帮助功能事件监听
+        new HelpListener().help(this.help);
     }
 
     /**
      * 编辑器编辑文档加载
      */
     private void loadEditorDoc() {
-        int index = templateFileSelector.getSelectedIndex();
-        // index>0，选择文件
-        if (index > 0) {
-            String groupName = Objects.requireNonNull(templateGroupSelector.getSelectedItem()).toString();
-            String fileName = Objects.requireNonNull(templateFileSelector.getSelectedItem()).toString();
-            String content = templateUtil.getTemplateContent(groupName, fileName);
-            refreshEditor(fileName, content);
+        if (StringUtils.isNotBlank(this.commonUI.getGroupName()) && TemplateUtil.isTemplateFile(this.commonUI.getGroupFileName())) {
+            String groupName = this.commonUI.getGroupName();
+            String fileName = this.commonUI.getGroupFileName();
+            Template template = this.templateUtil.getTemplate(groupName);
+            if (template != null) {
+                String content = this.templateUtil.getTemplateContent(template, fileName);
+                content = content != null ? content : "";
+                refreshEditor(fileName, content);
+            }
         } else {
             refreshEditor(ConfigInterface.DEFAULT_FILENAME, "");
         }
@@ -241,13 +161,12 @@ public class TemplateJUI implements Configurable {
      */
     private void groupListener() {
         //模板组选择器事件监听
-        templateGroupSelector.addActionListener(e -> {
+        this.commonUI.getTemplateGroupSelector().addActionListener(e -> {
             // 根据选择的模板组，获取该模板组下的模板文件项，并设置模板选择器的选择项
-            String groupName = Objects.requireNonNull(templateGroupSelector.getSelectedItem()).toString();
-            List<String> fileList = templateUtil.getGroupFileNames(groupName);
-            DefaultComboBoxModel fileModel = new TemplateJUI().getModel(new DefaultComboBoxModel(), fileList);
-            templateFileSelector.setModel(fileModel);
-            templateFileSelector.setSelectedIndex(0);
+            if (StringUtils.isNotBlank(this.commonUI.getGroupName())) {
+                SelectorUtil.loadGroupFileSelector(this.commonUI.getTemplateFileSelector(), this.templateUtil.getGroupFileNames(this.commonUI.getGroupName()), this.settings.getSelectGroupFile());
+                this.settings.setSelectGroup(this.commonUI.getGroupName());
+            }
         });
     }
 
@@ -256,14 +175,13 @@ public class TemplateJUI implements Configurable {
      */
     private void fileListener() {
         //模板文件选择器事件监听
-        templateFileSelector.addActionListener(e -> {
+        this.commonUI.getTemplateFileSelector().addActionListener(e -> {
             // 根据选择的模板文件，实时更新编辑器的编辑文档内容
-            String groupName = Objects.requireNonNull(templateGroupSelector.getSelectedItem()).toString();
-            String fileName = Objects.requireNonNull(templateFileSelector.getSelectedItem()).toString();
-            templateFileSelector.setSelectedItem(fileName);
-            loadEditorDoc();
-            settings.setSelectGroupName(groupName);
-            settings.setSelectGroupFile(fileName);
+            if (StringUtils.isNotBlank(this.commonUI.getGroupName()) && StringUtils.isNotBlank(this.commonUI.getGroupFileName())) {
+                String fileName = this.commonUI.getGroupFileName();
+                loadEditorDoc();
+                this.settings.setSelectGroupFile(fileName);
+            }
         });
     }
 
@@ -274,14 +192,23 @@ public class TemplateJUI implements Configurable {
      * @param content  编辑器的显示内容
      */
     private void refreshEditor(String fileName, String content) {
-        EditorUtil editorUtil = new EditorUtil(content);
-        JComponent editorComponent = editorUtil.getEditor(fileName, true);
-        editor = editorUtil.getEditor();
-        splitPne.setDividerLocation(0);
-        splitPne.setDividerSize(-1);
-        splitPne.setRightComponent(editorComponent);
-        modifiedEditorContent = editor.getDocument().getText();
-        settings.setContent(modifiedEditorContent);
+        EditorUtil util = new EditorUtil();
+        JComponent editorComponent = util.getEditor(fileName, content, true);
+        this.editor = util.getEditor();
+        this.splitPne.setDividerLocation(0);
+        this.splitPne.setDividerSize(-1);
+        this.splitPne.setRightComponent(editorComponent);
+        this.modified = this.editor.getDocument().getText();
+    }
+
+    /**
+     * 刷新主UI界面
+     */
+    public void refresh() {
+        // 初始化下拉选择器
+        SelectorUtil.loadGroupSelector(this.commonUI.getTemplateGroupSelector(), this.templateUtil.getGroupNames(), this.settings.getSelectGroup());
+        // 加载编辑区域编辑内容
+        loadEditorDoc();
     }
 
     @Nls(capitalization = Nls.Capitalization.Title)
@@ -294,43 +221,48 @@ public class TemplateJUI implements Configurable {
     @Override
     public JComponent createComponent() {
         loadEditorDoc();
-        return mainPanel;
+        return this.mainPanel;
     }
 
     @Override
     public boolean isModified() {
         // 判断编辑器的内容是否进行修改，如已修改，apply按钮功能可用
-        modifiedEditorContent = editor.getDocument().getText();
-        String oldEditorTxt = settings.getContent();
-        int index = templateFileSelector.getSelectedIndex();
-        return index > 0 && !modifiedEditorContent.equals(oldEditorTxt);
+        this.modified = this.editor.getDocument().getText();
+        String oldEditorTxt = "";
+        if (StringUtils.isNotBlank(this.commonUI.getGroupName()) && StringUtils.isNotBlank(this.commonUI.getGroupFileName())) {
+            Template template = this.templateUtil.getTemplate(this.commonUI.getGroupName());
+            oldEditorTxt = this.templateUtil.getTemplateContent(template, this.commonUI.getGroupFileName());
+        }
+        return TemplateUtil.isTemplateFile(this.commonUI.getGroupFileName()) && !this.modified.equals(oldEditorTxt);
     }
 
     @Override
     public void apply() {
-        String groupName = Objects.requireNonNull(templateGroupSelector.getSelectedItem()).toString();
-        String templateFileName = Objects.requireNonNull(templateFileSelector.getSelectedItem()).toString();
-        Template template = templateUtil.getTemplate(groupName);
+        String groupName = this.commonUI.getGroupName();
+        String templateFileName = this.commonUI.getGroupFileName();
+        Template template = this.templateUtil.getTemplate(groupName);
         Map<String, String> fileContentMap = template.getFileContentMap();
-        fileContentMap.put(templateFileName, modifiedEditorContent);
-        settings.setContent(modifiedEditorContent);
+        // 保存编辑的模板文件内容
+        fileContentMap.put(templateFileName, this.modified);
     }
 
     /**
      * 重置插件
      */
-    private void resetApp() {
-        reset.addActionListener(e -> {
+    private void resetPlugin() {
+        this.reset.addActionListener(e -> {
             DialogUtil dialogUtil = new DialogUtil();
             int dialog = dialogUtil.showConfirmDialog(null, Message.RESET_TEMPLATEJ.getMsg(), Message.RESET_TEMPLATEJ.getTitle());
+            // 确认重置
             if (dialog == 0) {
-                settings.setContent("");
-                settings.setTemplates(DefaultTemplateParams.getDefaultTemplates());
-                settings.setTypeMapper(DefaultTemplateParams.getDefaultTypeMapper());
-                settings.setSelectGroupName(DefaultTemplateParams.DEFAULT_NAME);
-                settings.setSelectGroupFile(0);
-                templateUtil = new TemplateUtil(DefaultTemplateParams.getDefaultTemplates());
-                initSelector();
+                // 重置模板组
+                this.settings.setTemplates(DefaultTemplateParams.getDefaultTemplates());
+                // 重置默认选择模板组
+                this.settings.setSelectGroup(DefaultTemplateParams.DEFAULT_NAME);
+                // 重置默认选择模板文件
+                this.settings.setSelectGroupFile(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
+                this.templateUtil = new TemplateUtil(DefaultTemplateParams.getDefaultTemplates());
+                refresh();
             }
         });
     }

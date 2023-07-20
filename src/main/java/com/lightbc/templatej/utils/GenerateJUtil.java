@@ -38,6 +38,12 @@ public class GenerateJUtil {
     // 字符编码
     @Getter
     private String encode = ConfigInterface.ENCODE_VALUE;
+    private TemplateUtil templateUtil;
+
+    public GenerateJUtil() {
+        // 获取模板信息
+        this.templateUtil = new TemplateUtil(TemplateJSettings.getInstance().getTemplates());
+    }
 
     /**
      * 根据模板生成文件
@@ -55,10 +61,9 @@ public class GenerateJUtil {
         if (saveFileName.contains(".")) {
             ext = saveFileName.substring(saveFileName.indexOf("."));
         }
-        // 获取模板信息
-        TemplateUtil templateUtil = new TemplateUtil(TemplateJSettings.getInstance().getTemplates());
-        String templateCode = templateUtil.getTemplateContent(groupName, templateFileName);
-        String globalConfig = templateUtil.getGlobalConfig(groupName);
+        com.lightbc.templatej.entity.Template template = this.templateUtil.getTemplate(groupName);
+        String templateCode = this.templateUtil.getTemplateContent(template, templateFileName);
+        String globalConfig = this.templateUtil.getGlobalConfig(template);
         String sourceCode = TemplateUtil.getSourceCode(globalConfig, templateCode, new PropertiesUtil());
         // 生成字符串内容
         String generateContent = generate(templateFileName, sourceCode, dataModel);
@@ -79,7 +84,7 @@ public class GenerateJUtil {
             if (!fileUtil.exist(customPath)) {
                 fileUtil.createDirs(customPath);
             }
-            if (generate.getFileName() != null && !"".equals(generate.getFileName())) {
+            if (generate.getFileName() != null && !"".equals(generate.getFileName().trim())) {
                 saveFileName = generate.getFileName();
                 //自定义文件名中如果不包含指定文件拓展名，使用默认文件拓展名
                 if (!saveFileName.contains(".")) saveFileName = saveFileName.concat(ext);
@@ -317,7 +322,7 @@ public class GenerateJUtil {
                         nns.append(ToolsUtil.getInstance().toUpperCamelCase(n));
                     }
                 }
-                name = nns.toString().trim();
+                name = nns.toString();
             } else {
                 name = ToolsUtil.getInstance().toUpperCamelCase(name);
             }
@@ -333,15 +338,14 @@ public class GenerateJUtil {
      */
     private Map<String, String> typeMapper(String groupName) {
         Map<String, String> map = new HashMap<>();
-        TemplateJSettings settings = TemplateJSettings.getInstance();
-        Map<String, Object[][]> typeMapper = settings.getTypeMapper();
-        if (typeMapper == null || typeMapper.size() == 0) {
-            typeMapper = DefaultTemplateParams.getDefaultTypeMapper();
+        com.lightbc.templatej.entity.Template template = this.templateUtil.getTemplate(groupName);
+        Object[][] typeMapper = this.templateUtil.getTypeMapper(template);
+        if (typeMapper == null) {
+            typeMapper = DefaultTemplateParams.getDefaultTableData();
         }
         if (groupName != null && !"".equals(groupName.trim())) {
-            Object[][] objects = typeMapper.get(groupName);
-            if (objects != null) {
-                for (Object[] obj : objects) {
+            if (typeMapper != null) {
+                for (Object[] obj : typeMapper) {
                     // column type
                     String s0 = obj[0].toString();
                     // java type

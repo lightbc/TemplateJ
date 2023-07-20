@@ -1,14 +1,15 @@
 package com.lightbc.templatej.listener;
 
+import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.TemplateJInterface;
 import com.lightbc.templatej.ui.PreviewUI;
+import com.lightbc.templatej.ui.TemplateJCommonUI;
 import com.lightbc.templatej.ui.TemplateJUI;
 import com.lightbc.templatej.utils.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 预览事件监听
@@ -17,25 +18,31 @@ import java.util.Objects;
 public class PreviewListener {
     // 配置界面UI
     private TemplateJUI templateJUI;
+    private TemplateJCommonUI commonUI;
 
     public PreviewListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
+        this.commonUI = templateJUI.getCommonUI();
+        init();
+    }
+
+    private void init(){
+        preview();
     }
 
     /**
      * 效果预览功能监听
      */
-
     public void preview() {
-        templateJUI.getPreview().addActionListener(e -> {
-            int index = templateJUI.getTemplateFileSelector().getSelectedIndex();
+        this.templateJUI.getPreview().addActionListener(e -> {
             DialogUtil dialogUtil = new DialogUtil();
             // 已选取预览文件
-            if (index > 0) {
-                String groupName = Objects.requireNonNull(templateJUI.getTemplateGroupSelector().getSelectedItem()).toString();
-                String templateFileName = Objects.requireNonNull(templateJUI.getTemplateFileSelector().getSelectedItem()).toString();
-                String templateCode = templateJUI.getTemplateUtil().getTemplateContent(groupName, templateFileName);
-                String globalConfig = templateJUI.getTemplateUtil().getGlobalConfig(groupName);
+            if (TemplateUtil.isTemplateFile(this.commonUI.getGroupFileName())) {
+                String groupName = this.commonUI.getGroupName();
+                String templateFileName = this.commonUI.getGroupFileName();
+                Template template = this.templateJUI.getTemplateUtil().getTemplate(groupName);
+                String templateCode = this.templateJUI.getTemplateUtil().getTemplateContent(template, templateFileName);
+                String globalConfig = this.templateJUI.getTemplateUtil().getGlobalConfig(template);
                 // 模板文件内容为空提示
                 if (templateCode == null || "".equals(templateCode.trim())) {
                     dialogUtil.showTipsDialog(null, Message.TEMPLATE_CONTENT_EMPTY.getMsg(), Message.TEMPLATE_CONTENT_EMPTY.getTitle());

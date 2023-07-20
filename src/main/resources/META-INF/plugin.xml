@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.lightbc.templatej</id>
     <name>TemplateJ</name>
-    <version>1.2.0-RELEASE</version>
+    <version>v1.2.1-RELEASE</version>
     <vendor email="lightbc@163.com" url="https://www.cnblogs.com/lightbc/">lightbc</vendor>
 
     <description>
@@ -24,22 +24,18 @@
 
     <change-notes>
         <![CDATA[
-        <h3>v1.2.0-RELEASE</h3>
+        <h3>v1.2.1-RELEASE</h3>
         <ol>
-        <li>Add template import/export function.</li>
-        <li>Add template group/template file renaming function.</li>
-        <li>UI style optimization.</li>
-        <li>Add relevant function prompt information.</li>
-        <li>Repair and optimize other known issues.</li>
+        <li>代码重构，代码优化，移除冗余代码。</li>
+        <li>UI界面调整。</li>
+        <li>已知问题修复。</li>
         </ol>
 
-        <h3>v1.2.0-RELEASE</h3>
+        <h3>v1.2.1-RELEASE</h3>
         <ol>
-        <li>新增模板导入/导出功能。</li>
-        <li>新增模板组/模板文件重命名功能。</li>
-        <li>UI样式优化。</li>
-        <li>新增相关功能提示信息。</li>
-        <li>其它已知问题修复优化。</li>
+        <li>Code refactoring, code optimization, removal of redundant code.</li>
+        <li>UI interface adjustment.</li>
+        <li>Fixed known issues.</li>
         </ol>
         ]]>
     </change-notes>

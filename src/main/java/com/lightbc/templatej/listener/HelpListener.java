@@ -24,12 +24,10 @@ import java.util.regex.Pattern;
 @Slf4j
 public class HelpListener {
     private static final String HELP = "/html/help.html";
+    private static final String DEFAULT_EXPLORER = "chrome.exe";
+    private static final String RETRY_EXPLORER = "iexplore.exe";
     private static String HTML_CONTENT;
     private static ImageCache IMAGE_CACHE;
-
-    public HelpListener() {
-
-    }
 
     /**
      * 帮助事件监听功能
@@ -46,7 +44,7 @@ public class HelpListener {
     /**
      * 显示帮助对话框
      */
-    private synchronized void showHelp() {
+    private void showHelp() {
         DialogUtil dialogUtil = new DialogUtil();
         Map<String, ImageCache> map = cache();
         JScrollPane pane = getComponent(map);
@@ -68,7 +66,7 @@ public class HelpListener {
             String href = e.getDescription();
             // 判断是否时网络链接，网络链接浏览器打开
             if (isNetAddress(href)) {
-                openNetHyperLink(href);
+                openNetHyperLink(DEFAULT_EXPLORER, href, 0);
             }
         });
     }
@@ -92,7 +90,7 @@ public class HelpListener {
                 for (String s : src) {
                     if (s.lastIndexOf("/") != -1) {
                         // 根据图片路径信息，获取文件名
-                        String fileName = s.substring(s.lastIndexOf("/")).trim();
+                        String fileName = s.substring(s.lastIndexOf("/"));
                         // 缓存文件保存路径
                         String path = cachePath.concat(File.separator).concat(fileName);
                         // 缓存图片
@@ -124,14 +122,22 @@ public class HelpListener {
     /**
      * 打开网址
      *
-     * @param path 网址链接
+     * @param explorer   打开链接的浏览器
+     * @param path       网址链接
+     * @param retryCount 重试次数
      */
-    private void openNetHyperLink(String path) {
+    private void openNetHyperLink(String explorer, String path, int retryCount) {
         DialogUtil dialogUtil = new DialogUtil();
         try {
-            Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + path);
+            Runtime.getRuntime().exec("cmd /c start " + explorer + " " + path);
         } catch (IOException e) {
-            dialogUtil.showTipsDialog(null, e, Message.ERROR_URL.getTitle());
+            if (retryCount < 3) {
+                openNetHyperLink(explorer, path, retryCount++);
+            } else if (retryCount < 6) {
+                openNetHyperLink(RETRY_EXPLORER, path, retryCount++);
+            } else {
+                dialogUtil.showTipsDialog(null, String.format(Message.ERROR_URL.getMsg()), Message.ERROR_URL.getTitle());
+            }
         }
     }
 
@@ -142,7 +148,7 @@ public class HelpListener {
      * @return JScrollPane
      */
     @SuppressWarnings("UndesirableClassUsage")
-    private synchronized JScrollPane getComponent(Map<String, ImageCache> map) {
+    private JScrollPane getComponent(Map<String, ImageCache> map) {
         // 替换获取到的【help.html】中的图片路径内容成本地缓存路径
         if (HTML_CONTENT != null && !"".equals(HTML_CONTENT.trim()) && map != null && map.size() > 0) {
             for (String key : map.keySet()) {
@@ -163,6 +169,7 @@ public class HelpListener {
         editorPane.setText(HTML_CONTENT);
         addHyperLinkListener(editorPane);
 
+        // 使UI界面显示图片
         Dictionary cache = (Dictionary) editorPane.getDocument().getProperty("imageCache");
         if (cache == null) {
             editorPane.getDocument().putProperty("imageCache", IMAGE_CACHE);

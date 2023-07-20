@@ -38,14 +38,14 @@ public class GenerateAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         DialogUtil dialogUtil = new DialogUtil();
         // 创建生成UI界面
-        generateUI = new TemplateJGenerateUI();
+        this.generateUI = new TemplateJGenerateUI();
         // 替换默认对话框确认操作按钮
-        dialogUtil.setOkBtn(generateUI.getOkBtn());
-        dialogUtil.setCancelBtn(generateUI.getCancelBtn());
+        dialogUtil.setOkBtn(this.generateUI.getOkBtn());
+        dialogUtil.setCancelBtn(this.generateUI.getCancelBtn());
         // 对话框事件监听
         dialogActionListener(dialogUtil);
         // 打开生成器UI界面对话框
-        dialogUtil.showCustomDialog(this.getTemplateText(), generateUI.getMainPanel(), null, new Dimension(600, 400), false);
+        dialogUtil.showCustomDialog(this.getTemplateText(), this.generateUI.getMainPanel(), null, new Dimension(600, 400), false);
     }
 
     /**
@@ -80,7 +80,7 @@ public class GenerateAction extends AnAction {
      */
     private void generate(String groupName, String savePath, List<String> checkFileList) {
         // 选择生成的表对象若为空 ，退出执行（基本不会存在为空情况）
-        if (tableList == null) {
+        if (this.tableList == null) {
             return;
         }
         // 未选中生成模板，退出执行
@@ -88,24 +88,24 @@ public class GenerateAction extends AnAction {
             return;
         }
         // 单表/多表选择，循环生成
-        for (DbTable table : tableList) {
+        for (DbTable table : this.tableList) {
             // 使用选中的模板文件生成对应表的接口文件
             for (String fileName : checkFileList) {
                 // 模板文件名
                 GenerateJUtil generateJUtil = new GenerateJUtil();
                 // 判断是否禁用报错提示
-                boolean closeTips = generateUI.getGenerateTips().isSelected();
+                boolean closeTips = this.generateUI.getGenerateTips().isSelected();
                 try {
                     // 模板数据模型对象
-                    Map<String, Object> dataModel = generateJUtil.getDataModel(groupName, table, fileName, generateUI, generatePath);
+                    Map<String, Object> dataModel = generateJUtil.getDataModel(groupName, table, fileName, this.generateUI, this.generatePath);
                     // 自定义的保存文件名
                     String saveFileName = ((Generate) dataModel.get("generate")).getFileName();
                     // 自定义保存路径部分
                     String customPath = ((Generate) dataModel.get("generate")).getSavePath();
                     // 拼接自定义路径部分，获取完整路径
                     savePath = generateJUtil.getCompleteSavePath(savePath, customPath);
-                    if ("".equals(savePath)) {
-                        savePath = generateUI.getGenerateRoot();
+                    if ("".equals(savePath.trim())) {
+                        savePath = this.generateUI.getGenerateRoot();
                     }
                     // 生成模板
                     generateJUtil.generate(groupName, fileName, saveFileName, savePath, dataModel, closeTips);
@@ -127,17 +127,17 @@ public class GenerateAction extends AnAction {
     private void dialogActionListener(DialogUtil dialog) {
         JButton ok = dialog.getOkBtn();
         ok.addActionListener(e -> {
-            generatePath = generateUI.getGeneratePath();
+            this.generatePath = this.generateUI.getGeneratePath();
             // 获取选中的模板
-            List<String> checkList = getCheckItems(generateUI.getCheckboxContainerPanel());
+            List<String> checkList = getCheckItems(this.generateUI.getCheckboxContainerPanel());
             // 模板组名称
-            String groupName = Objects.requireNonNull(generateUI.getGroupBox().getSelectedItem()).toString();
+            String groupName = Objects.requireNonNull(this.generateUI.getGroupBox().getSelectedItem()).toString();
             // 验证是否有模板被选择
             if (!validate(checkList)) {
-                dialog.showTipsDialog(null, Message.NO_CHOICE_GENERATE_TEMPLATE.getMsg(), Message.NO_CHOICE_GENERATE_TEMPLATE.getTitle());
+                dialog.showTipsDialog(this.generateUI.getMainPanel(), Message.NO_CHOICE_GENERATE_TEMPLATE.getMsg(), Message.NO_CHOICE_GENERATE_TEMPLATE.getTitle());
                 return;
             }
-            generate(groupName, generatePath, checkList);
+            generate(groupName, this.generatePath, checkList);
             dialog.dispose();
         });
     }

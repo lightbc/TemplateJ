@@ -11,9 +11,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiPackage;
 import com.lightbc.templatej.config.TemplateJSettings;
+import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.utils.ProjectUtil;
+import com.lightbc.templatej.utils.SelectorUtil;
 import com.lightbc.templatej.utils.TemplateUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -73,9 +75,9 @@ public class TemplateJGenerateUI {
      * 初始化
      */
     private void init() {
-        project = ProjectUtil.getProject();
+        this.project = ProjectUtil.getProject();
         TemplateJSettings settings = TemplateJSettings.getInstance();
-        templateUtil = new TemplateUtil(settings.getTemplates());
+        this.templateUtil = new TemplateUtil(settings.getTemplates());
         loadGroupItems();
         loadProjectModules();
         loadPackage();
@@ -91,38 +93,40 @@ public class TemplateJGenerateUI {
      * 加载模板组选择器选项
      */
     private void loadGroupItems() {
-        List<String> groups = templateUtil.getGroupNames();
-        groupBox.setModel(getModel(groups));
-        String groupName = Objects.requireNonNull(groupBox.getSelectedItem()).toString();
-        List<String> fileList = templateUtil.getGroupFileNames(groupName);
-        loadCheckbox(getCheckFiles(fileList));
+        List<String> groups = this.templateUtil.getGroupNames();
+        SelectorUtil.loadGroupSelector(this.groupBox, groups, null);
+        Template template = this.templateUtil.getTemplate(getGroupName());
+        if (template != null) {
+            List<String> fileList = this.templateUtil.getGroupFileNames(template);
+            loadCheckbox(getCheckFiles(fileList));
+        }
     }
 
     /**
      * 加载模块选择器选项
      */
     private void loadProjectModules() {
-        moduleMap = ProjectUtil.getModuleMap();
-        List<String> list = new ArrayList<>(moduleMap.keySet());
-        moduleBox.setModel(getModel(list));
+        this.moduleMap = ProjectUtil.getModuleMap();
+        List<String> list = new ArrayList<>(this.moduleMap.keySet());
+        SelectorUtil.loadSelector(this.moduleBox, list, null);
     }
 
     /**
      * 加载包选择组件
      */
     private void loadPackage() {
-        packagePanel.setLayout(new BorderLayout());
-        packagePath = new TextFieldWithBrowseButton();
-        packagePanel.add(packagePath, BorderLayout.CENTER);
+        this.packagePanel.setLayout(new BorderLayout());
+        this.packagePath = new TextFieldWithBrowseButton();
+        this.packagePanel.add(this.packagePath, BorderLayout.CENTER);
     }
 
     /**
      * 加载保存位置选择组件
      */
     private void loadSavePath() {
-        savePathPanel.setLayout(new BorderLayout());
-        savePath = new TextFieldWithBrowseButton();
-        savePathPanel.add(savePath, BorderLayout.CENTER);
+        this.savePathPanel.setLayout(new BorderLayout());
+        this.savePath = new TextFieldWithBrowseButton();
+        this.savePathPanel.add(this.savePath, BorderLayout.CENTER);
     }
 
     /**
@@ -133,44 +137,30 @@ public class TemplateJGenerateUI {
     @SuppressWarnings("UndesirableClassUsage")
     private void loadCheckbox(List<String> fileList) {
         // 移除复选面板的子组件
-        checkboxPanel.removeAll();
-        checkboxContainerPanel = new JPanel(new GridLayout(fileList.size(), 1));
+        this.checkboxPanel.removeAll();
+        this.checkboxContainerPanel = new JPanel(new GridLayout(fileList.size(), 1));
         // 向复选框面板组件中添加复选框组件
         for (String checkName : fileList) {
             JCheckBox checkBox = new JCheckBox(checkName);
-            checkboxContainerPanel.add(checkBox);
+            this.checkboxContainerPanel.add(checkBox);
         }
         // 组件重绘显示
-        checkboxPanel.revalidate();
-        checkboxPanel.repaint();
-        JScrollPane scrollPane = new JScrollPane(checkboxContainerPanel);
-        checkboxPanel.add(scrollPane, BorderLayout.CENTER);
-    }
-
-    /**
-     * 获取下拉选择器的选择数据模型
-     *
-     * @param items 元素
-     * @return DefaultComboBoxModel 选择器数据模型
-     */
-    private DefaultComboBoxModel<String> getModel(List<String> items) {
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-        for (String item : items) {
-            model.addElement(item);
-        }
-        return model;
+        this.checkboxPanel.revalidate();
+        this.checkboxPanel.repaint();
+        JScrollPane scrollPane = new JScrollPane(this.checkboxContainerPanel);
+        this.checkboxPanel.add(scrollPane, BorderLayout.CENTER);
     }
 
     /**
      * 模块选择器选择事件监听
      */
     private void moduleSelectListener() {
-        generateRoot = ProjectUtil.getModulePath(getSelectModule());
-        savePath.setText(generateRoot);
-        moduleBox.addActionListener(e -> {
-            generateRoot = ProjectUtil.getModulePath(getSelectModule());
-            savePath.setText(generateRoot);
-            packagePath.setText("");
+        this.generateRoot = ProjectUtil.getModulePath(getSelectModule());
+        this.savePath.setText(this.generateRoot);
+        this.moduleBox.addActionListener(e -> {
+            this.generateRoot = ProjectUtil.getModulePath(getSelectModule());
+            this.savePath.setText(this.generateRoot);
+            this.packagePath.setText("");
         });
     }
 
@@ -178,21 +168,32 @@ public class TemplateJGenerateUI {
      * 模板组选择事件监听
      */
     private void groupSelectListener() {
-        groupBox.addActionListener(e -> {
-            String groupName = Objects.requireNonNull(groupBox.getSelectedItem()).toString();
-            List<String> fileList = templateUtil.getGroupFileNames(groupName);
-            loadCheckbox(getCheckFiles(fileList));
+        this.groupBox.addActionListener(e -> {
+            Template template = this.templateUtil.getTemplate(getGroupName());
+            if (template != null) {
+                List<String> fileList = this.templateUtil.getGroupFileNames(template);
+                loadCheckbox(getCheckFiles(fileList));
+            }
             // 移除勾选
-            allCheck.setSelected(false);
-            generateTips.setSelected(false);
+            this.allCheck.setSelected(false);
+            this.generateTips.setSelected(false);
         });
+    }
+
+    /**
+     * 获取模板组名称
+     *
+     * @return string 模板组名称
+     */
+    private String getGroupName() {
+        return this.groupBox.getSelectedItem() != null ? this.groupBox.getSelectedItem().toString() : null;
     }
 
     /**
      * 包选择器事件监听
      */
     private void packageChooseListener() {
-        packagePath.addActionListener(e -> packageChoose());
+        this.packagePath.addActionListener(e -> packageChoose());
     }
 
     /**
@@ -200,7 +201,7 @@ public class TemplateJGenerateUI {
      */
     private void savePathListener() {
         savePath.addActionListener(e -> {
-            String name = Objects.requireNonNull(moduleBox.getSelectedItem()).toString();
+            String name = Objects.requireNonNull(this.moduleBox.getSelectedItem()).toString();
             savePathChoose(name);
         });
     }
@@ -209,8 +210,8 @@ public class TemplateJGenerateUI {
      * 模板全选事件监听
      */
     private void allCheckListener() {
-        allCheck.addActionListener(e -> {
-            if (allCheck.isSelected()) {
+        this.allCheck.addActionListener(e -> {
+            if (this.allCheck.isSelected()) {
                 allCheck(true);
             } else {
                 allCheck(false);
@@ -224,7 +225,7 @@ public class TemplateJGenerateUI {
      * @param b 选择-true，不选-false
      */
     private void allCheck(boolean b) {
-        Component[] components = checkboxContainerPanel.getComponents();
+        Component[] components = this.checkboxContainerPanel.getComponents();
         if (components != null && components.length > 0) {
             for (Component component : components) {
                 JCheckBox box = (JCheckBox) component;
@@ -243,10 +244,10 @@ public class TemplateJGenerateUI {
         // 反显选择的包路径
         if (psiPackage != null) {
             String pkName = psiPackage.getQualifiedName();
-            packagePath.setText(pkName);
+            this.packagePath.setText(pkName);
             if (!"".equals(pkName.trim())) {
-                generateRoot = getCompletePath();
-                savePath.setText(generateRoot);
+                this.generateRoot = getCompletePath();
+                this.savePath.setText(this.generateRoot);
             }
         }
     }
@@ -260,7 +261,7 @@ public class TemplateJGenerateUI {
         VirtualFile virtualFile = getDefaultVirtualFile(name);
         virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor(), ProjectUtil.getProject(), virtualFile);
         if (virtualFile != null) {
-            savePath.setText(virtualFile.getPath());
+            this.savePath.setText(virtualFile.getPath());
         }
     }
 
@@ -270,7 +271,7 @@ public class TemplateJGenerateUI {
      * @return String 模板生成路径
      */
     public String getGeneratePath() {
-        return savePath.getText();
+        return this.savePath.getText();
     }
 
     /**
@@ -281,9 +282,9 @@ public class TemplateJGenerateUI {
      */
     private VirtualFile getDefaultVirtualFile(String name) {
         VirtualFileManager manager = VirtualFileManager.getInstance();
-        Module module = ProjectUtil.getProjectModule(project, name);
+        Module module = ProjectUtil.getProjectModule(this.project, name);
         String modulePath = ProjectUtil.getModulePath(module);
-        if (modulePath != null && !"".equals(modulePath)) {
+        if (modulePath != null && !"".equals(modulePath.trim())) {
             return manager.findFileByUrl(modulePath);
         }
         return null;
@@ -306,8 +307,8 @@ public class TemplateJGenerateUI {
      * @return module
      */
     public Module getSelectModule() {
-        String moduleName = Objects.requireNonNull(moduleBox.getSelectedItem()).toString();
-        return moduleMap.get(moduleName);
+        String moduleName = Objects.requireNonNull(this.moduleBox.getSelectedItem()).toString();
+        return this.moduleMap.get(moduleName);
     }
 
     /**
@@ -333,7 +334,7 @@ public class TemplateJGenerateUI {
      */
     private String getCompletePath() {
         String moduleSourcesPath = findModuleSources();
-        String pPath = packagePath.getText();
+        String pPath = this.packagePath.getText();
         if (!"".equals(pPath.trim())) {
             String nPackagePath = pPath.replaceAll("\\.", Matcher.quoteReplacement("/"));
             return moduleSourcesPath.concat("/").concat(nPackagePath);

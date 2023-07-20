@@ -8,7 +8,6 @@ import com.lightbc.templatej.ui.ImportUI;
 import com.lightbc.templatej.ui.TemplateJUI;
 import com.lightbc.templatej.utils.DialogUtil;
 import com.lightbc.templatej.utils.FileUtil;
-import com.lightbc.templatej.utils.TemplateUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -27,6 +26,11 @@ public class ImportListener {
 
     public ImportListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
+        init();
+    }
+
+    private void init(){
+        importTemplate();
     }
 
     /**
@@ -65,14 +69,14 @@ public class ImportListener {
                 }
                 // 新增模板
                 settings.getTemplates().add(template);
-                // 设置默认选择的模板组
-                settings.setSelectGroupName(template.getGroupName());
+                // 设置导入模板组为默认选择模板组
+                settings.setSelectGroup(template.getGroupName());
                 // 设置默认选择的模板文件
-                settings.setSelectGroupFile(0);
+                settings.setSelectGroupFile(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
                 dialog.showTipsDialog(ui.getMainPanel(), Message.IMPORT_SUCCESS.getMsg(), Message.IMPORT_SUCCESS.getTitle());
                 dialog.dispose();
                 // 刷新主UI面板
-                reloadSelector(settings);
+                this.templateJUI.refresh();
             }
         });
     }
@@ -119,7 +123,7 @@ public class ImportListener {
                 Map<String, String> contentMap = new HashMap<>();
                 for (String key : itemMap.keySet()) {
                     // 判断文件格式，移除*.tj格式文件
-                    if (key.trim().lastIndexOf(ConfigInterface.PLUGIN_DEFAULT_EXT) == -1) {
+                    if (key.lastIndexOf(ConfigInterface.PLUGIN_DEFAULT_EXT) == -1) {
                         fileList.add(key);
                         contentMap.put(key, readContent(itemMap.get(key)));
                     }
@@ -210,19 +214,4 @@ public class ImportListener {
         return map;
     }
 
-    /**
-     * 重新加载选择器
-     *
-     * @param settings 持久化配置对象
-     */
-    private void reloadSelector(TemplateJSettings settings) {
-        if (settings != null) {
-            List<Template> templates = settings.getTemplates();
-            if (templates != null) {
-                TemplateUtil templateUtil = new TemplateUtil(templates);
-                this.templateJUI.selector(this.templateJUI.getTemplateGroupSelector(), templateUtil.getGroupNames(), settings.getSelectGroupName());
-                this.templateJUI.selector(this.templateJUI.getTemplateFileSelector(), templateUtil.getGroupFileNames(settings.getSelectGroupName()), settings.getSelectGroupFile());
-            }
-        }
-    }
 }

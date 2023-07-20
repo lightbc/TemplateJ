@@ -1,5 +1,6 @@
 package com.lightbc.templatej.listener;
 
+import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.ui.ExportUI;
@@ -25,6 +26,11 @@ public class ExportListener {
     public ExportListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
         this.templateUtil = new TemplateUtil(templateJUI.getSettings().getTemplates());
+        init();
+    }
+
+    private void init(){
+        exportTemplate();
     }
 
     /**
@@ -79,7 +85,8 @@ public class ExportListener {
                 }
                 // 导出全局配置文件
                 if (ui.getGlobalBox() != null && ui.getGlobalBox().isSelected()) {
-                    String globalConfig = this.templateUtil.getGlobalConfig(groupName);
+                    Template template = this.templateUtil.getTemplate(groupName);
+                    String globalConfig = this.templateUtil.getGlobalConfig(template);
                     if (StringUtils.isNotBlank(globalConfig)) {
                         String filePath = dirPath.concat(File.separator).concat(ui.getGlobalBox().getText());
                         fileUtil.createFile(filePath);
@@ -100,7 +107,8 @@ public class ExportListener {
      * @return string 模板文件内容
      */
     private String getTemplateContent(String groupName, String templateName) {
-        return templateUtil.getTemplateContent(groupName, templateName);
+        Template template = this.templateUtil.getTemplate(groupName);
+        return this.templateUtil.getTemplateContent(template, templateName);
     }
 
     /**

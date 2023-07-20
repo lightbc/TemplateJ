@@ -4,8 +4,10 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.utils.ProjectUtil;
+import com.lightbc.templatej.utils.SelectorUtil;
 import lombok.Data;
 
 import javax.swing.*;
@@ -27,7 +29,6 @@ public class ExportUI {
     private JButton ok;
     private JPanel exportFilePanel;
     private JPanel globalConfigPanel;
-    private JPanel exportItemsPanel;
     private TemplateJUI templateJUI;
     // 模板导出位置选择组件
     private TextFieldWithBrowseButton browseButton;
@@ -35,15 +36,14 @@ public class ExportUI {
     // 全局配置文件复选框组件
     private JCheckBox globalBox;
 
-    public ExportUI() {
-        init();
-    }
-
     public ExportUI(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
         init();
     }
 
+    /**
+     * 功能初始化
+     */
     private void init() {
         loadTemplateGroup();
         templateGroupSelectorListener();
@@ -55,13 +55,7 @@ public class ExportUI {
      */
     private void loadTemplateGroup() {
         List<String> groupList = this.templateJUI.getTemplateUtil().getGroupNames();
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        if (groupList != null && groupList.size() > 0) {
-            for (String ele : groupList) {
-                model.addElement(ele);
-            }
-        }
-        this.templateGroup.setModel(model);
+        SelectorUtil.loadGroupSelector(this.templateGroup,groupList,null);
     }
 
     /**
@@ -93,7 +87,8 @@ public class ExportUI {
         Object groupNameObj = this.templateGroup.getSelectedItem();
         if (groupNameObj != null) {
             String groupName = groupNameObj.toString();
-            return this.templateJUI.getTemplateUtil().getGroupFileNames(groupName);
+            Template template = this.templateJUI.getTemplateUtil().getTemplate(groupName);
+            return this.templateJUI.getTemplateUtil().getGroupFileNames(template);
         }
         return null;
     }

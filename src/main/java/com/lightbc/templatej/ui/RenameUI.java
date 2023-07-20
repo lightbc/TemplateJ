@@ -6,6 +6,7 @@ import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.utils.DialogUtil;
+import com.lightbc.templatej.utils.SelectorUtil;
 import com.lightbc.templatej.utils.TemplateUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +17,6 @@ import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Data
 public class RenameUI implements Configurable {
@@ -44,30 +44,9 @@ public class RenameUI implements Configurable {
         this.templateJUI = templateJUI;
         this.settings = templateJUI.getSettings();
         this.groupName = getGroupName();
-        this.templateUtil = new TemplateUtil(this.settings.getTemplates());
+        this.templateUtil = templateJUI.getTemplateUtil();
         this.template = this.templateUtil.getTemplate(this.groupName);
         this.templates = this.settings.getTemplates();
-        init();
-    }
-
-    private void init() {
-        initComboBoxModel();
-    }
-
-    /**
-     * 初始化下拉选择器模型
-     */
-    private void initComboBoxModel() {
-        // 初始化模板组选择器
-        List<String> groupName = this.templateJUI.getTemplateUtil().getGroupNames();
-        String selectGroup = Objects.requireNonNull(this.templateJUI.getTemplateGroupSelector().getSelectedItem()).toString();
-        this.templateGroupSelector.setModel(this.templateJUI.getModel(new DefaultComboBoxModel(), groupName));
-        this.templateGroupSelector.setSelectedItem(selectGroup);
-        // 初始化模板文件选择器
-        List<String> files = this.templateJUI.getTemplateUtil().getGroupFileNames(selectGroup);
-        String selectFile = Objects.requireNonNull(this.templateJUI.getTemplateFileSelector().getSelectedItem()).toString();
-        this.templateFileSelector.setModel(this.templateJUI.getModel(new DefaultComboBoxModel(), files));
-        this.templateFileSelector.setSelectedItem(selectFile);
     }
 
     /**
@@ -96,14 +75,8 @@ public class RenameUI implements Configurable {
      * @return boolean true-是，false-否
      */
     private boolean isTemplateFile() {
-        Object fileSelector = this.templateJUI.getTemplateFileSelector();
-        if (fileSelector != null) {
-            int fileIndex = this.templateJUI.getTemplateFileSelector().getSelectedIndex();
-            if (fileIndex > 0) {
-                return true;
-            }
-        }
-        return false;
+        String fileName = this.templateJUI.getCommonUI().getGroupFileName();
+        return TemplateUtil.isTemplateFile(fileName);
     }
 
     /**
@@ -112,9 +85,9 @@ public class RenameUI implements Configurable {
      * @return string 模板组名称
      */
     private String getGroupName() {
-        Object object = this.templateJUI.getTemplateGroupSelector().getSelectedItem();
-        if (object != null) {
-            return object.toString();
+        String groupName = this.templateJUI.getCommonUI().getGroupName();
+        if (StringUtils.isNotBlank(groupName)) {
+            return groupName;
         }
         return null;
     }
@@ -125,7 +98,7 @@ public class RenameUI implements Configurable {
      * @return string 模板文件名称
      */
     private String getTemplateFileName() {
-        return isTemplateFile() ? this.templateJUI.getTemplateFileSelector().getSelectedItem().toString() : null;
+        return isTemplateFile() ? this.templateJUI.getCommonUI().getGroupFileName() : null;
     }
 
     /**
@@ -166,13 +139,12 @@ public class RenameUI implements Configurable {
 
     @Override
     public boolean isModified() {
-        Object groupName = this.templateJUI.getTemplateGroupSelector().getSelectedItem();
-        Object templateFileName = this.templateJUI.getTemplateFileSelector().getSelectedItem();
+        Object templateFileName = this.templateJUI.getCommonUI().getGroupFileName();
         // 重命名模板文件，且模板文件选择为空，或重命名模板组，且模板组选择为空，返回false
-        if ((isTemplateFile() && templateFileName == null) || (!isTemplateFile() && groupName == null)) {
+        if ((isTemplateFile() && templateFileName == null) || (!isTemplateFile() && this.groupName == null)) {
             return false;
         }
-        return isTemplateFile() ? !this.rename.equals(templateFileName.toString()) : !this.rename.getText().equals(groupName.toString());
+        return isTemplateFile() ? !this.rename.equals(templateFileName.toString()) : !this.rename.getText().equals(this.groupName);
     }
 
     @Override
@@ -206,9 +178,10 @@ public class RenameUI implements Configurable {
                     contentMap.put(rename, content);
                 }
                 // 设置默认选择模板文件
-                settings.setSelectGroupFile(rename);
+                this.settings.setSelectGroupFile(rename);
                 // 刷新模板文件选择器
-                this.templateJUI.selector(this.templateJUI.getTemplateFileSelector(), this.templateUtil.getGroupFileNames(this.groupName), settings.getSelectGroupFile());
+                Template template = this.templateUtil.getTemplate(this.groupName);
+                SelectorUtil.loadGroupFileSelector(this.templateJUI.getCommonUI().getTemplateFileSelector(), template.getGroupFiles(), this.settings.getSelectGroupFile());
             } else {
                 // 判断模板组名称是否存在
                 if (this.templates != null) {
@@ -221,9 +194,9 @@ public class RenameUI implements Configurable {
                 }
                 this.templates.get(templateIndex).setGroupName(rename);
                 // 设置默认选择模板组
-                settings.setSelectGroupName(rename);
+                settings.setSelectGroup(rename);
                 // 刷新模板组选择器
-                this.templateJUI.selector(this.templateJUI.getTemplateGroupSelector(), this.templateUtil.getGroupNames(), settings.getSelectGroupName());
+                SelectorUtil.loadGroupSelector(this.templateJUI.getCommonUI().getTemplateGroupSelector(), this.templateUtil.getGroupNames(), this.settings.getSelectGroup());
             }
         } else {
             dialogUtil.showTipsDialog(null, Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());

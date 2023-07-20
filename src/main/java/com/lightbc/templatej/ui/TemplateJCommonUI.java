@@ -1,12 +1,16 @@
 package com.lightbc.templatej.ui;
 
+import com.lightbc.templatej.config.TemplateJSettings;
+import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.interfaces.ConfigInterface;
+import com.lightbc.templatej.utils.CommonUtil;
+import com.lightbc.templatej.utils.SelectorUtil;
+import com.lightbc.templatej.utils.TemplateUtil;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 /**
  * 通用显示内容UI
@@ -26,23 +30,60 @@ public class TemplateJCommonUI {
     private JRadioButton templateRadio;
     private JPanel addType;
     private JPanel selectorPanel;
-    private JLabel groupFileLabel;
     private ButtonGroup group;
-    // 配置界面UI
-    private TemplateJUI templateJUI;
+    private TemplateJSettings settings;
+    private TemplateUtil templateUtil;
 
-    public TemplateJCommonUI(TemplateJUI templateJUI) {
-        this.templateJUI = templateJUI;
+    public TemplateJCommonUI(TemplateJSettings settings, TemplateUtil templateUtil) {
+        this.settings = settings;
+        this.templateUtil = templateUtil;
         init();
     }
 
     /**
      * 初始化
      */
-    private void init() {
-        initComboBoxModel();
-        radioTypeListener(groupRadio, false);
-        radioTypeListener(templateRadio, true);
+    public void init() {
+        initSelector();
+        radioTypeListener(this.groupRadio, false);
+        radioTypeListener(this.templateRadio, true);
+        buttonGroup();
+    }
+
+    /**
+     * 初始化下拉选择器
+     */
+    private void initSelector() {
+        initGroupSelector();
+        initGroupFileSelector();
+    }
+
+    /**
+     * 初始化模板组下拉选择器
+     */
+    private void initGroupSelector() {
+        // 获取选择器选择项
+        List<String> groupList = this.templateUtil.getGroupNames();
+        // 加载模板组选择器
+        SelectorUtil.loadGroupSelector(getTemplateGroupSelector(), groupList, this.settings.getSelectGroup());
+    }
+
+    /**
+     * 初始化模板文件下拉选择器
+     */
+    private void initGroupFileSelector() {
+        // 默认选择模板组
+        String groupName = ConfigInterface.GROUP_NAME_VALUE;
+        if (StringUtils.isNotBlank(this.settings.getSelectGroup())) {
+            groupName = this.settings.getSelectGroup();
+        }
+        Template template = this.templateUtil.getTemplate(groupName);
+        List<String> fileList = null;
+        if (template != null) {
+            fileList = this.templateUtil.getGroupFileNames(template);
+        }
+        // 加载模板文件选择器
+        SelectorUtil.loadGroupFileSelector(getTemplateFileSelector(), fileList, this.settings.getSelectGroupFile());
     }
 
     /**
@@ -50,27 +91,11 @@ public class TemplateJCommonUI {
      *
      * @return ButtonGroup
      */
-    public ButtonGroup buttonGroup() {
-        group = new ButtonGroup();
-        group.add(groupRadio);
-        group.add(templateRadio);
-        return group;
-    }
-
-    /**
-     * 初始化下拉选择器模型
-     */
-    private void initComboBoxModel() {
-        // 初始化模板组选择器
-        List<String> groupName = templateJUI.getTemplateUtil().getGroupNames();
-        String selectGroup = Objects.requireNonNull(templateJUI.getTemplateGroupSelector().getSelectedItem()).toString();
-        templateGroupSelector.setModel(templateJUI.getModel(new DefaultComboBoxModel(), groupName));
-        templateGroupSelector.setSelectedItem(selectGroup);
-        // 初始化模板文件选择器
-        List<String> files = templateJUI.getTemplateUtil().getGroupFileNames(selectGroup);
-        String selectFile = Objects.requireNonNull(templateJUI.getTemplateFileSelector().getSelectedItem()).toString();
-        templateFileSelector.setModel(templateJUI.getModel(new DefaultComboBoxModel(), files));
-        templateFileSelector.setSelectedItem(selectFile);
+    private ButtonGroup buttonGroup() {
+        this.group = new ButtonGroup();
+        this.group.add(this.groupRadio);
+        this.group.add(this.templateRadio);
+        return this.group;
     }
 
     /**
@@ -82,7 +107,7 @@ public class TemplateJCommonUI {
     private void radioTypeListener(JRadioButton button, boolean b) {
         button.addActionListener(e -> {
             if (button.isSelected()) {
-                rename.setText(getExtRename(b));
+                this.rename.setText(getExtRename(b));
             }
         });
     }
@@ -94,11 +119,82 @@ public class TemplateJCommonUI {
      * @return string
      */
     private String getExtRename(boolean b) {
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         if (b) {
-            uuid = uuid.concat(ConfigInterface.DEFAULT_GENERATE_EXT);
+            return CommonUtil.getUUIDFileName(ConfigInterface.DEFAULT_GENERATE_EXT);
         }
-        return uuid;
+        return CommonUtil.getUUIDFileName();
     }
 
+    /**
+     * 显示下拉组件
+     */
+    public void showSelector() {
+        this.addType.setVisible(false);
+        this.renamePanel.setVisible(false);
+    }
+
+    /**
+     * 显示重命名组件
+     */
+    public void showRename() {
+        this.addType.setVisible(false);
+    }
+
+    /**
+     * 显示复制组件
+     */
+    public void showCopy() {
+        this.addType.setVisible(false);
+    }
+
+    /**
+     * 显示新增组件
+     */
+    public void showAdd() {
+        this.selectorPanel.setVisible(false);
+    }
+
+    /**
+     * 显示删除组件
+     */
+    public void showDel() {
+        this.addType.setVisible(false);
+        this.renamePanel.setVisible(false);
+    }
+
+    /**
+     * 下拉选择可可用
+     */
+    public void enable() {
+        this.templateGroupSelector.setEnabled(true);
+        this.templateFileSelector.setEnabled(true);
+    }
+
+    /**
+     * 下拉选择不可用
+     */
+    public void disable() {
+        this.templateGroupSelector.setEnabled(false);
+        this.templateFileSelector.setEnabled(false);
+    }
+
+    /**
+     * 获取模板组名称
+     *
+     * @return string 模板组名称
+     */
+    public String getGroupName() {
+        Object obj = this.templateGroupSelector.getSelectedItem();
+        return obj != null ? obj.toString() : null;
+    }
+
+    /**
+     * 获取模板文件名称
+     *
+     * @return string 模板文件名称
+     */
+    public String getGroupFileName() {
+        Object obj = this.templateFileSelector.getSelectedItem();
+        return obj != null ? obj.toString() : null;
+    }
 }

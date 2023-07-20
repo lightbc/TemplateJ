@@ -13,10 +13,6 @@ import java.io.*;
 public class FileUtil {
     private static final String[] IMAGE_TYPES = new String[]{".png", ".jpg", ".jpeg", ".gif"};
 
-    public FileUtil() {
-
-    }
-
     /**
      * 判断文件是否存在
      *
@@ -201,7 +197,7 @@ public class FileUtil {
      * @param type    新增类型，文件-1，文件夹-2
      * @return 是否新增成功，成功：true，失败：false
      */
-    public synchronized boolean add(String path, String content, int type) {
+    public boolean add(String path, String content, int type) {
         //文件创建
         try {
             create(path, type);

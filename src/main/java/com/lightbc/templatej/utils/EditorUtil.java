@@ -30,34 +30,30 @@ public class EditorUtil {
     //编辑对象
     @Getter
     private Editor editor;
-    //编辑内容
-    private String content;
     private Project project = ProjectUtil.getProject();
-
-    public EditorUtil(String content) {
-        this.content = content;
-    }
 
     /**
      * 初始化编辑对象
      *
      * @param fileName 文件名称
+     * @param content  文档内容
      * @param b        可编辑：true，只读：false
      */
-    private void initEditor(String fileName, boolean b) {
+    private void initEditor(String fileName, String content, boolean b) {
         factory = EditorFactory.getInstance();
         releaseEditor();
-        initEditorByType(fileName, b);
+        initEditorByType(fileName, content, b);
     }
 
     /**
      * 根据类型初始化加载编辑器
      *
      * @param fileName 模板文件名
+     * @param content  文档内容
      * @param b        可编辑-true，不可编辑-false
      */
-    private void initEditorByType(String fileName, boolean b) {
-        Document document = getDocument(fileName);
+    private void initEditorByType(String fileName, String content, boolean b) {
+        Document document = getDocument(fileName, content);
         if (b) {
             editable(document, project);
         } else {
@@ -71,9 +67,10 @@ public class EditorUtil {
      * 获取编辑文档
      *
      * @param fileName 模板名称
+     * @param content  文档内容
      * @return document
      */
-    private Document getDocument(String fileName) {
+    private Document getDocument(String fileName, String content) {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
         String psiFileName = fileName.concat(".").concat(ConfigInterface.EXT_VALUE);
         // 处理换行符
@@ -163,14 +160,15 @@ public class EditorUtil {
      * 获取编辑器组件
      *
      * @param fileName 文件名称
+     * @param content  文档内容
      * @param b        是否获取可编辑对象，可编辑：true，不可编辑：false
      * @return JComponent 编辑器组件
      */
-    public JComponent getEditor(String fileName, boolean b) {
+    public JComponent getEditor(String fileName, String content, boolean b) {
         if (fileName == null || "".equals(fileName.trim())) {
             fileName = ConfigInterface.DEFAULT_FILENAME;
         }
-        initEditor(fileName, b);
+        initEditor(fileName, content, b);
         return editor.getComponent();
     }
 

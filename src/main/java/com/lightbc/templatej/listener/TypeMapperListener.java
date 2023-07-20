@@ -12,15 +12,20 @@ public class TypeMapperListener {
 
     public TypeMapperListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
+        init();
+    }
+
+    private void init(){
+        typeMapper();
     }
 
     /**
      * 类型映射器监听功能
      */
-    public void typMapper() {
+    public void typeMapper() {
         templateJUI.getTypeMapperBtn().addActionListener(e -> {
             TypeMapperUI ui = new TypeMapperUI(templateJUI);
-            ui.typMapper();
+            ui.typeMapper();
         });
     }
 

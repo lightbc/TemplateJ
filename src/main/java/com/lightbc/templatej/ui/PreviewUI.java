@@ -57,6 +57,7 @@ public class PreviewUI {
     private boolean autoPreview;
 
     public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil, boolean autoPreview) {
+        this.editorUtil = new EditorUtil();
         this.groupName = groupName;
         this.templateFileName = templateFileName;
         this.sourceCode = sourceCode;
@@ -114,7 +115,7 @@ public class PreviewUI {
             Enumeration childrens = treeNode.children();
             while (childrens.hasMoreElements()) {
                 DefaultMutableTreeNode children = (DefaultMutableTreeNode) childrens.nextElement();
-                if (children.toString().equals(kw.trim())) {
+                if (children.toString().equals(kw)) {
                     tree.setSelectionPath(new TreePath(children));
                     DefaultMutableTreeNode d = (DefaultMutableTreeNode) children.getParent();
                     DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
@@ -230,8 +231,7 @@ public class PreviewUI {
      * @param content  显示内容
      */
     private void refreshEditor(String fileName, String content) {
-        EditorUtil editorUtil = new EditorUtil(content);
-        JComponent editorComponent = editorUtil.getEditor(fileName, false);
+        JComponent editorComponent = editorUtil.getEditor(fileName, content, false);
         format(editorUtil.getEditor());
         splitPane.setRightComponent(editorComponent);
         if (autoPreview) {

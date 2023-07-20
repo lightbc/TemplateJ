@@ -7,10 +7,6 @@ import com.lightbc.templatej.ui.TemplateJUI;
 import com.lightbc.templatej.utils.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Objects;
-
 /**
  * 删除模板事件监听
  */
@@ -18,9 +14,20 @@ import java.util.Objects;
 public class DelListener {
     // 配置界面UI
     private TemplateJUI templateJUI;
+    private TemplateJCommonUI commonUI;
 
     public DelListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
+        init();
+    }
+
+    private void loadCommonUI() {
+        this.commonUI = new TemplateJCommonUI(this.templateJUI.getSettings(), this.templateJUI.getTemplateUtil());
+    }
+
+    private void init(){
+        loadCommonUI();
+        del();
     }
 
     /**
@@ -28,69 +35,50 @@ public class DelListener {
      */
 
     public void del() {
-        templateJUI.getDel().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                synchronized (this){
-                    //加载删除UI界面
-                    TemplateJCommonUI ui = new TemplateJCommonUI(templateJUI);
-                    //隐藏不需要的通用组件
-                    ui.getRenamePanel().setVisible(false);
-                    ui.getAddType().setVisible(false);
-
-                    //删除操作对话框
-                    int db = del(ui.getMainPanel());
-                    //确认删除操作
-                    if (db == 0) {
-                        String groupName = Objects.requireNonNull(ui.getTemplateGroupSelector().getSelectedItem()).toString();
-                        int groupIndex = ui.getTemplateGroupSelector().getSelectedIndex();
-                        String fileName = Objects.requireNonNull(ui.getTemplateFileSelector().getSelectedItem()).toString();
-                        int fileIndex = ui.getTemplateFileSelector().getSelectedIndex();
-                        DialogUtil dialogUtil = new DialogUtil();
-                        // 默认模板判断，不能删除
-                        boolean idt = isDefaultTemplate(groupName, fileName, fileIndex);
-                        if (idt) {
-                            dialogUtil.showTipsDialog(null, Message.DEL_DEFAULT_TEMPLATE_FAIL.getMsg(), Message.DEL_DEFAULT_TEMPLATE_FAIL.getTitle());
-                            return;
-                        }
-                        // 模板删除提示
-                        int d = dialogUtil.showConfirmDialog(null, Message.DEL_CONTINUE.getMsg(), Message.DEL_CONTINUE.getTitle());
-                        if (d != 0) {
-                            return;
-                        }
-                        TemplateUtil templateUtil = templateJUI.getTemplateUtil();
-                        // 删除模板组
-                        if (fileIndex == 0) {
-                            templateUtil.delGroup(groupName);
-                            String gn = ui.getTemplateGroupSelector().getItemAt(groupIndex - 1).toString();
-                            templateJUI.getSettings().setSelectGroupName(gn);
-                            templateJUI.getSettings().setSelectGroupFile(0);
-                        }
-                        // 删除模板文件
-                        if (fileIndex > 0) {
-                            templateUtil.delGroupFile(groupName, fileName);
-                            templateJUI.getSettings().setSelectGroupName(groupName);
-                            String sgf = ui.getTemplateFileSelector().getItemAt(fileIndex - 1).toString();
-                            templateJUI.getSettings().setSelectGroupFile(sgf);
-                        }
-                        //刷新主UI界面
-                        refresh(templateUtil);
-                    }
+        this.templateJUI.getDel().addActionListener(e -> {
+            loadCommonUI();
+            this.commonUI.disable();
+            //隐藏不需要的通用组件
+            this.commonUI.showDel();
+            //删除操作对话框
+            int db = del(this.commonUI.getMainPanel());
+            //确认删除操作
+            if (db == 0) {
+                String groupName = this.commonUI.getGroupName();
+                int groupIndex = this.commonUI.getTemplateGroupSelector().getSelectedIndex();
+                String fileName = this.commonUI.getGroupFileName();
+                int fileIndex = this.commonUI.getTemplateFileSelector().getSelectedIndex();
+                DialogUtil dialogUtil = new DialogUtil();
+                // 默认模板判断，不能删除
+                boolean idt = isDefaultTemplate(groupName, fileName);
+                if (idt) {
+                    dialogUtil.showTipsDialog(this.templateJUI.getMainPanel(), Message.DEL_DEFAULT_TEMPLATE_FAIL.getMsg(), Message.DEL_DEFAULT_TEMPLATE_FAIL.getTitle());
+                    return;
                 }
+                // 模板删除提示
+                int d = dialogUtil.showConfirmDialog(this.templateJUI.getMainPanel(), Message.DEL_CONTINUE.getMsg(), Message.DEL_CONTINUE.getTitle());
+                if (d != 0) {
+                    return;
+                }
+                TemplateUtil templateUtil = this.templateJUI.getTemplateUtil();
+                // 删除模板组
+                if (fileIndex == 0) {
+                    templateUtil.delGroup(groupName);
+                    String gn = this.commonUI.getTemplateGroupSelector().getItemAt(groupIndex - 1).toString();
+                    this.templateJUI.getSettings().setSelectGroup(gn);
+                    this.templateJUI.getSettings().setSelectGroupFile(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
+                }
+                // 删除模板文件
+                if (fileIndex > 0) {
+                    templateUtil.delGroupFile(groupName, fileName);
+                    this.templateJUI.getSettings().setSelectGroup(groupName);
+                    String sgf = this.commonUI.getTemplateFileSelector().getItemAt(fileIndex - 1).toString();
+                    this.templateJUI.getSettings().setSelectGroupFile(sgf);
+                }
+                //刷新主UI界面
+                this.templateJUI.refresh();
             }
         });
-    }
-
-    /**
-     * 刷新主UI界面
-     *
-     * @param templateUtil 模板数据处理工具
-     */
-    private void refresh(TemplateUtil templateUtil) {
-        String selectGroup = templateJUI.getSettings().getSelectGroupName();
-        Object selectGroupFile = templateJUI.getSettings().getSelectGroupFile();
-        templateJUI.selector(templateJUI.getTemplateGroupSelector(), templateUtil.getGroupNames(), selectGroup);
-        templateJUI.selector(templateJUI.getTemplateFileSelector(), templateUtil.getGroupFileNames(selectGroup), selectGroupFile);
     }
 
     /**
@@ -101,7 +89,7 @@ public class DelListener {
      */
     private int del(Object message) {
         DialogUtil dialog = new DialogUtil();
-        return dialog.showOperateDialog(null, message, Message.DEL_TEMPLATE.getTitle());
+        return dialog.showOperateDialog(this.templateJUI.getMainPanel(), message, Message.DEL_TEMPLATE.getTitle());
     }
 
     /**
@@ -109,17 +97,16 @@ public class DelListener {
      *
      * @param groupName   模板组名称
      * @param delFileName 删除模板名称
-     * @param fileIndex   选择模板下标
      * @return boolean 是-true，否-false
      */
-    private boolean isDefaultTemplate(String groupName, String delFileName, int fileIndex) {
+    private boolean isDefaultTemplate(String groupName, String delFileName) {
         boolean b = false;
         // 是否是默认模板组
-        if (groupName.equals(ConfigInterface.GROUP_NAME_VALUE) && fileIndex == 0) {
+        if (groupName.equals(ConfigInterface.GROUP_NAME_VALUE) && !TemplateUtil.isTemplateFile(delFileName)) {
             b = true;
         }
         // 是否是默认模板组的默认模板文件
-        if (groupName.equals(ConfigInterface.GROUP_NAME_VALUE) && fileIndex > 0) {
+        if (groupName.equals(ConfigInterface.GROUP_NAME_VALUE) && TemplateUtil.isTemplateFile(delFileName)) {
             String[] groupFile = ConfigInterface.GROUP_FILE_VALUE;
             for (String file : groupFile) {
                 if (delFileName.equals(file)) {

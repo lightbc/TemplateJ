@@ -7,7 +7,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.entity.Template;
-import com.lightbc.templatej.interfaces.ConfigInterface;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,19 +19,9 @@ import java.util.*;
 @Data
 @State(name = "TemplateJSettings", storages = {@Storage("TemplateJ-Settings.xml")})
 public class TemplateJSettings implements PersistentStateComponent<TemplateJSettings> {
-    // 默认类型选择器名称
-    public static final String DEFAULT_NAME = ConfigInterface.GROUP_NAME_VALUE;
-    // 编辑器编辑内容
-    private String content = "";
-    // 类型映射器表头
-    private Object[] tableHeader;
-    // 类型映射器默认映射数据
-    private Object[][] defaultTableData;
-    // 类型映射器，以模板组为单位的个性化映射配置
-    private Map<String, Object[][]> typeMapper;
     private List<Template> templates;
-    private String selectGroupName = DEFAULT_NAME;
-    private Object selectGroupFile = 0;
+    private String selectGroup;
+    private String selectGroupFile;
 
     public TemplateJSettings() {
         init();
@@ -52,18 +41,6 @@ public class TemplateJSettings implements PersistentStateComponent<TemplateJSett
      */
     private void init() {
         initTemplate();
-        initTypeMapper();
-    }
-
-    /**
-     * 初始化映射器
-     */
-    private void initTypeMapper() {
-        tableHeader = new Object[]{"columnType", "javaType"};
-        defaultTableData = DefaultTemplateParams.getDefaultTableData();
-        if (typeMapper == null) {
-            typeMapper = DefaultTemplateParams.getDefaultTypeMapper();
-        }
     }
 
     /**
@@ -72,7 +49,6 @@ public class TemplateJSettings implements PersistentStateComponent<TemplateJSett
     private void initTemplate() {
         this.templates = DefaultTemplateParams.getDefaultTemplates();
     }
-
 
     @Nullable
     @Override

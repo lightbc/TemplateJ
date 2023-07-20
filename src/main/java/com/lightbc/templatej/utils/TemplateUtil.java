@@ -1,7 +1,10 @@
 package com.lightbc.templatej.utils;
 
+import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.entity.Template;
+import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.interfaces.TemplateJInterface;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,10 +15,21 @@ import java.util.Map;
  * 模板数据处理工具类型
  */
 public class TemplateUtil {
+    // 模板组
     private List<Template> templates;
 
     public TemplateUtil(List<Template> templates) {
         this.templates = templates;
+    }
+
+    /**
+     * 判断是否是模板文件
+     *
+     * @param selectGroupFile 选择项
+     * @return boolean true-是，false-否
+     */
+    public static boolean isTemplateFile(Object selectGroupFile) {
+        return selectGroupFile == null || selectGroupFile.toString().equals(ConfigInterface.DEFAULT_GROUP_FILE_VALUE) ? false : true;
     }
 
     /**
@@ -24,83 +38,127 @@ public class TemplateUtil {
      * @return list<string>
      */
     public List<String> getGroupNames() {
-        List<String> list = new ArrayList<>();
-        if (templates != null) {
-            for (Template template : templates) {
-                list.add(template.getGroupName());
+        List<String> list = null;
+        if (this.templates != null) {
+            list = new ArrayList<>();
+            for (Template template : this.templates) {
+                if (StringUtils.isNotBlank(template.getGroupName())) {
+                    list.add(template.getGroupName());
+                }
             }
         }
         return list;
     }
 
     /**
-     * 获取对应模板组模板文件名称
+     * 获取模板文件
      *
-     * @param groupName 模板组
+     * @param template 模板
+     * @return list<string>
+     */
+    public List<String> getGroupFileNames(Template template) {
+        return template != null ? template.getGroupFiles() : null;
+    }
+
+    /**
+     * 通过模板组名称获取模板文件
+     *
+     * @param groupName 模板组名称
      * @return list<string>
      */
     public List<String> getGroupFileNames(String groupName) {
-        if (templates != null) {
-            for (Template template : templates) {
-                if (template.getGroupName().equals(groupName.trim())) {
-                    return template.getGroupFiles();
-                }
+        Template template = getTemplate(groupName);
+        return getGroupFileNames(template);
+    }
+
+    /**
+     * 获取模板文件内容
+     *
+     * @param template      模板
+     * @param groupFileName 模板文件名称
+     * @return string 模板内容
+     */
+    public String getTemplateContent(Template template, String groupFileName) {
+        if (template != null && StringUtils.isNotBlank(groupFileName)) {
+            Map<String, String> contentMap = template.getFileContentMap();
+            if (contentMap != null && contentMap.containsKey(groupFileName)) {
+                return template.getFileContentMap().get(groupFileName);
             }
         }
         return null;
     }
 
     /**
-     * 获取指定模板的模板内容
-     *
-     * @param groupName     模板组
-     * @param groupFileName 模板文件
-     * @return string
-     */
-    public String getTemplateContent(String groupName, String groupFileName) {
-        String content = "";
-        try {
-            if (templates != null) {
-                for (Template template : templates)
-                    if (template.getGroupName().equals(groupName.trim())) {
-                        content = template.getFileContentMap().getOrDefault(groupFileName, "");
-                    }
-            }
-        } catch (Exception e) {
-        } finally {
-            return content;
-        }
-    }
-
-    /**
      * 获取模板组全局配置信息
      *
-     * @param groupName 模板组
-     * @return string
+     * @param template 模板
+     * @return string 全局配置信息
      */
-    public String getGlobalConfig(String groupName) {
-        if (templates != null) {
-            for (Template template : templates) {
-                if (template.getGroupName().equals(groupName.trim())) {
-                    return template.getGlobalConfig() != null ? template.getGlobalConfig() : "";
-                }
-            }
-        }
-        return "";
+    public String getGlobalConfig(Template template) {
+        return template != null ? template.getGlobalConfig() : null;
     }
 
     /**
-     * 设置模板组全局配置信息
+     * 设置全局配置信息
      *
-     * @param groupName 模板组
-     * @param content   全局配置信息
+     * @param template 模板
+     * @param content  配置内容
      */
-    public void setGlobalConfig(String groupName, String content) {
-        if (templates != null) {
-            for (Template template : templates) {
-                if (template.getGroupName().equals(groupName.trim())) {
-                    template.setGlobalConfig(content);
+    public void setGlobalConfig(Template template, String content) {
+        if (template != null && StringUtils.isNotBlank(content)) {
+            template.setGlobalConfig(content);
+        }
+    }
+
+    /**
+     * 获取模板配置的类型映射数据
+     *
+     * @param template 模板
+     * @return object[][]
+     */
+    public Object[][] getTypeMapper(Template template) {
+        return template != null ? template.getTypeMapper() : null;
+    }
+
+    /**
+     * 编辑选择的模板组名称
+     *
+     * @param oldName 选择的模板组名称
+     * @param newName 新名称
+     */
+    public void editGroupName(String oldName, String newName) {
+        if (StringUtils.isNotBlank(newName)) {
+            Template template = getTemplate(oldName);
+            template.setGroupName(newName);
+        }
+    }
+
+    /**
+     * 编辑选择的模板文件名称
+     *
+     * @param groupName 所属模板组名称
+     * @param oldName   原模板文件名称
+     * @param newName   新名称
+     */
+    public void editGroupFileName(String groupName, String oldName, String newName) {
+        if (StringUtils.isNotBlank(newName)) {
+            Template template = getTemplate(groupName);
+            List<String> groupFiles = template.getGroupFiles();
+            // 修改模板文件列表里对应的名称信息
+            if (groupFiles != null) {
+                int fileIndex = groupFiles.indexOf(oldName);
+                if (fileIndex >= 0) {
+                    groupFiles.remove(fileIndex);
+                    groupFiles.add(fileIndex, newName);
                 }
+            }
+
+            // 修改模板文件映射key值名称
+            Map<String, String> contentMap = template.getFileContentMap();
+            if (contentMap != null && contentMap.containsKey(oldName)) {
+                String content = contentMap.get(oldName);
+                contentMap.remove(oldName);
+                contentMap.put(newName, content);
             }
         }
     }
@@ -112,9 +170,9 @@ public class TemplateUtil {
      * @return template
      */
     public Template getTemplate(String groupName) {
-        if (templates != null) {
-            for (Template template : templates) {
-                if (template.getGroupName().equals(groupName.trim())) {
+        if (this.templates != null && StringUtils.isNotBlank(groupName)) {
+            for (Template template : this.templates) {
+                if (template.getGroupName().equals(groupName)) {
                     return template;
                 }
             }
@@ -134,7 +192,9 @@ public class TemplateUtil {
         tp.setGroupFiles(template.getGroupFiles());
         tp.setFileContentMap(template.getFileContentMap());
         tp.setGlobalConfig(template.getGlobalConfig());
-        templates.add(tp);
+        // 复制原模板组配置的类型映射信息
+        tp.setTypeMapper(template.getTypeMapper());
+        this.templates.add(tp);
     }
 
     /**
@@ -145,9 +205,9 @@ public class TemplateUtil {
      * @param rename        模板名称
      */
     public void copyGroupFile(String copyGroupName, String copyFileName, String rename) {
-        if (templates != null) {
-            for (int i = 0; i < templates.size(); i++) {
-                Template template = templates.get(i);
+        if (this.templates != null) {
+            for (int i = 0; i < this.templates.size(); i++) {
+                Template template = this.templates.get(i);
                 if (template.getGroupName().equals(copyGroupName.trim())) {
                     commonOperate(template, rename, template.getFileContentMap().get(copyFileName), i);
                     return;
@@ -166,7 +226,8 @@ public class TemplateUtil {
         template.setGroupName(rename);
         List<String> groupFiles = new ArrayList<>();
         template.setGroupFiles(groupFiles);
-        templates.add(template);
+        template.setTypeMapper(DefaultTemplateParams.getDefaultTableData());
+        this.templates.add(template);
     }
 
     /**
@@ -178,7 +239,7 @@ public class TemplateUtil {
      */
     public void addGroupFile(String groupName, String rename, String content) {
         Template template = getTemplate(groupName);
-        int index = templates.indexOf(template);
+        int index = this.templates.indexOf(template);
         commonOperate(template, rename, content, index);
     }
 
@@ -189,7 +250,7 @@ public class TemplateUtil {
      */
     public void delGroup(String groupName) {
         Template template = getTemplate(groupName);
-        templates.remove(template);
+        this.templates.remove(template);
     }
 
     /**
@@ -202,7 +263,7 @@ public class TemplateUtil {
         // 获取删除模板对象
         Template template = getTemplate(groupName);
         // 获取删除对象数组下标
-        int index = templates.indexOf(template);
+        int index = this.templates.indexOf(template);
         List<String> groupFiles = template.getGroupFiles();
         List<String> list = new ArrayList<>();
         for (String f : groupFiles) {
@@ -220,9 +281,9 @@ public class TemplateUtil {
         // 获取新模板对象
         Template t = getNewTemplate(groupName, list, map, template.getGlobalConfig());
         // 删除旧模板对象
-        templates.remove(index);
+        this.templates.remove(index);
         // 根据删除模板对象下标，新增新的模板对象
-        templates.add(index, t);
+        this.templates.add(index, t);
     }
 
     /**
@@ -238,9 +299,9 @@ public class TemplateUtil {
         Map<String, String> fileContentMap = template.getFileContentMap();
         Template t = getNewTemplate(template.getGroupName(), getNewGroupFiles(groupFiles, name), getNewFileContentMap(fileContentMap, name, content), template.getGlobalConfig());
         // 删除旧的
-        templates.remove(index);
+        this.templates.remove(index);
         // 添加新的
-        templates.add(index, t);
+        this.templates.add(index, t);
     }
 
     /**
@@ -309,12 +370,12 @@ public class TemplateUtil {
     /**
      * 模板文件是否已存在
      *
-     * @param groupName 模板组名称
-     * @param rename    新的模板文件名称
+     * @param template 模板对象
+     * @param rename   新的模板文件名称
      * @return boolean
      */
-    public boolean existGroupFile(String groupName, String rename) {
-        List<String> groupFiles = getGroupFileNames(groupName);
+    public boolean existGroupFile(Template template, String rename) {
+        List<String> groupFiles = getGroupFileNames(template);
         for (String name : groupFiles) {
             if (name.equals(rename.trim())) {
                 return true;

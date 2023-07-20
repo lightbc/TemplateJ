@@ -40,12 +40,7 @@ public class ImportUI {
     private String parentDir;
     // 全局配置文件选择组件
     private TextFieldWithBrowseButton globalConfigButton;
-
     private TemplateJUI templateJUI;
-
-    public ImportUI() {
-        init();
-    }
 
     public ImportUI(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
@@ -222,7 +217,7 @@ public class ImportUI {
             if (isFile(path)) {
                 File file = new File(path);
                 String gn = this.groupName.getText();
-                if (StringUtils.isNotBlank(gn) && file.getName().trim().equals(gn.concat(ConfigInterface.PLUGIN_DEFAULT_EXT))) {
+                if (StringUtils.isNotBlank(gn) && file.getName().equals(gn.concat(ConfigInterface.PLUGIN_DEFAULT_EXT))) {
                     return true;
                 }
             }
@@ -348,14 +343,14 @@ public class ImportUI {
         String name = file.getName();
         String gn = "";
         if (this.groupName != null && StringUtils.isNotBlank(this.groupName.getText())) {
-            gn = this.groupName.getText().trim();
+            gn = this.groupName.getText();
         }
         // 移除*.tj文件
-        if (name.trim().lastIndexOf(ConfigInterface.PLUGIN_DEFAULT_EXT) == -1) {
+        if (name.lastIndexOf(ConfigInterface.PLUGIN_DEFAULT_EXT) == -1) {
             list.add(name);
         }
         // 匹配导入的文件中是否包含全局配置文件，存在则默认显示
-        if (name.trim().equals(gn.concat(ConfigInterface.PLUGIN_DEFAULT_EXT))) {
+        if (name.equals(gn.concat(ConfigInterface.PLUGIN_DEFAULT_EXT))) {
             this.globalConfigButton.setText(file.getAbsolutePath());
         }
     }

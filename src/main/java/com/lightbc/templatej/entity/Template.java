@@ -15,4 +15,6 @@ public class Template {
     private Map<String, String> fileContentMap;
     // 模板组全局配置信息
     private String globalConfig;
+    // 类型映射器，以模板组为单位的个性化映射配置
+    private Object[][] typeMapper;
 }
