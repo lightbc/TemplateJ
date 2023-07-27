@@ -196,8 +196,10 @@ public class GenerateJUtil {
         List<ColumnInfo> columnsList = new ArrayList<>();
         List<String> columnNames = new ArrayList<>();
         Map<String, Object> columnType = new HashMap<>();
-        // 获取该模板组的数据类型映射信息
-        Map<String, String> typeMapper = typeMapper(groupName);
+        // 获取javaType类型映射关系
+        Map<String, String> javaTypeMapper = javaTypeMapper(groupName);
+        // 获取jdbcType类型映射关系
+        Map<String, String> jdbcTypeMapper = jdbcTypeMapper(groupName);
         for (DasColumn column : columns) {
             //处理主键
             if (DasUtil.isPrimary(column)) {
@@ -213,13 +215,15 @@ public class GenerateJUtil {
             // 数据类型
             String dataType = column.getDataType().typeName;
             cols.setDataType(dataType);
-            // 获取对应的java数据类型
-            cols.setJavaType(typeMapper.get(dataType));
+            // 获取对应的javaType数据类型
+            cols.setJavaType(javaTypeMapper.get(dataType));
+            // 获取对应的jdbcType数据类型
+            cols.setJdbcType(jdbcTypeMapper.get(dataType));
             // 列备注信息
             cols.setColumnComment(column.getComment());
             columnsList.add(cols);
             columnNames.add(processName(column.getName()));
-            columnType.put(columnName, typeMapper.get(dataType));
+            columnType.put(columnName, javaTypeMapper.get(dataType));
         }
         table.setColumns(columnsList);
         table.setColumnNames(columnNames);
@@ -334,27 +338,56 @@ public class GenerateJUtil {
      * 数据类型映射器
      *
      * @param groupName 模板组名称
+     * @param type      映射器类型，0：JavaType类型映射器，1：JdbcType类型映射器
      * @return Map<String, String>
      */
-    private Map<String, String> typeMapper(String groupName) {
+    private Map<String, String> typeMapper(String groupName, int type) {
         Map<String, String> map = new HashMap<>();
         com.lightbc.templatej.entity.Template template = this.templateUtil.getTemplate(groupName);
-        Object[][] typeMapper = this.templateUtil.getTypeMapper(template);
-        if (typeMapper == null) {
-            typeMapper = DefaultTemplateParams.getDefaultTableData();
+        Object[][] typeMapper = null;
+        if (type == 0) {
+            typeMapper = this.templateUtil.getTypeMapper(template);
+            if (typeMapper == null) {
+                typeMapper = DefaultTemplateParams.getDefaultTableData();
+            }
+        } else if (type == 1) {
+            typeMapper = this.templateUtil.getJdbcTypeMapper(template);
+            if (typeMapper == null) {
+                typeMapper = DefaultTemplateParams.getDefaultJdbcTypeTableData();
+            }
         }
         if (groupName != null && !"".equals(groupName.trim())) {
             if (typeMapper != null) {
                 for (Object[] obj : typeMapper) {
                     // column type
                     String s0 = obj[0].toString();
-                    // java type
+                    // java type/ jdbc type
                     String s1 = processTypeMapper(obj[1].toString());
                     map.put(s0, s1);
                 }
             }
         }
         return map;
+    }
+
+    /**
+     * JavaType数据类型映射器
+     *
+     * @param groupName 模板组名称
+     * @return Map<String, String>
+     */
+    private Map<String, String> javaTypeMapper(String groupName) {
+        return typeMapper(groupName, 0);
+    }
+
+    /**
+     * JdbcType数据类型映射器
+     *
+     * @param groupName 模板组名称
+     * @return Map<String, String>
+     */
+    private Map<String, String> jdbcTypeMapper(String groupName) {
+        return typeMapper(groupName, 1);
     }
 
     /**

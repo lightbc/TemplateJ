@@ -15,16 +15,27 @@ public class TypeMapperListener {
         init();
     }
 
-    private void init(){
-        typeMapper();
+    private void init() {
+        javaTypeMapper();
+        jdbcTypeMapper();
     }
 
     /**
-     * 类型映射器监听功能
+     * javaType类型映射器功能监听
      */
-    public void typeMapper() {
-        templateJUI.getTypeMapperBtn().addActionListener(e -> {
-            TypeMapperUI ui = new TypeMapperUI(templateJUI);
+    public void javaTypeMapper() {
+        this.templateJUI.getTypeMapperBtn().addActionListener(e -> {
+            TypeMapperUI ui = new TypeMapperUI(this.templateJUI, 0);
+            ui.typeMapper();
+        });
+    }
+
+    /**
+     * jdbcType类型映射器功能监听
+     */
+    public void jdbcTypeMapper() {
+        this.templateJUI.getJdbcType().addActionListener(e -> {
+            TypeMapperUI ui = new TypeMapperUI(this.templateJUI, 1);
             ui.typeMapper();
         });
     }

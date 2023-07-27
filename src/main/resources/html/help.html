@@ -15,7 +15,7 @@
 </head>
 <body style="margin: 10px;">
 <div style="text-align: right;font-size: 20px;font-weight: 800;">
-    <i>v1.2.1-RELEASE</i>
+    <i>v1.2.2-RELEASE</i>
 </div>
 <div>
     <h2>
@@ -57,6 +57,11 @@
                 <li style="margin-top: 5px;margin-bottom: 5px;">
                     <p>
                         提供重命名模板组/模板文件名称功能。
+                    </p>
+                </li>
+                <li style="margin-top: 5px;margin-bottom: 5px;">
+                    <p>
+                        提供JavaType/JdbcType类型映射配置功能。
                     </p>
                 </li>
                 <li style="margin-top: 5px;margin-bottom: 5px;">
@@ -295,6 +300,24 @@
                     步骤3：点击【Ok】按钮，导出模板。
                 </p>
                 <img src="/images/template_export.png">
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;color: red;">
+                <p>
+                    JdbcType类型映射器
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：点击JdbcType类型映射器按钮，进入配置UI界面。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：【+】为新增映射集，【-】为删除选中的映射集。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：点击单元格，可编辑单元格内容。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤4：点击【是(Y)】按钮，保存内容。
+                </p>
+                <img src="/images/jdbc_type_mapper.png">
             </li>
         </ol>
     </div>
@@ -541,6 +564,14 @@
                                 </p>
                                 <p style="margin-top: 5px;">
                                     【${table.getColumns().get(index).getJavaType()}】：获取数据字段对应的java类
+                                </p>
+                            </li>
+                            <li style="color: red;">
+                                <p>
+                                    【${table.getColumns().get(index).setJdbcType(参数)}】：设置数据字段对应的Jdbc枚举类型
+                                </p>
+                                <p style="margin-top: 5px;">
+                                    【${table.getColumns().get(index).getJdbcType()}】：获取数据字段对应的Jdbc枚举类型
                                 </p>
                             </li>
                         </ul>

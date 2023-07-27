@@ -40,14 +40,20 @@ public class TypeMapperUI implements Configurable {
     private String groupName;
     // TemplateJ 主UI 对象
     private TemplateJUI templateJUI;
-    // 类型映射器数据
+    // JavaType类型映射器数据
     private Object[][] typeMapper;
+    // JdbcType类型映射器数据
+    private Object[][] jdbcTypeMapper;
+    // 映射器类型，0：JavaType映射器，1：JdbcType映射器
+    private int mapperType;
 
-    public TypeMapperUI(TemplateJUI templateJUI) {
+    public TypeMapperUI(TemplateJUI templateJUI, int mapperType) {
         this.templateJUI = templateJUI;
+        this.mapperType = mapperType;
         this.settings = TemplateJSettings.getInstance();
         this.groupName = templateJUI.getCommonUI().getGroupName();
         this.typeMapper = this.templateJUI.getTemplateUtil().getTemplate(this.groupName).getTypeMapper();
+        this.jdbcTypeMapper = this.templateJUI.getTemplateUtil().getTemplate(this.groupName).getJdbcTypeMapper();
         init();
     }
 
@@ -56,7 +62,11 @@ public class TypeMapperUI implements Configurable {
      */
     private void init() {
         initIcons();
-        initTable();
+        if (mapperType == 0) {
+            initJavaTypeTable();
+        } else if (mapperType == 1) {
+            initJdbcTypeTable();
+        }
         operateListener();
     }
 
@@ -64,9 +74,19 @@ public class TypeMapperUI implements Configurable {
      * 初始化数据类型映射表初始显示内容
      */
     @SuppressWarnings({"BoundFieldAssignment", "UndesirableClassUsage"})
-    private void initTable() {
+    private void initJavaTypeTable() {
         this.typeMapper = this.typeMapper != null ? this.typeMapper : DefaultTemplateParams.getDefaultTableData();
-        this.tableModel = new DefaultTableModel(this.typeMapper, DefaultTemplateParams.getDefaultTableHeader());
+        this.tableModel = new DefaultTableModel(this.typeMapper, DefaultTemplateParams.getDefaultJavaTypeTableHeader());
+        initTable();
+    }
+
+    private void initJdbcTypeTable() {
+        this.jdbcTypeMapper = this.jdbcTypeMapper != null ? this.jdbcTypeMapper : DefaultTemplateParams.getDefaultJdbcTypeTableData();
+        this.tableModel = new DefaultTableModel(this.jdbcTypeMapper, DefaultTemplateParams.getDefaultJdbcTypeTableHeader());
+        initTable();
+    }
+
+    private void initTable() {
         this.mainPanel.setLayout(new BorderLayout());
         this.table = new JTable(this.tableModel);
         // 设置行高
@@ -111,11 +131,10 @@ public class TypeMapperUI implements Configurable {
     /**
      * 获取编辑后的类型映射表中的数据内容
      *
-     * @param tableModel 表格数据模型对象
      * @return Object[][]
      */
-    private Object[][] getTableData(DefaultTableModel tableModel) {
-        Vector vectors = tableModel.getDataVector();
+    private Object[][] getTableData() {
+        Vector vectors = this.tableModel.getDataVector();
         Object[][] objects = new Object[vectors.size()][];
         for (int i = 0; i < vectors.size(); i++) {
             Vector vector = (Vector) vectors.get(i);
@@ -134,7 +153,12 @@ public class TypeMapperUI implements Configurable {
      */
     public void typeMapper() {
         DialogUtil dialogUtil = new DialogUtil();
-        String title = Message.TYPE_MAPPER_OPEN.getTitle().concat(this.groupName);
+        String title = "";
+        if (this.mapperType == 0) {
+            title = Message.JAVA_TYPE_MAPPER_OPEN.getTitle().concat(this.groupName);
+        } else if (this.mapperType == 1) {
+            title = Message.JDBC_TYPE_MAPPER_OPEN.getTitle().concat(this.groupName);
+        }
         int c = dialogUtil.showConfirmDialog(null, getMainPanel(), title);
         // 点击确定按钮，保存当前模板组的最新数据类型映射配置信息
         if (c == 0) {
@@ -156,15 +180,39 @@ public class TypeMapperUI implements Configurable {
 
     @Override
     public boolean isModified() {
-        // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
-        Object[][] objects = getTableData(getTableModel());
-        return !this.typeMapper.equals(objects);
+        return this.mapperType == 0 ? javaTypeModified() : jdbcTypeModified();
     }
 
     @Override
     public void apply() {
+        if (this.mapperType == 0) {
+            javaTypeApply();
+        } else if (this.mapperType == 1) {
+            jdbcTypeApply();
+        }
+    }
+
+    private boolean javaTypeModified() {
+        // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
+        Object[][] objects = getTableData();
+        return !this.typeMapper.equals(objects);
+    }
+
+    private boolean jdbcTypeModified() {
+        // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
+        Object[][] objects = getTableData();
+        return !this.jdbcTypeMapper.equals(objects);
+    }
+
+    private void javaTypeApply() {
         // 当前模板组，数据类型映射，最新配置数据持久化
-        Object[][] objects = getTableData(getTableModel());
+        Object[][] objects = getTableData();
         this.templateJUI.getTemplateUtil().getTemplate(this.groupName).setTypeMapper(objects);
+    }
+
+    private void jdbcTypeApply() {
+        // 当前模板组，数据类型映射，最新配置数据持久化
+        Object[][] objects = getTableData();
+        this.templateJUI.getTemplateUtil().getTemplate(this.groupName).setJdbcTypeMapper(objects);
     }
 }

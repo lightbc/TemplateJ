@@ -35,7 +35,7 @@ public enum Message {
     IMPORT_GROUP_EXIST("提示", "导入的模板组已经存在，请修改模板组名称后重试！"),
     IMPORT_TEMPLATE_FILE_NO_EXIST("提示", "选择的文件无效/文件夹目录下无有效的文件存在！"),
     IMPORT_IS_NOT_GLOBAL_CONFIG("提示", "选择的文件非指定格式（格式：模板组名称.tj）！"),
-    ERROR_URL("网址打开错误","尝试了【%s】次后，我选择了摆烂..."),
+    ERROR_URL("网址打开错误", "尝试了【%s】次后，我选择了摆烂..."),
 
     // 配置标题
     ADD_TEMPLATE("新增模板"),
@@ -44,7 +44,8 @@ public enum Message {
     GLOBAL_CONFIG("配置项-"),
     PREVIEW_TEMPLATE("效果预览"),
     PACKAGE_CHOOSER_TITLE("包路径选择"),
-    TYPE_MAPPER_OPEN("数据类型映射-"),
+    JAVA_TYPE_MAPPER_OPEN("JavaType数据类型映射-"),
+    JDBC_TYPE_MAPPER_OPEN("JdbcType数据类型映射-"),
     HELP("帮助"),
     CACHE_ERROR("缓存失败"),
     RENAME_TITLE("重命名（模板组/模板文件）名称");

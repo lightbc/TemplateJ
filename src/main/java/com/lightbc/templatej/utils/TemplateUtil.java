@@ -121,6 +121,16 @@ public class TemplateUtil {
     }
 
     /**
+     * 获取jdbcType类型映射数据
+     *
+     * @param template 模板
+     * @return object[][]
+     */
+    public Object[][] getJdbcTypeMapper(Template template) {
+        return template != null ? template.getJdbcTypeMapper() : null;
+    }
+
+    /**
      * 编辑选择的模板组名称
      *
      * @param oldName 选择的模板组名称
@@ -192,8 +202,10 @@ public class TemplateUtil {
         tp.setGroupFiles(template.getGroupFiles());
         tp.setFileContentMap(template.getFileContentMap());
         tp.setGlobalConfig(template.getGlobalConfig());
-        // 复制原模板组配置的类型映射信息
+        // 复制原模板组配置的JavaType类型映射信息
         tp.setTypeMapper(template.getTypeMapper());
+        // 复制原模板组配置的JdbcType类型映射信息
+        tp.setJdbcTypeMapper(template.getJdbcTypeMapper());
         this.templates.add(tp);
     }
 
@@ -227,6 +239,7 @@ public class TemplateUtil {
         List<String> groupFiles = new ArrayList<>();
         template.setGroupFiles(groupFiles);
         template.setTypeMapper(DefaultTemplateParams.getDefaultTableData());
+        template.setJdbcTypeMapper(DefaultTemplateParams.getDefaultJdbcTypeTableData());
         this.templates.add(template);
     }
 

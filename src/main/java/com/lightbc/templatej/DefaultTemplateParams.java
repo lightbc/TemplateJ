@@ -321,19 +321,14 @@ public class DefaultTemplateParams {
                 "<#-- 处理MySQL Xml文件结果映射集 -->\n" +
                 "<#macro resultMap>\n" +
                 "    <#list table.getColumns() as column>\n" +
-                "        <result property=\"${tools.toLowerCamelCase(\"${column.columnName}\")}\" column=\"${column.originColumnName}\" jdbcType=\"<@jdbcType column.dataType/>\"/>\n" +
+                "        <result property=\"${tools.toLowerCamelCase(\"${column.columnName}\")}\" column=\"${column.originColumnName}\" jdbcType=\"<@jdbcType column.jdbcType/>\"/>\n" +
                 "    </#list>\n" +
                 "</#macro>\n" +
                 "\n" +
-                "<#-- 处理MySQL中的数据类型不在jdbcType枚举类型中的问题 -->\n" +
-                "<#macro jdbcType dataType>\n" +
+                "<#macro jdbcType jdbcType>\n" +
                 "<#-- 压缩成一行，移除字符串两端空字符显示 -->\n" +
                 "<@compress single_line=true>\n" +
-                "    <#if \"INT\"==tools.toUpperCase(dataType)>\n" +
-                "        INTEGER\n" +
-                "    <#else>\n" +
-                "        ${tools.toUpperCase(dataType)}\n" +
-                "    </#if>\n" +
+                "    ${tools.toUpperCase(jdbcType)}\n" +
                 "</@compress>\n" +
                 "</#macro>";
         String service = "<#assign fileName=\"${tableName}Service\">\n" +
@@ -511,12 +506,18 @@ public class DefaultTemplateParams {
         template.setGlobalConfig(GLOBAL_CONFIG);
         // 默认模板组数据类型映射集
         template.setTypeMapper(getDefaultTableData());
+        // 默认JdbcType类型映射集
+        template.setJdbcTypeMapper(getDefaultJdbcTypeTableData());
         templates.add(template);
         return templates;
     }
 
-    public static Object[] getDefaultTableHeader() {
-        return new Object[]{"columnType", "javaType"};
+    public static Object[] getDefaultJavaTypeTableHeader() {
+        return new Object[]{"ColumnType", "JavaType"};
+    }
+
+    public static Object[] getDefaultJdbcTypeTableHeader() {
+        return new Object[]{"ColumnType", "JdbcType"};
     }
 
     /**
@@ -536,6 +537,34 @@ public class DefaultTemplateParams {
                 new Object[]{"timestamp", "java.util.Date"},
                 new Object[]{"boolean", "java.lang.Boolean"},
                 new Object[]{"date", "java.util.Date"}
+        };
+    }
+
+    public static Object[][] getDefaultJdbcTypeTableData() {
+        return new Object[][]{
+                new Object[]{"tinyint", "tinyint"},
+                new Object[]{"smallint", "smallint"},
+                new Object[]{"int", "integer"},
+                new Object[]{"integer", "integer"},
+                new Object[]{"bigint", "bigint"},
+                new Object[]{"bit", "bit"},
+                new Object[]{"real", "real"},
+                new Object[]{"double", "double"},
+                new Object[]{"float", "float"},
+                new Object[]{"decimal", "decimal"},
+                new Object[]{"numeric", "numeric"},
+                new Object[]{"char", "char"},
+                new Object[]{"varchar", "varchar"},
+                new Object[]{"date", "date"},
+                new Object[]{"time", "time"},
+                new Object[]{"timestamp", "timestamp"},
+                new Object[]{"datetime", "datetime"},
+                new Object[]{"blob", "blob"},
+                new Object[]{"tinytext", "longvarchar"},
+                new Object[]{"text", "longvarchar"},
+                new Object[]{"longtext", "longvarchar"},
+                new Object[]{"binary", "binary"},
+                new Object[]{"varbinary", "varbinary"}
         };
     }
 }

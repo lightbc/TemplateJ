@@ -62,6 +62,7 @@ public class TemplateJUI implements Configurable {
     private JButton editName;
     // 选择器组件面板
     private JPanel selectorPanel;
+    private JButton jdbcType;
     // 通用组件
     private TemplateJCommonUI commonUI;
 
@@ -272,24 +273,24 @@ public class TemplateJUI implements Configurable {
      */
     private void initIcons() {
         // 编辑（模板组/模板文件）名称图标
-        editName.setIcon(AllIcons.Actions.Edit);
+        this.editName.setIcon(AllIcons.Actions.Edit);
         // 复制按钮图标
-        copy.setIcon(AllIcons.General.CopyHovered);
+        this.copy.setIcon(AllIcons.General.CopyHovered);
         // 新增按钮图标
-        add.setIcon(AllIcons.General.Add);
+        this.add.setIcon(AllIcons.General.Add);
         // 删除按钮图标
-        del.setIcon(AllIcons.General.Remove);
+        this.del.setIcon(AllIcons.General.Remove);
         // 模板组全局设置按钮图标
-        configBtn.setIcon(AllIcons.General.GearPlain);
+        this.configBtn.setIcon(AllIcons.General.GearPlain);
         // 帮助按钮图标
-        help.setIcon(AllIcons.Actions.Help);
+        this.help.setIcon(AllIcons.Actions.Help);
         // 导出按钮图标
-        exportButton.setIcon(AllIcons.Actions.Upload);
+        this.exportButton.setIcon(AllIcons.Actions.Upload);
         // 导入按钮图标
-        importButton.setIcon(AllIcons.Actions.Download);
+        this.importButton.setIcon(AllIcons.Actions.Download);
         // 预览按钮图标
-        preview.setIcon(AllIcons.General.InspectionsEye);
+        this.preview.setIcon(AllIcons.General.InspectionsEye);
         // 功能重置按钮图标
-        reset.setIcon(AllIcons.General.Reset);
+        this.reset.setIcon(AllIcons.General.Reset);
     }
 }
