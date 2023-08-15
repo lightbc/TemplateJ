@@ -28,6 +28,8 @@ public enum Message {
     NO_SELECT_TEMPLATE_FILE("提示", "未选择需要导出的模板文件！"),
     NO_SELECT_EXPORT_PATH("提示", "模板导出路径为空！"),
     EXPORT_SUCCESS("提示", "模板导出成功！"),
+    EXPORT_ERROR("错误", "导出错误："),
+    EXPORT_CONTENT_EMPTY("提示", "导出内容为空!"),
     NO_SELECT_IMPORT_PATH("提示", "请选择需要导入的模板路径（文件夹/文件）！"),
     NO_DEFAULT_GROUP_NAME("提示", "请输入默认的模板组名称！"),
     NO_SELECT_IMPORT_TEMPLATE_FILE("提示", "未选择需要导入的模板文件！"),
@@ -36,6 +38,8 @@ public enum Message {
     IMPORT_TEMPLATE_FILE_NO_EXIST("提示", "选择的文件无效/文件夹目录下无有效的文件存在！"),
     IMPORT_IS_NOT_GLOBAL_CONFIG("提示", "选择的文件非指定格式（格式：模板组名称.tj）！"),
     ERROR_URL("网址打开错误", "尝试了【%s】次后，我选择了摆烂..."),
+    FILENAME_EMPTY("警告", "文件名称为空！"),
+    EXPORT_PATH_EMPTY("警告", "保存路径为空！"),
 
     // 配置标题
     ADD_TEMPLATE("新增模板"),
@@ -48,7 +52,8 @@ public enum Message {
     JDBC_TYPE_MAPPER_OPEN("JdbcType数据类型映射-"),
     HELP("帮助"),
     CACHE_ERROR("缓存失败"),
-    RENAME_TITLE("重命名（模板组/模板文件）名称");
+    RENAME_TITLE("重命名（模板组/模板文件）名称"),
+    EXPORT("导出");
 
 
     // 消息标题

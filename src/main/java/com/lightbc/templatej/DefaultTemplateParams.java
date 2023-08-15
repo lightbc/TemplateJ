@@ -142,6 +142,7 @@ public class DefaultTemplateParams {
                 "\n" +
                 "import java.util.List;\n" +
                 "\n" +
+                "import org.apache.ibatis.annotations.Param;\n" +
                 "import ${entityPackagePath}.${tableName};\n" +
                 "\n" +
                 "/**\n" +
@@ -164,7 +165,7 @@ public class DefaultTemplateParams {
                 "    * 根据主键删除数据\n" +
                 "    * @param id 主键\n" +
                 "    */\n" +
-                "    int delete(String id);\n" +
+                "    int delete(@Param(\"id\") String id);\n" +
                 "\n" +
                 "    /**\n" +
                 "    * 根据主键更新数据\n" +
@@ -177,7 +178,7 @@ public class DefaultTemplateParams {
                 "     * @param id 主键\n" +
                 "     * @return ${tableName} 数据对象\n" +
                 "     */\n" +
-                "    ${tableName} queryById(String id);\n" +
+                "    ${tableName} queryById(@Param(\"id\") String id);\n" +
                 "\n" +
                 "    /**\n" +
                 "     * 查询多条记录\n" +

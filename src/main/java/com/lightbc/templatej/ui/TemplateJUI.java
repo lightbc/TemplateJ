@@ -2,8 +2,11 @@ package com.lightbc.templatej.ui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.event.EditorMouseEvent;
+import com.intellij.openapi.editor.event.EditorMouseListener;
 import com.intellij.openapi.options.Configurable;
 import com.lightbc.templatej.DefaultTemplateParams;
+import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.config.TemplateJSettings;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
@@ -14,10 +17,12 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.Map;
 
 /**
@@ -200,6 +205,15 @@ public class TemplateJUI implements Configurable {
         this.splitPne.setDividerSize(-1);
         this.splitPne.setRightComponent(editorComponent);
         this.modified = this.editor.getDocument().getText();
+        this.editor.addEditorMouseListener(new EditorMouseListener() {
+            @Override
+            public void mouseReleased(@NotNull EditorMouseEvent event) {
+                MouseEvent e = event.getMouseEvent();
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    EditorPopupMenuActionGroup.setChildren(RightKeyUtil.getPluginConfigActions(editor));
+                }
+            }
+        });
     }
 
     /**

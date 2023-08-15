@@ -1,6 +1,7 @@
 package com.lightbc.templatej.utils;
 
 import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -180,5 +181,25 @@ public class EditorUtil {
      */
     private String processContent(String content) {
         return content.replaceAll("\r", "");
+    }
+
+    /**
+     * 处理文档内容
+     *
+     * @param document        文档对象
+     * @param documentContent 当前文档内容
+     * @param replaceContent  替换内容
+     */
+    public static void processDocument(Document document, String documentContent, String replaceContent) {
+        WriteCommandAction.runWriteCommandAction(ProjectUtil.getProject(), () -> {
+            if (document != null) {
+                document.deleteString(0, documentContent.length());
+            }
+        });
+        WriteCommandAction.runWriteCommandAction(ProjectUtil.getProject(), () -> {
+            if (document != null) {
+                document.insertString(0, replaceContent);
+            }
+        });
     }
 }

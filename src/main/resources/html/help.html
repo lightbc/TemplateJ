@@ -15,7 +15,7 @@
 </head>
 <body style="margin: 10px;">
 <div style="text-align: right;font-size: 20px;font-weight: 800;">
-    <i>v1.2.2-RELEASE</i>
+    <i>v1.2.3-RELEASE</i>
 </div>
 <div>
     <h2>
@@ -301,7 +301,7 @@
                 </p>
                 <img src="/images/template_export.png">
             </li>
-            <li style="margin-top: 5px;margin-bottom: 5px;color: red;">
+            <li style="margin-top: 5px;margin-bottom: 5px;">
                 <p>
                     JdbcType类型映射器
                 </p>
@@ -318,6 +318,52 @@
                     步骤4：点击【是(Y)】按钮，保存内容。
                 </p>
                 <img src="/images/jdbc_type_mapper.png">
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;color: red;">
+                <p>
+                    插件主UI界面编辑器右键功能
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：主UI界面的编辑器区域右键。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：出现下图（1）所示菜单项。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    【TemplateJ Plugin...】->【Add Auto Preview Code(文档首行添加自动预览代码)/Add Ignore Global Code（文档首行添加忽略全局模板配置）】。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    点击菜单项后下图（2）的位置会出现对应要添加的代码。
+                </p>
+                <img src="/images/add_plugin_config_code.png">
+            </li>
+            <li style="margin-top: 5px;margin-bottom: 5px;color: red;">
+                <p>
+                    自定义模板（非数据接口类模板）导出功能
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤1：预览模板需要添加如下图（1）的代码，进行自定义模板预览。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤2：出现下图（2）自动预览区域。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤3：在自定义模板预览区域，进行右键操作，出现如下图（3）所示菜单选择项。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    点击【export】菜单项，会弹出自定义模板导出界面。
+                </p>
+                <img src="/images/export_custom_template.png">
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤4：在模板导出界面，如下图所示（1）的位置输入导出的文件名。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    在下图（2）的位置点击选择需要导出到的文件目录路径信息。
+                </p>
+                <p style="margin-top: 5px;margin-bottom: 5px;">
+                    步骤5：导出信息填写后，点击下图（3）【Ok】按钮，导出预览到的自定义模板内容。
+                </p>
+                <img src="/images/export_custom_template_ui.png">
             </li>
         </ol>
     </div>
@@ -566,7 +612,7 @@
                                     【${table.getColumns().get(index).getJavaType()}】：获取数据字段对应的java类
                                 </p>
                             </li>
-                            <li style="color: red;">
+                            <li>
                                 <p>
                                     【${table.getColumns().get(index).setJdbcType(参数)}】：设置数据字段对应的Jdbc枚举类型
                                 </p>

@@ -5,17 +5,18 @@ import com.intellij.database.psi.DbDataSource;
 import com.intellij.database.psi.DbTable;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.event.EditorMouseEvent;
+import com.intellij.openapi.editor.event.EditorMouseListener;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.components.TextField;
 import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.renderer.CustomJTreeRenderer;
-import com.lightbc.templatej.utils.DataBaseUtil;
-import com.lightbc.templatej.utils.EditorUtil;
-import com.lightbc.templatej.utils.GenerateJUtil;
-import com.lightbc.templatej.utils.ProjectUtil;
+import com.lightbc.templatej.utils.*;
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -24,6 +25,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.List;
@@ -72,11 +74,13 @@ public class PreviewUI {
     private void init() {
         if (autoPreview) {
             show();
+            editorPopupMenuListener(0);
         } else {
             initTree();
             initSearch();
             treeListener();
             refreshEditor(templateFileName, content);
+            editorPopupMenuListener(1);
         }
     }
 
@@ -263,6 +267,25 @@ public class PreviewUI {
         options.setProcessingScope(scope);
         FileInEditorProcessor processor = new FileInEditorProcessor(file, editor, options);
         processor.processCode();
+    }
+
+    private void editorPopupMenuListener(int editorType){
+        this.editorUtil.getEditor().addEditorMouseListener(new EditorMouseListener() {
+            @Override
+            public void mouseReleased(@NotNull EditorMouseEvent event) {
+                MouseEvent e=event.getMouseEvent();
+                if(e.getButton()==MouseEvent.BUTTON3){
+                    switch (editorType){
+                        case 0:
+                            EditorPopupMenuActionGroup.setChildren(RightKeyUtil.getCustomTemplateExportActions(editorUtil.getEditor()));
+                            break;
+                        case 1:
+                            EditorPopupMenuActionGroup.setChildren(null);
+                            break;
+                    }
+                }
+            }
+        });
     }
 
 }
