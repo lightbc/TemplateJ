@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.lightbc.templatej</id>
     <name>TemplateJ</name>
-    <version>1.2.3-RELEASE</version>
+    <version>1.2.4-RELEASE</version>
     <vendor email="lightbc@163.com" url="https://www.cnblogs.com/lightbc/">lightbc</vendor>
 
     <description>
@@ -24,26 +24,30 @@
 
     <change-notes>
         <![CDATA[
-        <h3>v1.2.3-RELEASE</h3>
+        <h3>v1.2.4-RELEASE</h3>
         <ol>
-            <li>Automatic addition of plugin configuration information.</li>
-            <li>Add a custom template (non data interface class template) export function.</li>
-            <li>Default template content optimization.</li>
-            <li>Optimization and repair of known issues.</li>
+            <li>Discard the official PersistenceStateComponent persistence scheme.</li>
+            <li>Fixed the issue of losing configuration content due to untimely saving when adding, deleting, renaming, or resetting template groups/files.</li>
+            <li>Adjust some UI display logic and effects.</li>
+            <li>Add some JavaType default values.</li>
+            <li>Optimize the code structure and make logical judgments.</li>
+            <li>Fix other known issues.</li>
         </ol>
 
-        <h3>v1.2.3-RELEASE</h3>
+        <h3>v1.2.4-RELEASE</h3>
         <ol>
-            <li>新增插件配置信息自动添加功能。</li>
-            <li>新增自定模板（非数据接口类模板）导出功能。</li>
-            <li>默认模板内容优化。</li>
-            <li>已知问题的优化修复。</li>
+            <li>弃用官方PersistentStateComponent持久化方案。</li>
+            <li>修复模板组/模板文件进行增删改、重命名、配置重置出现配置内容保存不及时导致丢失的问题。</li>
+            <li>调整部分UI显示逻辑和效果。</li>
+            <li>新增部分JavaType默认值。</li>
+            <li>优化部分代码结构，逻辑判断。</li>
+            <li>修复其它已知问题。</li>
         </ol>
         ]]>
     </change-notes>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="191.0" until-build="211.*"/>
+    <idea-version since-build="173"/>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
@@ -59,8 +63,6 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <!-- 应用级持久化服务 -->
-        <applicationService serviceImplementation="com.lightbc.templatej.config.TemplateJSettings"/>
         <!-- 配置应用显示主UI界面 -->
         <applicationConfigurable instance="com.lightbc.templatej.ui.TemplateJUI" id="com.lightbc.templatej"
                                  displayName="TemplateJ"/>

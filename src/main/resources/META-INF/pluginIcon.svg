@@ -5,13 +5,13 @@
   <rect fill="none" id="canvas_background" height="402" width="582" y="-1" x="-1"/>
  </g>
  <g stroke="null">
-  <title stroke="null">Layer 1</title>
+  <title>Layer 1</title>
   <path stroke="#000" id="svg_3" d="m240.000003,64.736857c43.86065,-125.829734 215.708116,0 0,161.781087c-215.708116,-161.781087 -43.86065,-287.610821 0,-161.781087z" stroke-opacity="null" stroke-width="3" fill="#5fbf00"/>
   <path transform="rotate(120 330.00000000000006,279.99999999999994) " stroke="#000" id="svg_7" d="m330,224.73686c43.86065,-125.82974 215.70812,0 0,161.78108c-215.70811,-161.78108 -43.86065,-287.61082 0,-161.78108z" stroke-width="3" fill="#5fbf00"/>
   <path transform="rotate(-120 147.15530395507812,278.8561096191406) " stroke="#000" id="svg_8" d="m147.155296,223.592993c43.86065,-125.82974 215.70812,0 0,161.78108c-215.70811,-161.78108 -43.86065,-287.61082 0,-161.78108z" stroke-width="3" fill="#5fbf00"/>
   <path stroke="#000" id="svg_14" d="m239.49999,231.712495c0,237.314393 80.965464,228.006193 80.500156,227.343122" fill-opacity="null" stroke-opacity="null" stroke-width="6" fill="none"/>
-  <line stroke="#000" stroke-linecap="null" stroke-linejoin="null" id="svg_15" y2="230.712506" x2="239.49999" y1="63.712497" x1="241.561719" fill-opacity="null" stroke-opacity="null" stroke-width="3" fill="none"/>
-  <line transform="rotate(120 311.5308532714844,269.21252441406244) " stroke="#000" stroke-linecap="null" stroke-linejoin="null" id="svg_16" y2="352.712506" x2="310.49999" y1="185.712497" x1="312.561719" fill-opacity="null" stroke-opacity="null" stroke-width="3" fill="none"/>
-  <line transform="rotate(-120 168.53085327148438,266.21252441406256) " stroke="#000" stroke-linecap="null" stroke-linejoin="null" id="svg_17" y2="349.712506" x2="167.49999" y1="182.712497" x1="169.561719" fill-opacity="null" stroke-opacity="null" stroke-width="3" fill="none"/>
+  <line stroke="#000"  id="svg_15" y2="230.712506" x2="239.49999" y1="63.712497" x1="241.561719" fill-opacity="null" stroke-opacity="null" stroke-width="3" fill="none"/>
+  <line transform="rotate(120 311.5308532714844,269.21252441406244) " stroke="#000" id="svg_16" y2="352.712506" x2="310.49999" y1="185.712497" x1="312.561719" fill-opacity="null" stroke-opacity="null" stroke-width="3" fill="none"/>
+  <line transform="rotate(-120 168.53085327148438,266.21252441406256) " stroke="#000" id="svg_17" y2="349.712506" x2="167.49999" y1="182.712497" x1="169.561719" fill-opacity="null" stroke-opacity="null" stroke-width="3" fill="none"/>
  </g>
 </svg>

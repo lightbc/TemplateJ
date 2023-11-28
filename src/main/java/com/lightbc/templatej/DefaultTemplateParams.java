@@ -522,9 +522,9 @@ public class DefaultTemplateParams {
     }
 
     /**
-     * 获取默认映射表数据
+     * 获取默认映射表JavaType数据
      *
-     * @return object
+     * @return object[][]
      */
     public static Object[][] getDefaultTableData() {
         return new Object[][]{
@@ -537,10 +537,16 @@ public class DefaultTemplateParams {
                 new Object[]{"datetime", "java.util.Date"},
                 new Object[]{"timestamp", "java.util.Date"},
                 new Object[]{"boolean", "java.lang.Boolean"},
-                new Object[]{"date", "java.util.Date"}
+                new Object[]{"date", "java.util.Date"},
+                new Object[]{"longtext", "java.lang.String"}
         };
     }
 
+    /**
+     * 获取默认映射表JdbcType数据
+     *
+     * @return object[][]
+     */
     public static Object[][] getDefaultJdbcTypeTableData() {
         return new Object[][]{
                 new Object[]{"tinyint", "tinyint"},

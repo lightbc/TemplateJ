@@ -27,7 +27,7 @@ public class EditNameListener {
         this.commonUI = new TemplateJCommonUI(this.templateJUI.getSettings(), this.templateJUI.getTemplateUtil());
     }
 
-    private void init(){
+    private void init() {
         loadCommonUI();
         editName();
     }

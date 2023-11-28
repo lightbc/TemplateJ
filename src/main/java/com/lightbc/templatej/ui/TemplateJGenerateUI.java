@@ -14,9 +14,7 @@ import com.lightbc.templatej.config.TemplateJSettings;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
-import com.lightbc.templatej.utils.ProjectUtil;
-import com.lightbc.templatej.utils.SelectorUtil;
-import com.lightbc.templatej.utils.TemplateUtil;
+import com.lightbc.templatej.utils.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -317,14 +315,26 @@ public class TemplateJGenerateUI {
      * @return string
      */
     private String findModuleSources() {
+        DialogUtil dialog = new DialogUtil();
+        // 获取选择的模块路径，判断路径是否存在
         Module module = getSelectModule();
         String modulePath = ProjectUtil.getModulePath(module);
         File file = new File(modulePath);
-        assert file.exists();
+        if (!file.exists()) {
+            dialog.showTipsDialog(null, Message.MODULE_PATH_LOAD_ERROR.getMsg(), Message.MODULE_PATH_LOAD_ERROR.getTitle());
+            return null;
+        }
+        // 获取项目工程的默认结构信息，获取资源生成的默认目录路径
         VirtualFile moduleFile = VfsUtil.findFileByIoFile(file, true);
         VirtualFile findFile = VfsUtil.findRelativeFile(moduleFile, "src", "main", "java");
-        assert findFile != null && findFile.isDirectory();
-        return findFile.getPath();
+        if (findFile != null && findFile.isDirectory()) {
+            return findFile.getPath();
+        }
+        // 未发现默认项目结构，默认创建该目录结构路径，并返回路径信息
+        FileUtil fileUtil = new FileUtil();
+        String defaultSourcePath = modulePath.concat(File.separator).concat("src").concat(File.separator).concat("main").concat(File.separator).concat("java");
+        fileUtil.createDirs(defaultSourcePath);
+        return defaultSourcePath;
     }
 
     /**

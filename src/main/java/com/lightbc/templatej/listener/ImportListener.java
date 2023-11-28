@@ -29,7 +29,7 @@ public class ImportListener {
         init();
     }
 
-    private void init(){
+    private void init() {
         importTemplate();
     }
 
@@ -65,6 +65,11 @@ public class ImportListener {
                 boolean ge = groupExist(settings.getTemplates(), template);
                 if (ge) {
                     dialog.showTipsDialog(ui.getMainPanel(), Message.IMPORT_GROUP_EXIST.getMsg(), Message.IMPORT_GROUP_EXIST.getTitle());
+                    // 存在同名的模板组，将导入的模板组名称重新命名
+                    String newGroupName = ui.getGroupName().getText().trim();
+                    if (StringUtils.isNotBlank(newGroupName)) {
+                        ui.getGroupName().setText(newGroupName.concat(ConfigInterface.DEFAULT_RENAME_SUFFIX));
+                    }
                     return;
                 }
                 // 新增模板

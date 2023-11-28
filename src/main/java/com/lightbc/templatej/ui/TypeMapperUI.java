@@ -139,10 +139,10 @@ public class TypeMapperUI implements Configurable {
         for (int i = 0; i < vectors.size(); i++) {
             Vector vector = (Vector) vectors.get(i);
             // 数据列类型
-            String columnType = vector.get(0).toString();
-            // 数据列对应的java类型
-            String javaType = vector.get(1).toString();
-            Object[] object = new Object[]{columnType, javaType};
+            String column = vector.get(0).toString();
+            // 数据列对应的java/jdbc类型
+            String type = vector.get(1).toString();
+            Object[] object = new Object[]{column, type};
             objects[i] = object;
         }
         return objects;
@@ -208,11 +208,13 @@ public class TypeMapperUI implements Configurable {
         // 当前模板组，数据类型映射，最新配置数据持久化
         Object[][] objects = getTableData();
         this.templateJUI.getTemplateUtil().getTemplate(this.groupName).setTypeMapper(objects);
+        this.templateJUI.getSettings().save();
     }
 
     private void jdbcTypeApply() {
         // 当前模板组，数据类型映射，最新配置数据持久化
         Object[][] objects = getTableData();
         this.templateJUI.getTemplateUtil().getTemplate(this.groupName).setJdbcTypeMapper(objects);
+        this.templateJUI.getSettings().save();
     }
 }

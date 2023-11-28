@@ -40,6 +40,7 @@ public enum Message {
     ERROR_URL("网址打开错误", "尝试了【%s】次后，我选择了摆烂..."),
     FILENAME_EMPTY("警告", "文件名称为空！"),
     EXPORT_PATH_EMPTY("警告", "保存路径为空！"),
+    MODULE_PATH_LOAD_ERROR("警告", "选择模块目录未加载到！"),
 
     // 配置标题
     ADD_TEMPLATE("新增模板"),

@@ -349,7 +349,31 @@ public class FileUtil {
                 re = cacheFile.getAbsolutePath();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        } finally {
+            return re;
+        }
+    }
+
+    /**
+     * 获取插件配置文件路径
+     *
+     * @return string 配置文件路径
+     */
+    public String getPluginConfigFilePath() {
+        String re = null;
+        try {
+            String pluginPath = PluginUtil.getPluginSavePath();
+            assert pluginPath != null;
+            File pluginFile = new File(pluginPath);
+            if (pluginFile.exists() && pluginFile.isDirectory()) {
+                String configDir = pluginPath.concat(File.separator).concat(ConfigInterface.PLUGIN_CONFIG_DIR);
+                File cacheFile = new File(configDir);
+                if (!cacheFile.exists()) {
+                    cacheFile.mkdir();
+                }
+                re = cacheFile.getAbsolutePath().concat(File.separator).concat(ConfigInterface.PLUGIN_CONFIG_FILENAME);
+            }
+        } catch (Exception ignored) {
         } finally {
             return re;
         }

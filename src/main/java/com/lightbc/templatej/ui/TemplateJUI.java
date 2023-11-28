@@ -220,6 +220,8 @@ public class TemplateJUI implements Configurable {
      * 刷新主UI界面
      */
     public void refresh() {
+        // 保存配置数据
+        this.settings.save();
         // 初始化下拉选择器
         SelectorUtil.loadGroupSelector(this.commonUI.getTemplateGroupSelector(), this.templateUtil.getGroupNames(), this.settings.getSelectGroup());
         // 加载编辑区域编辑内容
@@ -276,7 +278,7 @@ public class TemplateJUI implements Configurable {
                 this.settings.setSelectGroup(DefaultTemplateParams.DEFAULT_NAME);
                 // 重置默认选择模板文件
                 this.settings.setSelectGroupFile(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
-                this.templateUtil = new TemplateUtil(DefaultTemplateParams.getDefaultTemplates());
+                this.templateUtil = new TemplateUtil(this.settings.getTemplates());
                 refresh();
             }
         });

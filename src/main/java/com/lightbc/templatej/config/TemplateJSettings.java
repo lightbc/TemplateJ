@@ -1,15 +1,13 @@
 package com.lightbc.templatej.config;
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.entity.Template;
+import com.lightbc.templatej.enums.Message;
+import com.lightbc.templatej.utils.DialogUtil;
+import com.lightbc.templatej.utils.FileUtil;
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -17,14 +15,15 @@ import java.util.*;
  * 插件程序的数据持久化组件
  */
 @Data
-@State(name = "TemplateJSettings", storages = {@Storage("TemplateJ-Settings.xml")})
-public class TemplateJSettings implements PersistentStateComponent<TemplateJSettings> {
+public class TemplateJSettings {
     private List<Template> templates;
     private String selectGroup;
     private String selectGroupFile;
+    private static TemplateJSettings settings;
+
 
     public TemplateJSettings() {
-        init();
+        initTemplate();
     }
 
     /**
@@ -33,15 +32,13 @@ public class TemplateJSettings implements PersistentStateComponent<TemplateJSett
      * @return TemplateJSettings
      */
     public static TemplateJSettings getInstance() {
-        return ServiceManager.getService(TemplateJSettings.class);
+        if (settings == null) {
+            TemplateJSettings tjs = load();
+            settings = tjs == null ? new TemplateJSettings() : tjs;
+        }
+        return settings;
     }
 
-    /**
-     * 初始化
-     */
-    private void init() {
-        initTemplate();
-    }
 
     /**
      * 初始化模板
@@ -50,15 +47,32 @@ public class TemplateJSettings implements PersistentStateComponent<TemplateJSett
         this.templates = DefaultTemplateParams.getDefaultTemplates();
     }
 
-    @Nullable
-    @Override
-    public TemplateJSettings getState() {
-        return this;
+    /**
+     * 保存配置数据
+     */
+    public synchronized void save() {
+        FileUtil fileUtil = new FileUtil();
+        String cfgPath = fileUtil.getPluginConfigFilePath();
+        String cfg = JSONObject.toJSONString(this);
+        fileUtil.write(cfgPath, cfg);
     }
 
-    @Override
-    public void loadState(@NotNull TemplateJSettings settings) {
-        XmlSerializerUtil.copyBean(settings, this);
+    /**
+     * 加载配置数据
+     *
+     * @return 配置数据对象
+     */
+    private synchronized static TemplateJSettings load() {
+        FileUtil fileUtil = new FileUtil();
+        String cfgPath = fileUtil.getPluginConfigFilePath();
+        if (StringUtils.isBlank(cfgPath)) {
+            return null;
+        }
+        String cfg = fileUtil.read(cfgPath);
+        if (StringUtils.isBlank(cfg)) {
+            return null;
+        }
+        return JSONObject.parseObject(cfg, TemplateJSettings.class);
     }
 
 }

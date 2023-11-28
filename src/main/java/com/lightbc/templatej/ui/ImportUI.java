@@ -52,7 +52,6 @@ public class ImportUI {
         loadComponent();
         importPathSelectListener();
         importGlobalConfigListener();
-        groupNameChangeListener();
     }
 
     /**
@@ -145,30 +144,6 @@ public class ImportUI {
             if (StringUtils.isNotBlank(selectImportPath)) {
                 this.browseButton.setText(selectImportPath);
                 showComponent();
-            }
-        });
-    }
-
-    /**
-     * 模板组名称修改事件监听
-     */
-    private void groupNameChangeListener() {
-        this.groupName.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                String gn = groupName.getText();
-                String globalPath = globalConfigButton.getText();
-                if (StringUtils.isNotBlank(globalPath)) {
-                    if (isFile(globalPath)) {
-                        File file = new File(globalPath);
-                        String name = file.getName();
-                        String fileName = name.substring(0, name.indexOf(ConfigInterface.PLUGIN_DEFAULT_EXT));
-                        // 选择的全局配置文件和命名的模板组名称不一致，置空显示内容
-                        if (!gn.equals(fileName)) {
-                            globalConfigButton.setText("");
-                        }
-                    }
-                }
             }
         });
     }
