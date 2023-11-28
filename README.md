@@ -1,7 +1,7 @@
 # TemplateJ
 
 ## 版本支持
-【IntelliJ IDEA Ultimate 173+】
+【IntelliJ IDEA Ultimate 191+】
 
 ## 插件描述
 * TemplateJ是一个模板生成解决方案。
