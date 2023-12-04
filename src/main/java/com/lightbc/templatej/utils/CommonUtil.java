@@ -42,7 +42,7 @@ public class CommonUtil {
     public static String getUUIDFileName(String ext) {
         String uuid = getUUID();
         if (StringUtils.isNotBlank(ext)) {
-            uuid = uuid.concat(".").concat(ext);
+            uuid = uuid.concat(ext);
         }
         return uuid;
     }

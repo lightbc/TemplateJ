@@ -1,5 +1,7 @@
 package com.lightbc.templatej.listener;
 
+import com.alibaba.fastjson.JSONArray;
+import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.config.TemplateJSettings;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
@@ -144,6 +146,8 @@ public class ImportListener {
                 // 设置模板文件内容
                 template.setFileContentMap(contentMap);
             }
+            // 导入类型映射器默认数据
+            getTypeMapper(ui, template);
         }
         return template;
     }
@@ -217,6 +221,59 @@ public class ImportListener {
             }
         }
         return map;
+    }
+
+    /**
+     * 导入类型映射器配置数据内容
+     *
+     * @param ui       导入UI界面
+     * @param template 导入的模板对象
+     */
+    private void getTypeMapper(ImportUI ui, Template template) {
+        // 获取父级文件目录路径
+        String parentDir = ui.getParentDir();
+        if (StringUtils.isNotBlank(parentDir)) {
+            // 判断JavaType复选框是否选择
+            if (ui.getJavaType().isSelected()) {
+                Object[][] tm = null;
+                try {
+                    // 读取JavaType类型映射配置数据
+                    String filePath = parentDir.concat(File.separator).concat(ui.getJavaType().getText()).concat(ConfigInterface.EXT_TXT);
+                    String content = readContent(filePath);
+                    if (StringUtils.isNotBlank(content)) {
+                        tm = JSONArray.parseObject(content, Object[][].class);
+                    }
+                } catch (Exception ignore) {
+                } finally {
+                    // 读取的JavaType类型配置数据为空，重置为默认数据
+                    if (tm != null) {
+                        template.setTypeMapper(tm);
+                    } else {
+                        template.setTypeMapper(DefaultTemplateParams.getDefaultTableData());
+                    }
+                }
+            }
+            // 判断JdbcType复选框是否选择
+            if (ui.getJdbcType().isSelected()) {
+                Object[][] tm = null;
+                try {
+                    // 读取JdbcType类型映射配置数据
+                    String filePath = parentDir.concat(File.separator).concat(ui.getJdbcType().getText()).concat(ConfigInterface.EXT_TXT);
+                    String content = readContent(filePath);
+                    if (StringUtils.isNotBlank(content)) {
+                        tm = JSONArray.parseObject(content, Object[][].class);
+                    }
+                } catch (Exception ignore) {
+                } finally {
+                    // 读取的JdbcType类型配置数据为空，重置为默认数据
+                    if (tm != null) {
+                        template.setJdbcTypeMapper(tm);
+                    } else {
+                        template.setJdbcTypeMapper(DefaultTemplateParams.getDefaultJdbcTypeTableData());
+                    }
+                }
+            }
+        }
     }
 
 }

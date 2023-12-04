@@ -13,8 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +31,8 @@ public class ImportUI {
     private JPanel templateFilePanel;
     private JPanel importTemplateGroupPanel;
     private JPanel globalConfigPanel;
+    private JCheckBox javaType;
+    private JCheckBox jdbcType;
     // 导入路径选择组件
     private TextFieldWithBrowseButton browseButton;
     private JPanel importFileContainer;
@@ -77,7 +77,7 @@ public class ImportUI {
         if (fileList != null && fileList.size() > 0) {
             this.importTemplateGroupPanel.setVisible(true);
         } else {
-            // 无文件模板项是，组件置空
+            // 无文件模板项时，组件置空
             if (this.importFileContainer != null) {
                 this.importFileContainer.removeAll();
                 this.importFileContainer.revalidate();
@@ -86,6 +86,8 @@ public class ImportUI {
             DialogUtil dialogUtil = new DialogUtil();
             dialogUtil.showTipsDialog(this.mainPanel, Message.IMPORT_TEMPLATE_FILE_NO_EXIST.getMsg(), Message.IMPORT_TEMPLATE_FILE_NO_EXIST.getTitle());
         }
+        // 类型映射器复选框默认显示状态
+        showTypeMapper(importPath);
     }
 
     /**
@@ -196,7 +198,7 @@ public class ImportUI {
                     return true;
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignore) {
         }
         return false;
     }
@@ -330,4 +332,27 @@ public class ImportUI {
         }
     }
 
+    /**
+     * 类型映射器复选框默认显示
+     *
+     * @param importPath 模板导入路径
+     */
+    private void showTypeMapper(String importPath) {
+        if (StringUtils.isNotBlank(importPath)) {
+            String javaTypeFilePath = importPath.concat(File.separator).concat(this.javaType.getText()).concat(ConfigInterface.EXT_TXT);
+            String jdbcTypeFilePath = importPath.concat(File.separator).concat(this.jdbcType.getText()).concat(ConfigInterface.EXT_TXT);
+            File javaTypeFile = new File(javaTypeFilePath);
+            File jdbcTypeFile = new File(jdbcTypeFilePath);
+            boolean isJavaTypeSelected = false;
+            boolean isJdbcTypeSelected = false;
+            if (javaTypeFile.exists() && javaTypeFile.isFile()) {
+                isJavaTypeSelected = true;
+            }
+            if (jdbcTypeFile.exists() && jdbcTypeFile.isFile()) {
+                isJdbcTypeSelected = true;
+            }
+            this.getJavaType().setSelected(isJavaTypeSelected);
+            this.getJdbcType().setSelected(isJdbcTypeSelected);
+        }
+    }
 }

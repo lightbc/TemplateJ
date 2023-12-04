@@ -15,7 +15,7 @@ import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.entity.Table;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
-import com.lightbc.templatej.ui.TemplateJGenerateUI;
+import com.lightbc.templatej.ui.TemplateJGenerateCommonUI;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -253,18 +253,17 @@ public class GenerateJUtil {
      * @param groupName    模板组名称
      * @param table        数据表
      * @param fileName     模板文件名称
-     * @param generateUI   生成UI界面对象
+     * @param rootPath     项目根路径
+     * @param packagePath  包路径
      * @param generatePath 生成路径
      * @return Map<String, Object>
      */
-    public Map<String, Object> getDataModel(String groupName, DbTable table, String fileName, TemplateJGenerateUI generateUI, String generatePath) {
+    public Map<String, Object> getDataModel(String groupName, DbTable table, String fileName, String rootPath, String packagePath, String generatePath) {
         Table t = getTable(groupName, table);
-        String root = ProjectUtil.getModulePath(generateUI.getSelectModule());
-        String packageName = generateUI.getPackagePath().getText();
         Generate generate = new Generate();
         fileName = t.getName().concat(fileName.substring(fileName.indexOf(".")));
         generate.setFileName(fileName);
-        return getCommonDataModel(root, packageName, generatePath, generate, t);
+        return getCommonDataModel(rootPath, packagePath, generatePath, generate, t);
     }
 
     /**

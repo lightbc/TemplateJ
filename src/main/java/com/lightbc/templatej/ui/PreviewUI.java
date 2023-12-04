@@ -57,6 +57,8 @@ public class PreviewUI {
     // 选择的节点
     private DefaultMutableTreeNode selectTreeNode;
     private boolean autoPreview;
+    // 默认查询数据库
+    private DefaultMutableTreeNode schemaTreeNode;
 
     public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil, boolean autoPreview) {
         this.editorUtil = new EditorUtil();
@@ -74,13 +76,11 @@ public class PreviewUI {
     private void init() {
         if (autoPreview) {
             show();
-            editorPopupMenuListener(0);
         } else {
             initTree();
             initSearch();
             treeListener();
             refreshEditor(templateFileName, content);
-            editorPopupMenuListener(1);
         }
     }
 
@@ -96,14 +96,16 @@ public class PreviewUI {
         tableNameSearch.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                super.keyReleased(e);
-                String kw = tableNameSearch.getText();
-                DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) tree.getModel().getRoot();
+                // 查询选择的数据库下的指定数据表
                 DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-                if (selectNode != null && selectNode.getChildCount() > 0) {
-                    treeNode = selectNode;
+                if (selectNode.getLevel() == CustomJTreeRenderer.SECOND_LEVEL) {
+                    schemaTreeNode = selectNode;
                 }
-                searchTreeNode(kw, treeNode);
+                if (schemaTreeNode != null) {
+                    // 查询完整关键字
+                    String kw = tableNameSearch.getText();
+                    searchTreeNode(kw, schemaTreeNode);
+                }
             }
         });
     }
@@ -111,23 +113,20 @@ public class PreviewUI {
     /**
      * 查询节点树
      *
-     * @param kw       查询关键词
-     * @param treeNode 树结构根节点
+     * @param kw         查询关键词
+     * @param schemaNode 数据库节点
      */
-    private void searchTreeNode(String kw, DefaultMutableTreeNode treeNode) {
-        if (treeNode != null && treeNode.getChildCount() >= 0) {
-            Enumeration childrens = treeNode.children();
+    private void searchTreeNode(String kw, DefaultMutableTreeNode schemaNode) {
+        if (schemaNode != null) {
+            // 遍历选择数据库节点下的所有数据表节点
+            Enumeration childrens = schemaNode.children();
             while (childrens.hasMoreElements()) {
                 DefaultMutableTreeNode children = (DefaultMutableTreeNode) childrens.nextElement();
+                // 对比数据表完整名称和查询关键字是否相同，相同则返回
                 if (children.toString().equals(kw)) {
                     tree.setSelectionPath(new TreePath(children));
-                    DefaultMutableTreeNode d = (DefaultMutableTreeNode) children.getParent();
-                    DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
-                    tree.expandRow(root.getIndex(d));
                     return;
                 }
-                // 迭代查询
-                searchTreeNode(kw, children);
             }
         }
     }
@@ -196,24 +195,23 @@ public class PreviewUI {
         if (selectTreeNode == null) {
             return;
         }
-        String selectTableName = selectTreeNode.toString();
         // 根据当前选择的数据表名，获取对应的数源信息
         Map<String, DbDataSource> dataSourceMap = dataBaseUtil.getDataSourceMap();
-        // 获取默认格式的树形结构的顶级节点名称
-        String name = null;
-        String schema = null;
-        if (selectTreeNode.getChildCount() == 0) {
-            name = selectTreeNode.getParent().getParent().toString();
-            // 数据库名称
-            schema = selectTreeNode.getParent().toString();
-        }
         // 当前生成的预览内容
         String curContent = "";
         try {
-            // 判断当前选择节点的指定父级节点是否为数据库节点
-            if (name != null && schema != null && !"".equals(name.trim()) && !"DataBase".equals(name)) {
+            // 获取当前选择节点的级别
+            int level = selectTreeNode.getLevel();
+            // 判断选择的节点为数据库数据表节点，则进行预览内容生成
+            if (level == CustomJTreeRenderer.THIRD_LEVEL) {
+                // 数据源名称
+                String dataSourceName = selectTreeNode.getParent().getParent().toString();
+                // 数据库名称
+                String schema = selectTreeNode.getParent().toString();
+                // 选择的数据表名称
+                String selectTableName = selectTreeNode.toString();
                 // 当前选择的数据表
-                DbTable dbTable = dataBaseUtil.getTable(dataSourceMap.get(name), schema, selectTableName);
+                DbTable dbTable = dataBaseUtil.getTable(dataSourceMap.get(dataSourceName), schema, selectTableName);
                 GenerateJUtil generateJUtil = new GenerateJUtil();
                 // 获取数据模型
                 Map<String, Object> dataModel = generateJUtil.getPreviewDataModel(groupName, dbTable);
@@ -245,6 +243,7 @@ public class PreviewUI {
             splitPane.setDividerSize(1);
         }
         editorUtil.highLighter(fileName, ProjectUtil.getProject());
+        editorPopupMenuListener();
     }
 
     /**
@@ -269,19 +268,21 @@ public class PreviewUI {
         processor.processCode();
     }
 
-    private void editorPopupMenuListener(int editorType){
+    /**
+     * 编辑器右键属性菜单监听
+     */
+    private void editorPopupMenuListener() {
         this.editorUtil.getEditor().addEditorMouseListener(new EditorMouseListener() {
             @Override
             public void mouseReleased(@NotNull EditorMouseEvent event) {
-                MouseEvent e=event.getMouseEvent();
-                if(e.getButton()==MouseEvent.BUTTON3){
-                    switch (editorType){
-                        case 0:
-                            EditorPopupMenuActionGroup.setChildren(RightKeyUtil.getCustomTemplateExportActions(editorUtil.getEditor()));
-                            break;
-                        case 1:
-                            EditorPopupMenuActionGroup.setChildren(null);
-                            break;
+                MouseEvent e = event.getMouseEvent();
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    if (autoPreview) {
+                        // 非数据接口，属性菜单显示导出功能
+                        EditorPopupMenuActionGroup.setChildren(RightKeyUtil.getCustomTemplateExportActions(editorUtil.getEditor()));
+                    } else {
+                        // 数据表接口，属性菜单置为无效状态
+                        EditorPopupMenuActionGroup.setChildren(null);
                     }
                 }
             }

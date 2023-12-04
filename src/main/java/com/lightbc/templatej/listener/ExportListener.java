@@ -15,6 +15,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 模板导出按钮监听
@@ -29,7 +30,7 @@ public class ExportListener {
         init();
     }
 
-    private void init(){
+    private void init() {
         exportTemplate();
     }
 
@@ -37,9 +38,7 @@ public class ExportListener {
      * 模板导出功能
      */
     public void exportTemplate() {
-        this.templateJUI.getExportButton().addActionListener((e) -> {
-            showExport();
-        });
+        this.templateJUI.getExportButton().addActionListener((e) -> showExport());
     }
 
     /**
@@ -69,7 +68,7 @@ public class ExportListener {
                 // 选择的导出位置
                 String selectExportPath = ui.getBrowseButton().getText();
                 // 选择的模板组名称
-                String groupName = ui.getTemplateGroup().getSelectedItem().toString();
+                String groupName = Objects.requireNonNull(ui.getTemplateGroup().getSelectedItem()).toString();
                 // 导出的文件夹目录
                 String dirPath = selectExportPath.concat(File.separator).concat(groupName);
                 fileUtil.createDirs(dirPath);
@@ -83,9 +82,20 @@ public class ExportListener {
                         fileUtil.write(filePath, getTemplateContent(groupName, templateFile));
                     }
                 }
+                Template template = this.templateUtil.getTemplate(groupName);
+                // 导出选择的JavaType/JdbcType类型映射配置数据
+                if (ui.getJavaType().isSelected()) {
+                    String filePath = dirPath.concat(File.separator).concat(ui.getJavaType().getText()).concat(ConfigInterface.EXT_TXT);
+                    String javaType = this.templateUtil.getTypeMapper(template, 0);
+                    fileUtil.write(filePath, javaType);
+                }
+                if (ui.getJdbcType().isSelected()) {
+                    String filePath = dirPath.concat(File.separator).concat(ui.getJdbcType().getText()).concat(ConfigInterface.EXT_TXT);
+                    String jdbcType = this.templateUtil.getTypeMapper(template, 1);
+                    fileUtil.write(filePath, jdbcType);
+                }
                 // 导出全局配置文件
                 if (ui.getGlobalBox() != null && ui.getGlobalBox().isSelected()) {
-                    Template template = this.templateUtil.getTemplate(groupName);
                     String globalConfig = this.templateUtil.getGlobalConfig(template);
                     if (StringUtils.isNotBlank(globalConfig)) {
                         String filePath = dirPath.concat(File.separator).concat(ui.getGlobalBox().getText());

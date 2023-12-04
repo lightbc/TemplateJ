@@ -18,6 +18,14 @@ public class CustomJTreeRenderer extends DefaultTreeCellRenderer {
     @Getter
     @Setter
     private String provider;
+    // 根节点
+    public final static int ROOT_LEVEL = 0;
+    // 数据源节点
+    public final static int FIRST_LEVEL = 1;
+    // 数据库节点
+    public final static int SECOND_LEVEL = 2;
+    // 数据库数据表节点
+    public final static int THIRD_LEVEL = 3;
 
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
@@ -37,19 +45,19 @@ public class CustomJTreeRenderer extends DefaultTreeCellRenderer {
         JLabel label = new JLabel();
         if (nodeName != null && !"".equals(nodeName.trim()) && level > -1) {
             // 判断节点是否为数据库节点
-            if ("DataBase".equals(nodeName) && level == 0) {
+            if ("DataBase".equals(nodeName) && level == ROOT_LEVEL) {
                 label.setIcon(DatabaseIcons.Dbms);
             }
             // 判断节点是否为数据服务提供者节点
-            if (level == 1) {
+            if (level == FIRST_LEVEL) {
                 label.setIcon(getProviderIcon());
             }
             // 判断节点是否为数据库节点
-            if (level == 2) {
+            if (level == SECOND_LEVEL) {
                 label.setIcon(DatabaseIcons.Schema);
             }
             // 判断节点是否是数据库表节点
-            if (level == 3) {
+            if (level == THIRD_LEVEL) {
                 label.setIcon(AllIcons.Nodes.DataTables);
             }
             label.setText(nodeName);

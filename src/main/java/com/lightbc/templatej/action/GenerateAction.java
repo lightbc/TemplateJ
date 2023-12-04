@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.enums.Message;
+import com.lightbc.templatej.ui.TemplateJGenerateCommonUI;
 import com.lightbc.templatej.ui.TemplateJGenerateUI;
 import com.lightbc.templatej.utils.*;
 import lombok.Setter;
@@ -25,8 +26,6 @@ public class GenerateAction extends AnAction {
     // 选取的生成表
     @Setter
     private List<DbTable> tableList;
-    // 生成的保存路径
-    private String generatePath;
     // 生成器UI界面对象
     private TemplateJGenerateUI generateUI;
 
@@ -77,8 +76,9 @@ public class GenerateAction extends AnAction {
      * @param groupName     模板组名称
      * @param savePath      保存目录
      * @param checkFileList 选中的模板文件
+     * @param commonUI      生成器通用UI对象
      */
-    private void generate(String groupName, String savePath, List<String> checkFileList) {
+    private void generate(String groupName, String savePath, List<String> checkFileList, TemplateJGenerateCommonUI commonUI) {
         // 选择生成的表对象若为空 ，退出执行（基本不会存在为空情况）
         if (this.tableList == null) {
             return;
@@ -94,10 +94,12 @@ public class GenerateAction extends AnAction {
                 // 模板文件名
                 GenerateJUtil generateJUtil = new GenerateJUtil();
                 // 判断是否禁用报错提示
-                boolean closeTips = this.generateUI.getGenerateTips().isSelected();
+                boolean closeTips = commonUI.getGenerateTips().isSelected();
                 try {
+                    String rootPath = ProjectUtil.getModulePath(this.generateUI.getSelectModule());
+                    String packageName = commonUI.getPackagePath().getText();
                     // 模板数据模型对象
-                    Map<String, Object> dataModel = generateJUtil.getDataModel(groupName, table, fileName, this.generateUI, this.generatePath);
+                    Map<String, Object> dataModel = generateJUtil.getDataModel(groupName, table, fileName, rootPath, packageName, commonUI.getGeneratePath());
                     // 自定义的保存文件名
                     String saveFileName = ((Generate) dataModel.get("generate")).getFileName();
                     // 自定义保存路径部分
@@ -105,7 +107,7 @@ public class GenerateAction extends AnAction {
                     // 拼接自定义路径部分，获取完整路径
                     savePath = generateJUtil.getCompleteSavePath(savePath, customPath);
                     if ("".equals(savePath.trim())) {
-                        savePath = this.generateUI.getGenerateRoot();
+                        savePath = commonUI.getGenerateRoot();
                     }
                     // 生成模板
                     generateJUtil.generate(groupName, fileName, saveFileName, savePath, dataModel, closeTips);
@@ -127,18 +129,26 @@ public class GenerateAction extends AnAction {
     private void dialogActionListener(DialogUtil dialog) {
         JButton ok = dialog.getOkBtn();
         ok.addActionListener(e -> {
-            this.generatePath = this.generateUI.getGeneratePath();
-            // 获取选中的模板
-            List<String> checkList = getCheckItems(this.generateUI.getCheckboxContainerPanel());
-            // 模板组名称
-            String groupName = Objects.requireNonNull(this.generateUI.getGroupBox().getSelectedItem()).toString();
-            // 验证是否有模板被选择
-            if (!validate(checkList)) {
-                dialog.showTipsDialog(this.generateUI.getMainPanel(), Message.NO_CHOICE_GENERATE_TEMPLATE.getMsg(), Message.NO_CHOICE_GENERATE_TEMPLATE.getTitle());
-                return;
+            // 兼容项目为多模块情况
+            Map<String, TemplateJGenerateCommonUI> commonUIMaps = this.generateUI.getCommonUIMaps();
+            if (commonUIMaps != null && commonUIMaps.size() > 0) {
+                for (String key : commonUIMaps.keySet()) {
+                    TemplateJGenerateCommonUI ui = commonUIMaps.get(key);
+                    // 获取选中的模板
+                    List<String> checkList = getCheckItems(ui.getCheckboxContainerPanel());
+                    // 模板组名称
+                    String groupName = Objects.requireNonNull(ui.getGroupBox().getSelectedItem()).toString();
+                    // 验证是否有模板被选择
+                    if (!validate(checkList)) {
+                        dialog.showTipsDialog(this.generateUI.getMainPanel(), Message.NO_CHOICE_GENERATE_TEMPLATE.getMsg(), Message.NO_CHOICE_GENERATE_TEMPLATE.getTitle());
+                        return;
+                    }
+                    generate(groupName, ui.getGeneratePath(), checkList, ui);
+                    dialog.dispose();
+                }
+            } else {
+                dialog.showTipsDialog(this.generateUI.getMainPanel(), Message.NO_CONFIG_MODULE.getMsg(), Message.NO_CONFIG_MODULE.getTitle());
             }
-            generate(groupName, this.generatePath, checkList);
-            dialog.dispose();
         });
     }
 

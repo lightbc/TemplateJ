@@ -6,6 +6,7 @@ package com.lightbc.templatej.enums;
 public enum Message {
     // 配置标题和消息内容
     NO_CHOICE_GENERATE_TEMPLATE("未选择", "请选择需要生成的模板！"),
+    NO_CONFIG_MODULE("警告", "未获取到模块配置信息！"),
     ADD_CHOICE_FAIL("选择失败", "新增模板组/模板文件名称不能为空！"),
     ADD_EXIST("文件新增", "新增文件已存在！请修改文件名后再试！"),
     DEL_DEFAULT_TEMPLATE_FAIL("删除失败", "无法对默认的模板组/模板文件进行删除操作！！！"),

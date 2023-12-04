@@ -29,6 +29,8 @@ public class ExportUI {
     private JButton ok;
     private JPanel exportFilePanel;
     private JPanel globalConfigPanel;
+    private JCheckBox javaType;
+    private JCheckBox jdbcType;
     private TemplateJUI templateJUI;
     // 模板导出位置选择组件
     private TextFieldWithBrowseButton browseButton;
@@ -55,7 +57,7 @@ public class ExportUI {
      */
     private void loadTemplateGroup() {
         List<String> groupList = this.templateJUI.getTemplateUtil().getGroupNames();
-        SelectorUtil.loadGroupSelector(this.templateGroup,groupList,null);
+        SelectorUtil.loadGroupSelector(this.templateGroup, groupList, null);
     }
 
     /**

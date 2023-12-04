@@ -565,7 +565,7 @@ public class DefaultTemplateParams {
                 new Object[]{"date", "date"},
                 new Object[]{"time", "time"},
                 new Object[]{"timestamp", "timestamp"},
-                new Object[]{"datetime", "datetime"},
+                new Object[]{"datetime", "timestamp"},
                 new Object[]{"blob", "blob"},
                 new Object[]{"tinytext", "longvarchar"},
                 new Object[]{"text", "longvarchar"},
