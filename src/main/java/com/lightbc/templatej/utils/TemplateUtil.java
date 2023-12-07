@@ -468,20 +468,4 @@ public class TemplateUtil {
         return globalConfig.concat(templateCode).trim();
     }
 
-    /**
-     * 获取指定映射器文本内容
-     *
-     * @param type 映射器类型，0-JavaType映射器，1-JdbcType映射器
-     * @return 映射器文本容
-     */
-    public String getTypeMapper(Template template, int type) {
-        Object[][] jt = new Object[][]{};
-        if (type == 0) {
-            jt = template.getTypeMapper();
-        }
-        if (type == 1) {
-            jt = template.getJdbcTypeMapper();
-        }
-        return JSONArray.toJSONString(jt);
-    }
 }

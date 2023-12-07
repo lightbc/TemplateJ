@@ -16,7 +16,7 @@
         </constraints>
         <properties>
           <dividerLocation value="300"/>
-          <dividerSize value="1"/>
+          <dividerSize value="2"/>
         </properties>
         <border type="none"/>
         <children>

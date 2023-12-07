@@ -31,11 +31,9 @@ public interface ConfigInterface {
     // 默认新名称后缀
     String DEFAULT_RENAME_SUFFIX = "-副本";
     // 预览功能，表搜索框占位符
-    String TABLE_NAME_SEARCH_PLACEHOLDER = "请输入数据表全名";
+    String TABLE_NAME_SEARCH_PLACEHOLDER = "按回车查询";
     // 插件缓存数据目录
     String PLUGIN_CACHE_DIR = "cache";
-    // 插件配置文件存放目录
-    String PLUGIN_CONFIG_DIR = "config";
     // 插件配置文件名称
     String PLUGIN_CONFIG_FILENAME = "TemplateJ.cfg";
     // 模板导入
@@ -44,6 +42,4 @@ public interface ConfigInterface {
     String TEMPLATE_EXPORT = "模板导出";
     // 插件默认文件拓展名
     String PLUGIN_DEFAULT_EXT = ".tj";
-    // txt扩展名
-    String EXT_TXT = ".txt";
 }

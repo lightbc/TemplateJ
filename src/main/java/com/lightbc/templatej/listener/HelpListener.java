@@ -177,7 +177,7 @@ public class HelpListener {
         JPanel panel = new JPanel();
         panel.add(editorPane, BorderLayout.CENTER);
         JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setPreferredSize(new Dimension(1000, 500));
+        scrollPane.setPreferredSize(new Dimension(1200, 700));
         JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
         // 解决初始化时滚动条不在顶部的问题
         SwingUtilities.invokeLater(() -> scrollBar.setValue(0));

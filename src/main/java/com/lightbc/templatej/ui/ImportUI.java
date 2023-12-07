@@ -339,20 +339,22 @@ public class ImportUI {
      */
     private void showTypeMapper(String importPath) {
         if (StringUtils.isNotBlank(importPath)) {
-            String javaTypeFilePath = importPath.concat(File.separator).concat(this.javaType.getText()).concat(ConfigInterface.EXT_TXT);
-            String jdbcTypeFilePath = importPath.concat(File.separator).concat(this.jdbcType.getText()).concat(ConfigInterface.EXT_TXT);
+            String javaTypeFilePath = importPath.concat(File.separator).concat(this.javaType.getText()).concat(ConfigInterface.PLUGIN_DEFAULT_EXT);
+            String jdbcTypeFilePath = importPath.concat(File.separator).concat(this.jdbcType.getText()).concat(ConfigInterface.PLUGIN_DEFAULT_EXT);
             File javaTypeFile = new File(javaTypeFilePath);
             File jdbcTypeFile = new File(jdbcTypeFilePath);
-            boolean isJavaTypeSelected = false;
-            boolean isJdbcTypeSelected = false;
+            // JavaType文件存在，复选框可以编辑，否则不可编辑，导入使用默认值
             if (javaTypeFile.exists() && javaTypeFile.isFile()) {
-                isJavaTypeSelected = true;
+                this.getJavaType().setSelected(true);
+            } else {
+                this.getJavaType().setEnabled(false);
             }
+            // JdbcType文件存在，复选框可以编辑，否则不可编辑，导入使用默认值
             if (jdbcTypeFile.exists() && jdbcTypeFile.isFile()) {
-                isJdbcTypeSelected = true;
+                this.getJdbcType().setSelected(true);
+            } else {
+                this.jdbcType.setEnabled(false);
             }
-            this.getJavaType().setSelected(isJavaTypeSelected);
-            this.getJdbcType().setSelected(isJdbcTypeSelected);
         }
     }
 }

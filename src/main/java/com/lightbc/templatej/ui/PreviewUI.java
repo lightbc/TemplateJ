@@ -19,6 +19,7 @@ import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -59,6 +60,8 @@ public class PreviewUI {
     private boolean autoPreview;
     // 默认查询数据库
     private DefaultMutableTreeNode schemaTreeNode;
+    // 默认需要打开的数据库搜索节点
+    private TreePath expandSchemaPath;
 
     public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil, boolean autoPreview) {
         this.editorUtil = new EditorUtil();
@@ -96,15 +99,13 @@ public class PreviewUI {
         tableNameSearch.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                // 查询选择的数据库下的指定数据表
-                DefaultMutableTreeNode selectNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-                if (selectNode.getLevel() == CustomJTreeRenderer.SECOND_LEVEL) {
-                    schemaTreeNode = selectNode;
-                }
-                if (schemaTreeNode != null) {
-                    // 查询完整关键字
-                    String kw = tableNameSearch.getText();
-                    searchTreeNode(kw, schemaTreeNode);
+                // 按下回车，进行查询
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    if (schemaTreeNode != null) {
+                        // 查询完整关键字
+                        String kw = tableNameSearch.getText();
+                        searchTreeNode(kw, schemaTreeNode);
+                    }
                 }
             }
         });
@@ -122,9 +123,13 @@ public class PreviewUI {
             Enumeration childrens = schemaNode.children();
             while (childrens.hasMoreElements()) {
                 DefaultMutableTreeNode children = (DefaultMutableTreeNode) childrens.nextElement();
-                // 对比数据表完整名称和查询关键字是否相同，相同则返回
-                if (children.toString().equals(kw)) {
+                // 模糊匹配数据表节点，返回首次查询出的结果
+                if (children.toString().contains(kw)) {
                     tree.setSelectionPath(new TreePath(children));
+                    // 展开查询数据库节点子节点
+                    if (expandSchemaPath != null) {
+                        tree.expandPath(expandSchemaPath);
+                    }
                     return;
                 }
             }
@@ -173,7 +178,7 @@ public class PreviewUI {
      * 树形结构事件监听
      */
     private void treeListener() {
-        tree.addTreeSelectionListener(e -> editorShow());
+        tree.addTreeSelectionListener(e -> editorShow(e));
     }
 
     /**
@@ -188,12 +193,19 @@ public class PreviewUI {
 
     /**
      * 编辑器内容显示
+     *
+     * @param event 树选择事件
      */
-    private void editorShow() {
+    private void editorShow(TreeSelectionEvent event) {
         // 当前选择节点
         selectTreeNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (selectTreeNode == null) {
             return;
+        }
+        // 获取默认查询的数据库节点对象
+        if (selectTreeNode.getLevel() == CustomJTreeRenderer.SECOND_LEVEL) {
+            schemaTreeNode = selectTreeNode;
+            expandSchemaPath = event.getPath();
         }
         // 根据当前选择的数据表名，获取对应的数源信息
         Map<String, DbDataSource> dataSourceMap = dataBaseUtil.getDataSourceMap();

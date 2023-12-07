@@ -107,7 +107,13 @@ public class DialogUtil {
      */
     private void previewDialogBuilder(String title, JComponent component, EditorUtil util) {
         DialogBuilder builder = getDialogBuilder(title, component);
-        builder.addCloseButton();
+        /** 避免预览查询功能，按下回车时关闭对话框
+         *  对话框确认/取消按钮默认行为为关闭对话框
+         *  Enter-对话框确认按钮默认行为
+         *  Esc-对话框取消按钮默认行为
+         */
+        builder.addCancelAction();
+        builder.getCancelAction().setText("Close");
         builder.addDisposable(() -> {
             if (util != null) {
                 util.releaseEditor();

@@ -238,7 +238,7 @@ public class ImportListener {
                 Object[][] tm = null;
                 try {
                     // 读取JavaType类型映射配置数据
-                    String filePath = parentDir.concat(File.separator).concat(ui.getJavaType().getText()).concat(ConfigInterface.EXT_TXT);
+                    String filePath = parentDir.concat(File.separator).concat(ui.getJavaType().getText()).concat(ConfigInterface.PLUGIN_DEFAULT_EXT);
                     String content = readContent(filePath);
                     if (StringUtils.isNotBlank(content)) {
                         tm = JSONArray.parseObject(content, Object[][].class);
@@ -258,7 +258,7 @@ public class ImportListener {
                 Object[][] tm = null;
                 try {
                     // 读取JdbcType类型映射配置数据
-                    String filePath = parentDir.concat(File.separator).concat(ui.getJdbcType().getText()).concat(ConfigInterface.EXT_TXT);
+                    String filePath = parentDir.concat(File.separator).concat(ui.getJdbcType().getText()).concat(ConfigInterface.PLUGIN_DEFAULT_EXT);
                     String content = readContent(filePath);
                     if (StringUtils.isNotBlank(content)) {
                         tm = JSONArray.parseObject(content, Object[][].class);

@@ -3,6 +3,7 @@ package com.lightbc.templatej.utils;
 import com.lightbc.templatej.exception.NotExistException;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 
@@ -362,16 +363,20 @@ public class FileUtil {
     public String getPluginConfigFilePath() {
         String re = null;
         try {
+            // 获取插件安装目录
             String pluginPath = PluginUtil.getPluginSavePath();
-            assert pluginPath != null;
-            File pluginFile = new File(pluginPath);
-            if (pluginFile.exists() && pluginFile.isDirectory()) {
-                String configDir = pluginPath.concat(File.separator).concat(ConfigInterface.PLUGIN_CONFIG_DIR);
-                File cacheFile = new File(configDir);
-                if (!cacheFile.exists()) {
-                    cacheFile.mkdir();
+            if (StringUtils.isNotBlank(pluginPath)) {
+                // 获取插件安装父级目录
+                File pluginFile = new File(pluginPath);
+                if (pluginFile.exists() && pluginFile.isDirectory()) {
+                    String parentPath = pluginFile.getParent();
+                    re = parentPath.concat(File.separator).concat(ConfigInterface.PLUGIN_CONFIG_FILENAME);
+                    // 在插件安装同级目录下创建插件配置文件，避免插件更新升级时，自定义模板文件丢失问题
+                    File cacheFile = new File(re);
+                    if (!cacheFile.exists()) {
+                        cacheFile.createNewFile();
+                    }
                 }
-                re = cacheFile.getAbsolutePath().concat(File.separator).concat(ConfigInterface.PLUGIN_CONFIG_FILENAME);
             }
         } catch (Exception ignored) {
         } finally {

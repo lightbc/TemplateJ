@@ -74,7 +74,7 @@ public class TemplateJGenerateUI {
      *
      * @return 模板生成器通用UI对象
      */
-    private TemplateJGenerateCommonUI loadGenerateCommonUI() {
+    private synchronized TemplateJGenerateCommonUI loadGenerateCommonUI() {
         // 通用对象已存在，则返回，未存在则重新生成
         Module module = getSelectModule();
         if (this.commonUIMaps.containsKey(module.getName())) {

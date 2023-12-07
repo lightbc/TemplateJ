@@ -1,5 +1,7 @@
 package com.lightbc.templatej.listener;
 
+import com.alibaba.fastjson.JSONArray;
+import com.lightbc.templatej.config.TemplateJSettings;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
@@ -26,7 +28,6 @@ public class ExportListener {
 
     public ExportListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
-        this.templateUtil = new TemplateUtil(templateJUI.getSettings().getTemplates());
         init();
     }
 
@@ -45,6 +46,7 @@ public class ExportListener {
      * 显示导出UI界面
      */
     private void showExport() {
+        this.templateUtil = new TemplateUtil(TemplateJSettings.getInstance().getTemplates());
         DialogUtil dialogUtil = new DialogUtil();
         ExportUI exportUI = new ExportUI(this.templateJUI);
         dialogUtil.setOkBtn(exportUI.getOk());
@@ -85,18 +87,18 @@ public class ExportListener {
                 Template template = this.templateUtil.getTemplate(groupName);
                 // 导出选择的JavaType/JdbcType类型映射配置数据
                 if (ui.getJavaType().isSelected()) {
-                    String filePath = dirPath.concat(File.separator).concat(ui.getJavaType().getText()).concat(ConfigInterface.EXT_TXT);
-                    String javaType = this.templateUtil.getTypeMapper(template, 0);
+                    String filePath = dirPath.concat(File.separator).concat(ui.getJavaType().getText()).concat(ConfigInterface.PLUGIN_DEFAULT_EXT);
+                    String javaType = JSONArray.toJSONString(template.getTypeMapper());
                     fileUtil.write(filePath, javaType);
                 }
                 if (ui.getJdbcType().isSelected()) {
-                    String filePath = dirPath.concat(File.separator).concat(ui.getJdbcType().getText()).concat(ConfigInterface.EXT_TXT);
-                    String jdbcType = this.templateUtil.getTypeMapper(template, 1);
+                    String filePath = dirPath.concat(File.separator).concat(ui.getJdbcType().getText()).concat(ConfigInterface.PLUGIN_DEFAULT_EXT);
+                    String jdbcType = JSONArray.toJSONString(template.getJdbcTypeMapper());
                     fileUtil.write(filePath, jdbcType);
                 }
                 // 导出全局配置文件
                 if (ui.getGlobalBox() != null && ui.getGlobalBox().isSelected()) {
-                    String globalConfig = this.templateUtil.getGlobalConfig(template);
+                    String globalConfig = template.getGlobalConfig();
                     if (StringUtils.isNotBlank(globalConfig)) {
                         String filePath = dirPath.concat(File.separator).concat(ui.getGlobalBox().getText());
                         fileUtil.createFile(filePath);

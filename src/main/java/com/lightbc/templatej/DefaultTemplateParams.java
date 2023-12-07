@@ -115,7 +115,9 @@ public class DefaultTemplateParams {
                 "    private static final long serialVersionUID = ${tools.serial()};\n" +
                 "\n" +
                 "    <#list columns as column>\n" +
+                "    <#if column.columnComment??>\n" +
                 "    // ${column.columnComment!}\n" +
+                "    </#if>\n" +
                 "    private ${column.javaType} ${tools.toLowerCamelCase(\"${column.columnName}\")};\n" +
                 "    </#list>\n" +
                 "\n" +
@@ -538,7 +540,10 @@ public class DefaultTemplateParams {
                 new Object[]{"timestamp", "java.util.Date"},
                 new Object[]{"boolean", "java.lang.Boolean"},
                 new Object[]{"date", "java.util.Date"},
-                new Object[]{"longtext", "java.lang.String"}
+                new Object[]{"longtext", "java.lang.String"},
+                new Object[]{"double", "java.lang.Double"},
+                new Object[]{"float", "java.lang.Float"},
+                new Object[]{"bigint", "java.lang.Long"}
         };
     }
 

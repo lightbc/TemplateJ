@@ -132,6 +132,7 @@ public class GenerateAction extends AnAction {
             // 兼容项目为多模块情况
             Map<String, TemplateJGenerateCommonUI> commonUIMaps = this.generateUI.getCommonUIMaps();
             if (commonUIMaps != null && commonUIMaps.size() > 0) {
+                boolean noTemplate = true;
                 for (String key : commonUIMaps.keySet()) {
                     TemplateJGenerateCommonUI ui = commonUIMaps.get(key);
                     // 获取选中的模板
@@ -140,11 +141,15 @@ public class GenerateAction extends AnAction {
                     String groupName = Objects.requireNonNull(ui.getGroupBox().getSelectedItem()).toString();
                     // 验证是否有模板被选择
                     if (!validate(checkList)) {
-                        dialog.showTipsDialog(this.generateUI.getMainPanel(), Message.NO_CHOICE_GENERATE_TEMPLATE.getMsg(), Message.NO_CHOICE_GENERATE_TEMPLATE.getTitle());
-                        return;
+                        continue;
                     }
                     generate(groupName, ui.getGeneratePath(), checkList, ui);
                     dialog.dispose();
+                    noTemplate = false;
+                }
+                // 多模块都无选择模板时提示
+                if (noTemplate) {
+                    dialog.showTipsDialog(this.generateUI.getMainPanel(), Message.NO_CHOICE_GENERATE_TEMPLATE.getMsg(), Message.NO_CHOICE_GENERATE_TEMPLATE.getTitle());
                 }
             } else {
                 dialog.showTipsDialog(this.generateUI.getMainPanel(), Message.NO_CONFIG_MODULE.getMsg(), Message.NO_CONFIG_MODULE.getTitle());

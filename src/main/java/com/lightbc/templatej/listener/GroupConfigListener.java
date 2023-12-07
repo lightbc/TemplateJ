@@ -21,7 +21,7 @@ public class GroupConfigListener {
         init();
     }
 
-    private void init(){
+    private void init() {
         config();
     }
 
@@ -44,7 +44,7 @@ public class GroupConfigListener {
             String fileName = groupName.concat(".").concat(ConfigInterface.SETTING_TYPE);
             Template template = this.templateJUI.getTemplateUtil().getTemplate(groupName);
             // 判断全局配置文件是否存在
-            String content = templateJUI.getTemplateUtil().getGlobalConfig(template);
+            String content = this.templateJUI.getTemplateUtil().getGlobalConfig(template);
             DialogUtil util = new DialogUtil();
 
             // 显示全局配置对话框
@@ -53,7 +53,9 @@ public class GroupConfigListener {
             if (c == 0) {
                 String editedContent = util.getEditor().getDocument().getText();
                 // 保存编辑后的内容
-                templateJUI.getTemplateUtil().setGlobalConfig(template, editedContent);
+                this.templateJUI.getTemplateUtil().setGlobalConfig(template, editedContent);
+                // 刷新UI显示
+                this.templateJUI.refresh();
             }
         }
     }

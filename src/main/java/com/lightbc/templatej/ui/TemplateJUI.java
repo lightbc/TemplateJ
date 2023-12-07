@@ -279,6 +279,7 @@ public class TemplateJUI implements Configurable {
                 // 重置默认选择模板文件
                 this.settings.setSelectGroupFile(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
                 this.templateUtil = new TemplateUtil(this.settings.getTemplates());
+                this.settings.save();
                 refresh();
             }
         });

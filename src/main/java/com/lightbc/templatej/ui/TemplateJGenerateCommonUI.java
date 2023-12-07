@@ -168,10 +168,7 @@ public class TemplateJGenerateCommonUI {
      * 保存位置组件事件监听
      */
     private void savePathListener() {
-        savePath.addActionListener(e -> {
-            String name = Objects.requireNonNull(this.generateUI.getModuleBox().getSelectedItem()).toString();
-            savePathChoose(name);
-        });
+        this.savePath.addActionListener(e -> savePathChoose());
     }
 
     /**
@@ -222,11 +219,9 @@ public class TemplateJGenerateCommonUI {
 
     /**
      * 选择保存位置
-     *
-     * @param name 选择的模块名称
      */
-    private void savePathChoose(String name) {
-        VirtualFile virtualFile = getDefaultVirtualFile(name);
+    private void savePathChoose() {
+        VirtualFile virtualFile = getDefaultVirtualFile();
         virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor(), ProjectUtil.getProject(), virtualFile);
         if (virtualFile != null) {
             this.savePath.setText(virtualFile.getPath());
@@ -245,12 +240,11 @@ public class TemplateJGenerateCommonUI {
     /**
      * 获取默认虚拟文件对象
      *
-     * @param name 选择的模块名称
      * @return VirtualFile
      */
-    private VirtualFile getDefaultVirtualFile(String name) {
+    private VirtualFile getDefaultVirtualFile() {
         VirtualFileManager manager = VirtualFileManager.getInstance();
-        Module module = ProjectUtil.getProjectModule(this.project, name);
+        Module module = this.generateUI.getSelectModule();
         String modulePath = ProjectUtil.getModulePath(module);
         if (modulePath != null && !"".equals(modulePath.trim())) {
             return manager.findFileByUrl(modulePath);
