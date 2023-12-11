@@ -1,6 +1,7 @@
 package com.lightbc.templatej.config;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
@@ -53,7 +54,8 @@ public class TemplateJSettings {
     public synchronized void save() {
         FileUtil fileUtil = new FileUtil();
         String cfgPath = fileUtil.getPluginConfigFilePath();
-        String cfg = JSONObject.toJSONString(this);
+        // 禁止FastJson循环引用检测
+        String cfg = JSONObject.toJSONString(this, SerializerFeature.DisableCircularReferenceDetect);
         fileUtil.write(cfgPath, cfg);
     }
 
