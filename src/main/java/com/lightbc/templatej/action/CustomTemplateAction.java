@@ -41,7 +41,7 @@ public class CustomTemplateAction extends AnAction {
         dialogUtil.setOkBtn(exportUI.getOkBtn());
         dialogUtil.setCancelBtn(exportUI.getCancelBtn());
         confirmListener(exportUI, dialogUtil, dialogUtil.getOkBtn());
-        dialogUtil.showCustomDialog(Message.EXPORT.getTitle(), exportUI.getMainPanel(), this.editor.getComponent(), new Dimension(500, 300), false);
+        dialogUtil.showCustomDialog(Message.EXPORT.getTitle(), exportUI.getMainPanel(), this.editor.getComponent(), new Dimension(400, 200), false);
     }
 
     /**

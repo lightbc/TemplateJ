@@ -261,6 +261,7 @@ public class TemplateJUI implements Configurable {
         Map<String, String> fileContentMap = template.getFileContentMap();
         // 保存编辑的模板文件内容
         fileContentMap.put(templateFileName, this.modified);
+        refresh();
     }
 
     /**

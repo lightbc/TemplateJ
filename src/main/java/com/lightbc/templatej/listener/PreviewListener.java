@@ -26,7 +26,7 @@ public class PreviewListener {
         init();
     }
 
-    private void init(){
+    private void init() {
         preview();
     }
 
@@ -48,14 +48,16 @@ public class PreviewListener {
                     dialogUtil.showTipsDialog(null, Message.TEMPLATE_CONTENT_EMPTY.getMsg(), Message.TEMPLATE_CONTENT_EMPTY.getTitle());
                     return;
                 }
-                // 全局配置信息为空提示
-                if (globalConfig == null || "".equals(globalConfig.trim())) {
-                    dialogUtil.showTipsDialog(null, Message.GLOBAL_CONFIG_EMPTY.getMsg(), Message.GLOBAL_CONFIG_EMPTY.getTitle());
-                    return;
-                }
                 // 获取完整模板信息（全局配置+单个模板）
                 PropertiesUtil util = new PropertiesUtil();
                 String sourceCode = TemplateUtil.getSourceCode(globalConfig, templateCode, util);
+                // 是否忽略全局配置
+                boolean ignoreGlobal = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL));
+                // // 非全局配置忽略时，全局配置信息为空校验
+                if (!ignoreGlobal && (globalConfig == null || "".equals(globalConfig.trim()))) {
+                    dialogUtil.showTipsDialog(null, Message.GLOBAL_CONFIG_EMPTY.getMsg(), Message.GLOBAL_CONFIG_EMPTY.getTitle());
+                    return;
+                }
                 // 预览
                 preview(groupName, templateFileName, sourceCode, util);
             } else {
