@@ -82,9 +82,9 @@ public class ImportListener {
                 settings.setSelectGroupFile(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
                 dialog.showTipsDialog(ui.getMainPanel(), Message.IMPORT_SUCCESS.getMsg(), Message.IMPORT_SUCCESS.getTitle());
                 dialog.dispose();
-                // 刷新主UI面板
-                this.templateJUI.refresh();
             }
+            // 刷新主UI面板
+            this.templateJUI.refresh();
         });
     }
 

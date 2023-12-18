@@ -75,7 +75,7 @@
         </group>
         <!-- API文档效果预览功能 -->
         <action id="Com.Lightbc.Templatej.ApiDocAction" class="com.lightbc.templatej.action.ApiDocAction"
-                text="Effect Preview">
+                text="API Doc Preview">
             <add-to-group group-id="BasicEditorPopupMenu" anchor="first"/>
         </action>
     </actions>

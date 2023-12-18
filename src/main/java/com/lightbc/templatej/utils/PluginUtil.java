@@ -2,10 +2,12 @@ package com.lightbc.templatej.utils;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
+import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -81,5 +83,66 @@ public class PluginUtil {
             }
         }
         return file;
+    }
+
+    /**
+     * 缓存效果预览的api文档
+     *
+     * @param groupName   模板组名称
+     * @param htmlContent api文档内容
+     */
+    public static void cacheApiDoc(String groupName, String htmlContent) {
+        // 缓存目录路径
+        FileUtil fileUtil = new FileUtil();
+        String apiDocCacheDir = FileUtil.getPluginCacheDir().concat(File.separator).concat(ConfigInterface.API_DOC_CACHE_DIR);
+        fileUtil.createDirs(apiDocCacheDir);
+        // 缓存文件路径
+        String pdfName = groupName.concat(ConfigInterface.PDF);
+        String apiDocCacheFilePath = apiDocCacheDir.concat(File.separator).concat(pdfName);
+        fileUtil.createFile(apiDocCacheFilePath);
+        // 将HTML文档内容转换成PDF
+        PdfUtil pdfUtil = new PdfUtil();
+        boolean b = pdfUtil.htmlToPdf(apiDocCacheFilePath, htmlContent);
+        if (b) {
+            String prefixCmd = "cmd /c ";
+            // 首次尝试chrome浏览器打开展示PDF效果
+            String cmd = prefixCmd + "start chrome.exe " + apiDocCacheFilePath;
+            boolean r = runCmd(cmd);
+            if (!r) {
+                // chrome浏览器打开PDF失败，再次尝试系统PDF软件打开展示效果
+                cmd = prefixCmd + "start " + apiDocCacheFilePath;
+                boolean rr = runCmd(cmd);
+                if (!rr) {
+                    // 两次效果预览都失败后，弹窗提示，可手动尝试
+                    DialogUtil dialog = new DialogUtil();
+                    dialog.showTipsDialog(null, Message.API_DOC_PREVIEW_ERROR.getMsg(), Message.API_DOC_PREVIEW_ERROR.getTitle());
+                }
+            }
+
+        }
+
+    }
+
+    private static boolean runCmd(String cmd) {
+        boolean b = false;
+        try {
+            Runtime.getRuntime().exec(cmd);
+            b = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            return b;
+        }
+    }
+
+    /**
+     * 获取windows操作系统的字体文件存放目录路径
+     *
+     * @return string 字体目录路径
+     */
+    public static String getWindowsFontsDir() {
+        String path = System.getenv("WINDIR");
+        File fontDir = new File(path, "Fonts");
+        return fontDir.getAbsolutePath();
     }
 }

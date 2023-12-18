@@ -20,7 +20,7 @@ public class CustomIconUtil {
      */
     public static Icon getIcon(String fileName) {
         String originPath = ORIGIN_DIR.concat(fileName);
-        String cachePath = FileUtil.getPluginCacheFilePath(fileName);
+        String cachePath = FileUtil.getPluginCacheImagesFilePath(fileName);
         PluginUtil.cacheImage(originPath, cachePath);
         ImageIcon icon = new ImageIcon(cachePath);
         return icon;

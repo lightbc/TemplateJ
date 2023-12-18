@@ -90,7 +90,7 @@ public class HelpListener {
                         // 根据图片路径信息，获取文件名
                         String fileName = s.substring(s.lastIndexOf("/"));
                         // 缓存文件保存路径
-                        String path = FileUtil.getPluginCacheFilePath(fileName);
+                        String path = FileUtil.getPluginCacheImagesFilePath(fileName);
                         // 缓存图片
                         PluginUtil.cacheImage(s, path);
                         // 获取已缓存文件

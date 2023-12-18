@@ -3,6 +3,16 @@ package com.lightbc.templatej.action;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.psi.PsiFile;
+import com.lightbc.templatej.enums.Message;
+import com.lightbc.templatej.utils.DialogUtil;
+import com.lightbc.templatej.utils.PluginUtil;
+import com.lightbc.templatej.utils.RightKeyUtil;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,22 +23,31 @@ import org.jetbrains.annotations.NotNull;
  * @version 1.0
  */
 public class ApiDocAction extends AnAction {
+    @Setter
+    @Getter
+    private String content;
+    @Setter
+    @Getter
+    private String groupName;
     public static final String ID = "Com.Lightbc.Templatej.ApiDocAction";
 
     public ApiDocAction() {
-        ActionManager.getInstance().unregisterAction(ID);
-    }
-
-    public ApiDocAction(String text) {
-        super(text);
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
-
+        doAction();
     }
 
-    public static void setAction() {
-
+    private void doAction() {
+        DialogUtil dialog = new DialogUtil();
+        if (StringUtils.isBlank(this.content)) {
+            dialog.showTipsDialog(null, Message.API_DOC_EMPTY.getMsg(), Message.API_DOC_EMPTY.getTitle());
+            return;
+        }
+        if (StringUtils.isNotBlank(this.groupName)) {
+            PluginUtil.cacheApiDoc(this.groupName, this.content);
+        }
     }
+
 }

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * 编辑器属性菜单action group
  */
 public class EditorPopupMenuActionGroup extends ActionGroup {
+    public static final String ID = "Com.Lightbc.Templatej.EditorPopupMenuActionGroup";
     private static AnAction[] CHILDRENS;
 
     public EditorPopupMenuActionGroup() {

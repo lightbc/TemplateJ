@@ -45,6 +45,8 @@ public enum Message {
     MODULE_PATH_LOAD_ERROR("警告", "选择模块目录未加载到！"),
     CUSTOM_DATASOURCE_EMPTY("警告", "自定义数据源内容为空/指定格式不符合规范！"),
     CUSTOM_DATASOURCE_IMPORT_PATH_WARN("警告", "数源路径为空/无法解析！"),
+    API_DOC_PREVIEW_ERROR("错误", "API文档效果预览出错，无法自动打开！"),
+    CHANGE_DIR_ERROR("错误", "目录切换失败！"),
 
     // 配置标题
     ADD_TEMPLATE("新增模板"),

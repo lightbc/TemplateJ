@@ -356,13 +356,15 @@ public class FileUtil {
     }
 
     /**
-     * 获取插件缓存文件路径
+     * 获取插件缓存图片文件路径
      *
      * @param fileName 文件名
      * @return string 文件路径
      */
-    public static String getPluginCacheFilePath(String fileName) {
-        return getPluginCacheDir().concat(File.separator).concat(fileName);
+    public static String getPluginCacheImagesFilePath(String fileName) {
+        String imageDir = getPluginCacheDir().concat(File.separator).concat(ConfigInterface.IMAGES_CACHE_DIR);
+        new FileUtil().createDirs(imageDir);
+        return imageDir.concat(File.separator).concat(fileName);
     }
 
     /**

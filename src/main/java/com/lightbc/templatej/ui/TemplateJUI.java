@@ -215,6 +215,7 @@ public class TemplateJUI implements Configurable {
                 MouseEvent e = event.getMouseEvent();
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     EditorPopupMenuActionGroup.setChildren(RightKeyUtil.getPluginConfigActions(editor));
+                    RightKeyUtil.disableApiDocEditorPopupMenu();
                 }
             }
         });
@@ -223,7 +224,7 @@ public class TemplateJUI implements Configurable {
     /**
      * 刷新主UI界面
      */
-    public void refresh() {
+    public synchronized void refresh() {
         // 保存配置数据
         this.settings.save();
         // 初始化下拉选择器

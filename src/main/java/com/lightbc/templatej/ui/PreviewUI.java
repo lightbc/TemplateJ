@@ -5,11 +5,13 @@ import com.intellij.codeInsight.actions.*;
 import com.intellij.database.psi.DbDataSource;
 import com.intellij.database.psi.DbTable;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
 import com.intellij.openapi.editor.event.EditorMouseListener;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.lightbc.templatej.action.ApiDocAction;
 import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.components.TextField;
 import com.lightbc.templatej.entity.Generate;
@@ -196,11 +198,13 @@ public class PreviewUI {
         Map<String, Object> dataModel = generateJUtil.getCommonDataModel(null, ConfigInterface.DEFAULT_PACKAGE_NAME, null, new Generate(), null);
         // 自定义数源导入
         List customDataSourceContent = getCustomDataSourceContent();
-        if (StringUtils.isNotBlank(this.customDataSourcePath) && customDataSourceContent != null && customDataSourceContent.size() > 0) {
-            dataModel.put("customData", customDataSourceContent);
-        } else {
-            DialogUtil dialog = new DialogUtil();
-            dialog.showTipsDialog(this.mainPanel, Message.CUSTOM_DATASOURCE_EMPTY.getMsg(), Message.CUSTOM_DATASOURCE_EMPTY.getTitle());
+        if (StringUtils.isNotBlank(this.customDataSourcePath)) {
+            if (customDataSourceContent != null && customDataSourceContent.size() > 0) {
+                dataModel.put("customData", customDataSourceContent);
+            } else {
+                DialogUtil dialog = new DialogUtil();
+                dialog.showTipsDialog(this.mainPanel, Message.CUSTOM_DATASOURCE_EMPTY.getMsg(), Message.CUSTOM_DATASOURCE_EMPTY.getTitle());
+            }
         }
         String curContent = generateJUtil.generate(templateFileName, sourceCode, dataModel);
         refreshEditor(templateFileName, curContent);

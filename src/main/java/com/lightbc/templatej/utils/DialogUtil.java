@@ -1,5 +1,6 @@
 package com.lightbc.templatej.utils;
 
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;

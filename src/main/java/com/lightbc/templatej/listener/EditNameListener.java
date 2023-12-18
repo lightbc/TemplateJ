@@ -137,7 +137,6 @@ public class EditNameListener {
         } else {
             dialogUtil.showTipsDialog(this.templateJUI.getMainPanel(), Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());
             this.templateJUI.refresh();
-            return;
         }
     }
 

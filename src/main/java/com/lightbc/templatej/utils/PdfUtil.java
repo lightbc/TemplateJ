@@ -8,6 +8,8 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.font.FontProvider;
+import com.lightbc.templatej.interfaces.ConfigInterface;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.FileOutputStream;
 
@@ -38,16 +40,21 @@ public class PdfUtil {
             // 设置中文字体支持
             ConverterProperties prop = new ConverterProperties();
             FontProvider provider = new FontProvider();
-            PdfFont font = PdfFontFactory.createFont("STSongStd-Light");
-            provider.addFont(font.getFontProgram(), "UniGB-UCS2-H");
+            // 字体目录路径
+            String fontDir = PluginUtil.getWindowsFontsDir();
+            if (StringUtils.isNotBlank(fontDir)) {
+                provider.addDirectory(fontDir);
+            }
             prop.setFontProvider(provider);
+            prop.setCharset(ConfigInterface.ENCODE_VALUE);
 
             // 转换成pdf
             HtmlConverter.convertToPdf(htmlContent, document, prop);
             document.close();
             writer.close();
             b = true;
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             return b;
         }

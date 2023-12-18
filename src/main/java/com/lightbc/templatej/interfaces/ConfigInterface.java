@@ -46,4 +46,10 @@ public interface ConfigInterface {
     String CUSTOM_DATASOURCE_FILE_TYPE = "json";
     // API文档文件类型
     String API_DOC_TYPE = ".html";
+    // api 文档缓存目录
+    String API_DOC_CACHE_DIR = "api";
+    // pdf
+    String PDF = ".pdf";
+    // 图片缓存目录
+    String IMAGES_CACHE_DIR = "images";
 }

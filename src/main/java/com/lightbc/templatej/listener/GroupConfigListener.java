@@ -1,12 +1,20 @@
 package com.lightbc.templatej.listener;
 
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.event.EditorMouseEvent;
+import com.intellij.openapi.editor.event.EditorMouseListener;
+import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.ui.TemplateJUI;
 import com.lightbc.templatej.utils.DialogUtil;
+import com.lightbc.templatej.utils.RightKeyUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.event.MouseEvent;
 
 /**
  * 全局配置项配置事件监听
@@ -29,6 +37,7 @@ public class GroupConfigListener {
      * 编辑全局配置文件配置信息
      */
     private void editConfig() {
+        RightKeyUtil.disableEditorPopupMenu();
         String groupName = this.templateJUI.getCommonUI().getGroupName();
         if (StringUtils.isNotBlank(groupName)) {
             String title = Message.GLOBAL_CONFIG.getTitle().concat(groupName);
@@ -47,12 +56,13 @@ public class GroupConfigListener {
                 if (StringUtils.isNotBlank(editedContent)) {
                     // 保存编辑后的内容
                     template.setGlobalConfig(editedContent);
-                    // 刷新UI显示
-                    this.templateJUI.refresh();
                 } else {
                     util.showTipsDialog(null, Message.GLOBAL_CONFIG_EMPTY.getMsg(), Message.GLOBAL_CONFIG_EMPTY.getTitle());
                 }
             }
         }
+        // 刷新UI显示
+        this.templateJUI.refresh();
     }
+
 }

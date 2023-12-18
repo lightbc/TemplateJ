@@ -48,18 +48,16 @@ public class ApiDocListener {
     private void apiDoc() {
         String groupName = this.templateJUI.getCommonUI().getGroupName();
         if (StringUtils.isNotBlank(groupName)) {
-            String title = Message.API_DCO.getTitle().concat(groupName);
-
-            // API文档文件名（含默认拓展名）
-            String fileName = groupName.concat(ConfigInterface.API_DOC_TYPE);
             Template template = this.templateJUI.getTemplateUtil().getTemplate(groupName);
             String content = template.getApiDoc();
+            // 显示菜单属性
+            RightKeyUtil.enableApiDocEditorPopupMenu(groupName, content);
             DialogUtil util = new DialogUtil();
-
+            String title = Message.API_DCO.getTitle().concat(groupName);
+            // API文档文件名（含默认拓展名）
+            String fileName = groupName.concat(ConfigInterface.API_DOC_TYPE);
             // 显示API文档配置对话框
             int c = util.showApiDialog(title, fileName, content);
-            // 编辑区域右键事件监听
-            editorPopupMenuListener(util.getEditor(), fileName);
             //ok按钮按下后进行的后续操作
             if (c == 0) {
                 String editedContent = util.getEditor().getDocument().getText();
@@ -73,34 +71,7 @@ public class ApiDocListener {
                 }
             }
         }
+        this.templateJUI.refresh();
     }
 
-    private void addEditorPopupMenu(Editor editor, String fileName) {
-        if (editor != null) {
-            Document document = editor.getDocument();
-            Project project = ProjectUtil.getProject();
-            PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-            String name = psiFile.getName();
-            if (fileName.equals(name)) {
-                ActionManager manager = ActionManager.getInstance();
-                ApiDocAction action = new ApiDocAction("Effect Preview");
-                manager.registerAction(ApiDocAction.ID, action);
-            }
-        }
-    }
-
-    /**
-     * 编辑器右键属性菜单监听
-     */
-    private void editorPopupMenuListener(Editor editor, String fileName) {
-        editor.addEditorMouseListener(new EditorMouseListener() {
-            @Override
-            public void mouseReleased(@NotNull EditorMouseEvent event) {
-                MouseEvent e = event.getMouseEvent();
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    addEditorPopupMenu(editor, fileName);
-                }
-            }
-        });
-    }
 }
