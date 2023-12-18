@@ -42,7 +42,7 @@ public class PreviewListener {
                 String templateFileName = this.commonUI.getGroupFileName();
                 Template template = this.templateJUI.getTemplateUtil().getTemplate(groupName);
                 String templateCode = this.templateJUI.getTemplateUtil().getTemplateContent(template, templateFileName);
-                String globalConfig = this.templateJUI.getTemplateUtil().getGlobalConfig(template);
+                String globalConfig = template.getGlobalConfig();
                 // 模板文件内容为空提示
                 if (templateCode == null || "".equals(templateCode.trim())) {
                     dialogUtil.showTipsDialog(null, Message.TEMPLATE_CONTENT_EMPTY.getMsg(), Message.TEMPLATE_CONTENT_EMPTY.getTitle());
@@ -85,7 +85,9 @@ public class PreviewListener {
         }
         // 显示效果预览组件
         boolean auto = Boolean.parseBoolean(util.getValue(TemplateJInterface.AUTO_PREVIEW));
-        PreviewUI previewUI = new PreviewUI(groupName, templateFileName, sourceCode, dataBaseUtil, auto);
+        // 自定义数源文件路径
+        String customDataSourcePath = util.getValue(TemplateJInterface.CUSTOM_DATASOURCE);
+        PreviewUI previewUI = new PreviewUI(groupName, templateFileName, sourceCode, dataBaseUtil, customDataSourcePath, auto);
         dialogUtil.showPreviewDialog(Message.PREVIEW_TEMPLATE.getTitle(), previewUI.getMainPanel(), previewUI.getEditorUtil());
     }
 }

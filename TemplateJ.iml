@@ -12,5 +12,6 @@
     <orderEntry type="library" name="org.projectlombok:lombok:1.18.20" level="project" />
     <orderEntry type="library" name="org.freemarker:freemarker:2.3.22" level="project" />
     <orderEntry type="library" name="com.alibaba:fastjson:1.2.80" level="project" />
+    <orderEntry type="library" name="com.itextpdf:html2pdf:4.0.3" level="project" />
   </component>
 </module>

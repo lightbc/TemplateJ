@@ -8,6 +8,7 @@ import com.intellij.openapi.options.Configurable;
 import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.config.TemplateJSettings;
+import com.lightbc.templatej.constant.CustomIcon;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
@@ -68,6 +69,7 @@ public class TemplateJUI implements Configurable {
     // 选择器组件面板
     private JPanel selectorPanel;
     private JButton jdbcType;
+    private JButton api;
     // 通用组件
     private TemplateJCommonUI commonUI;
 
@@ -132,6 +134,8 @@ public class TemplateJUI implements Configurable {
         new EditNameListener(this);
         // 预览功能事件监听
         new PreviewListener(this);
+        // API接口文档配置时间监听
+        new ApiDocListener(this);
         // 模板组全局配置事件监听
         new GroupConfigListener(this);
         // 数据类型映射器功能事件监听
@@ -310,5 +314,13 @@ public class TemplateJUI implements Configurable {
         this.preview.setIcon(AllIcons.General.InspectionsEye);
         // 功能重置按钮图标
         this.reset.setIcon(AllIcons.General.Reset);
+
+        // 自定义图标
+        // API文档按钮图标
+        this.api.setIcon(CustomIcon.API);
+        // JdbcType按钮图标
+        this.jdbcType.setIcon(CustomIcon.JDBC_TYPE_MAPPER);
+        // JavaType按钮图标
+        this.typeMapperBtn.setIcon(CustomIcon.JAVA_TYPE_MAPPER);
     }
 }

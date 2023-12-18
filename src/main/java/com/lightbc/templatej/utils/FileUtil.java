@@ -264,7 +264,7 @@ public class FileUtil {
      * @param oPath    图片原路径
      * @param savePath 图片缓存路径
      */
-    static void cacheImage(String oPath, String savePath) {
+    synchronized static void cacheImage(String oPath, String savePath) {
         if (!isImage(oPath)) {
             return;
         }
@@ -356,6 +356,16 @@ public class FileUtil {
     }
 
     /**
+     * 获取插件缓存文件路径
+     *
+     * @param fileName 文件名
+     * @return string 文件路径
+     */
+    public static String getPluginCacheFilePath(String fileName) {
+        return getPluginCacheDir().concat(File.separator).concat(fileName);
+    }
+
+    /**
      * 获取插件配置文件路径
      *
      * @return string 配置文件路径
@@ -381,6 +391,34 @@ public class FileUtil {
         } catch (Exception ignored) {
         } finally {
             return re;
+        }
+    }
+
+    /**
+     * 文件是否为指定类型判断
+     *
+     * @param filePath  文件路径
+     * @param extension 拓展名
+     * @return Boolean true-指定类型，false-非指定类型
+     */
+    public static boolean isFileType(String filePath, String extension) {
+        boolean b = false;
+        try {
+            // 判断文件路径和指定拓展名是否为空
+            if (StringUtils.isNotBlank(filePath) && StringUtils.isNotBlank(extension)) {
+                // 判断文件是否存在
+                File file = new File(filePath);
+                if (file.exists() && file.isFile()) {
+                    // 判断文件的拓展名和指定拓展名是否相同
+                    String filePathExtension = filePath.substring(filePath.lastIndexOf(".") + 1);
+                    if (filePathExtension.equals(extension)) {
+                        b = true;
+                    }
+                }
+            }
+        } catch (Exception ignore) {
+        } finally {
+            return b;
         }
     }
 

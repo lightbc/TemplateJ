@@ -20,7 +20,8 @@ public class RightKeyUtil {
     public static AnAction[] getPluginConfigActions(Editor editor) {
         UsePluginConfigAction autoPreview = new UsePluginConfigAction(editor, ActionNameInterface.AUTO_PREVIEW, 0);
         UsePluginConfigAction ignoreGlobal = new UsePluginConfigAction(editor, ActionNameInterface.IGNORE_GLOBAL, 1);
-        return new AnAction[]{autoPreview, ignoreGlobal};
+        UsePluginConfigAction customDataSource = new UsePluginConfigAction(editor, ActionNameInterface.CUSTOM_DATASOURCE, 2);
+        return new AnAction[]{autoPreview, ignoreGlobal, customDataSource};
     }
 
     /**

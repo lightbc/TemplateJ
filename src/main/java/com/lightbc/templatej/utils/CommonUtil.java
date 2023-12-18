@@ -1,8 +1,11 @@
 package com.lightbc.templatej.utils;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -66,5 +69,39 @@ public class CommonUtil {
         }
         // 默认格式：（原名称）-副本
         return name.concat(ConfigInterface.DEFAULT_RENAME_SUFFIX);
+    }
+
+    /**
+     * 判断是否是json对象数据
+     *
+     * @param s 判断字符串
+     * @return Boolean true-json对象，false-非json对象
+     */
+    public boolean isJsonObject(String s) {
+        boolean b = false;
+        try {
+            JSONObject.parseObject(s);
+            b = true;
+        } catch (Exception ignore) {
+        } finally {
+            return b;
+        }
+    }
+
+    /**
+     * 判断是否是json数组数据
+     *
+     * @param s 判断字符串
+     * @return Boolean true-json数组，false-非json数组
+     */
+    public boolean isJsonArray(String s) {
+        boolean b = false;
+        try {
+            JSONArray.parseArray(s);
+            b = true;
+        } catch (Exception ignore) {
+        } finally {
+            return b;
+        }
     }
 }

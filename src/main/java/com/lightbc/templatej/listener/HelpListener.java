@@ -77,8 +77,6 @@ public class HelpListener {
      * @return map
      */
     private Map<String, ImageCache> cache() {
-        // 获取插件的缓存路径
-        String cachePath = FileUtil.getPluginCacheDir();
         // 缓存图片工具
         IMAGE_CACHE = new ImageCache();
         Map<String, ImageCache> map = null;
@@ -92,7 +90,7 @@ public class HelpListener {
                         // 根据图片路径信息，获取文件名
                         String fileName = s.substring(s.lastIndexOf("/"));
                         // 缓存文件保存路径
-                        String path = cachePath.concat(File.separator).concat(fileName);
+                        String path = FileUtil.getPluginCacheFilePath(fileName);
                         // 缓存图片
                         PluginUtil.cacheImage(s, path);
                         // 获取已缓存文件

@@ -21,7 +21,7 @@ public interface ConfigInterface {
     // 默认单选按钮选中值
     String DEFAULT_RADIO_GROUP_NAME = "模板组";
     // 全局设置文件的文件类型
-    String SETTING_TYPE = "ftl";
+    String SETTING_TYPE = ".ftl";
     // 主UI界面显示名称
     String PLUGIN_TEMPLATEJ_DISPLAYNAME = "TemplateJ";
     // 模板生成时候的默认拓展名
@@ -42,4 +42,8 @@ public interface ConfigInterface {
     String TEMPLATE_EXPORT = "模板导出";
     // 插件默认文件拓展名
     String PLUGIN_DEFAULT_EXT = ".tj";
+    // 自定义数源文件允许的文件类型
+    String CUSTOM_DATASOURCE_FILE_TYPE = "json";
+    // API文档文件类型
+    String API_DOC_TYPE = ".html";
 }

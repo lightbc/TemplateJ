@@ -9,5 +9,7 @@ public interface ActionNameInterface {
     String CUSTOM_TEMPLATE_EXPORT = "Export";
     // 插件编辑器属性主菜单项
     String EDITOR_POPUP_MENU_GROUP = "TemplateJ Plugin...";
+    // 自定义数源
+    String CUSTOM_DATASOURCE = "Add Custom DataSource";
 
 }

@@ -89,7 +89,31 @@ public class DialogUtil {
      * @param content  编辑内容
      * @return int ok：0，cancel：1
      */
+    public int showApiDialog(String title, String fileName, String content) {
+        return showCommonDialog(title, fileName, content);
+    }
+
+    /**
+     * 显示选中模板全局通用配置项配置对话框
+     *
+     * @param title    对话框标题
+     * @param fileName 编辑文件名
+     * @param content  编辑内容
+     * @return int ok：0，cancel：1
+     */
     public int showConfigDialog(String title, String fileName, String content) {
+        return showCommonDialog(title, fileName, content);
+    }
+
+    /**
+     * api接口文档&全局配置通用对话框
+     *
+     * @param title    对话框标题
+     * @param fileName 编辑文件名
+     * @param content  编辑内容
+     * @return int ok：0，cancel：1
+     */
+    private int showCommonDialog(String title, String fileName, String content) {
         EditorUtil util = new EditorUtil();
         JComponent editor = initEditorComponent(util, fileName, content);
         Project project = ProjectUtil.getProject();

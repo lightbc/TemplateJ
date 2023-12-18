@@ -73,6 +73,11 @@
                class="com.lightbc.templatej.action.EditorPopupMenuActionGroup">
             <add-to-group group-id="BasicEditorPopupMenu" anchor="first"/>
         </group>
+        <!-- API文档效果预览功能 -->
+        <action id="Com.Lightbc.Templatej.ApiDocAction" class="com.lightbc.templatej.action.ApiDocAction"
+                text="Effect Preview">
+            <add-to-group group-id="BasicEditorPopupMenu" anchor="first"/>
+        </action>
     </actions>
 
 </idea-plugin>

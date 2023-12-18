@@ -465,6 +465,20 @@ public class DefaultTemplateParams {
         return map;
     }
 
+    /**
+     * 默认API接口文档内容
+     *
+     * @return string API接口文档内容
+     */
+    private static String getDefaultApiDoc() {
+        return "";
+    }
+
+    /**
+     * 默认全局配置文件内容
+     *
+     * @return string 全局配置容
+     */
     private static String getDefaultGlobalConfig() {
         return "<#assign author=\"lightbc\">\n" +
                 "<#assign date=tools.getDate(\"yyyy-MM-dd HH:mm:ss\")>\n" +
@@ -505,6 +519,8 @@ public class DefaultTemplateParams {
         template.setGroupFiles(templateFiles);
         // 默认文件映射的默认内容
         template.setFileContentMap(getDefaultTemplateData());
+        // 默认API文档模板内容
+        template.setApiDoc(getDefaultApiDoc());
         // 默认模板组的全局配置
         template.setGlobalConfig(GLOBAL_CONFIG);
         // 默认模板组数据类型映射集

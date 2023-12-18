@@ -63,7 +63,7 @@ public class GenerateJUtil {
         }
         com.lightbc.templatej.entity.Template template = this.templateUtil.getTemplate(groupName);
         String templateCode = this.templateUtil.getTemplateContent(template, templateFileName);
-        String globalConfig = this.templateUtil.getGlobalConfig(template);
+        String globalConfig = template.getGlobalConfig();
         String sourceCode = TemplateUtil.getSourceCode(globalConfig, templateCode, new PropertiesUtil());
         // 生成字符串内容
         String generateContent = generate(templateFileName, sourceCode, dataModel);

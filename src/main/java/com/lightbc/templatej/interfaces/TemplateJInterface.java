@@ -5,4 +5,6 @@ public interface TemplateJInterface {
     String AUTO_PREVIEW = "TEMPLATEJ-AUTO-PREVIEW";
     // 是否不引用全局配置，TRUE-是，FALSE-否
     String IGNORE_GLOBAL = "TEMPLATEJ-IGNORE-GLOBAL";
+    // 引用自定义数据源
+    String CUSTOM_DATASOURCE = "TEMPLATEJ-CUSTOM-DATASOURCE";
 }

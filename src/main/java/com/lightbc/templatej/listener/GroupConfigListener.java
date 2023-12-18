@@ -22,13 +22,6 @@ public class GroupConfigListener {
     }
 
     private void init() {
-        config();
-    }
-
-    /**
-     * 全局配置文件配置监听功能
-     */
-    public void config() {
         this.templateJUI.getConfigBtn().addActionListener(e -> editConfig());
     }
 
@@ -41,10 +34,9 @@ public class GroupConfigListener {
             String title = Message.GLOBAL_CONFIG.getTitle().concat(groupName);
 
             // 全局配置文件名（含默认拓展名）
-            String fileName = groupName.concat(".").concat(ConfigInterface.SETTING_TYPE);
+            String fileName = groupName.concat(ConfigInterface.SETTING_TYPE);
             Template template = this.templateJUI.getTemplateUtil().getTemplate(groupName);
-            // 判断全局配置文件是否存在
-            String content = this.templateJUI.getTemplateUtil().getGlobalConfig(template);
+            String content = template.getGlobalConfig();
             DialogUtil util = new DialogUtil();
 
             // 显示全局配置对话框
@@ -52,10 +44,14 @@ public class GroupConfigListener {
             //ok按钮按下后进行的后续操作
             if (c == 0) {
                 String editedContent = util.getEditor().getDocument().getText();
-                // 保存编辑后的内容
-                this.templateJUI.getTemplateUtil().setGlobalConfig(template, editedContent);
-                // 刷新UI显示
-                this.templateJUI.refresh();
+                if (StringUtils.isNotBlank(editedContent)) {
+                    // 保存编辑后的内容
+                    template.setGlobalConfig(editedContent);
+                    // 刷新UI显示
+                    this.templateJUI.refresh();
+                } else {
+                    util.showTipsDialog(null, Message.GLOBAL_CONFIG_EMPTY.getMsg(), Message.GLOBAL_CONFIG_EMPTY.getTitle());
+                }
             }
         }
     }

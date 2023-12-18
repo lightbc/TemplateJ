@@ -19,6 +19,7 @@ public enum Message {
     DATABASE_NOT_CONNECT("错误", "获取已连接数据库失败！"),
     TEMPLATE_CONTENT_EMPTY("提示", "模板内容不能为空！"),
     GLOBAL_CONFIG_EMPTY("提示", "模板组全局配置为空！"),
+    API_DOC_EMPTY("提示", "API文档内容为空！"),
     RESET_TEMPLATEJ("重置", "是否确认重置？重置后你的自定义配置信息将会被移除！"),
     RENAME_IS_BLANK("提示", "新名称不能为空！"),
     RENAME_GROUP_EXIST("提示", "此名称的模板组已存在！"),
@@ -42,11 +43,14 @@ public enum Message {
     FILENAME_EMPTY("警告", "文件名称为空！"),
     EXPORT_PATH_EMPTY("警告", "保存路径为空！"),
     MODULE_PATH_LOAD_ERROR("警告", "选择模块目录未加载到！"),
+    CUSTOM_DATASOURCE_EMPTY("警告", "自定义数据源内容为空/指定格式不符合规范！"),
+    CUSTOM_DATASOURCE_IMPORT_PATH_WARN("警告", "数源路径为空/无法解析！"),
 
     // 配置标题
     ADD_TEMPLATE("新增模板"),
     COPY_TEMPLATE("复制模板"),
     DEL_TEMPLATE("删除选择模板组/模板文件"),
+    API_DCO("API文档-"),
     GLOBAL_CONFIG("配置项-"),
     PREVIEW_TEMPLATE("效果预览"),
     PACKAGE_CHOOSER_TITLE("包路径选择"),

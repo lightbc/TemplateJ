@@ -19,4 +19,6 @@ public class Template {
     private Object[][] typeMapper;
     // JdbcType类型映射器
     private Object[][] jdbcTypeMapper;
+    // API接口文档模板
+    private String apiDoc;
 }

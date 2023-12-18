@@ -1,5 +1,6 @@
 package com.lightbc.templatej.ui;
 
+import com.alibaba.fastjson.JSONArray;
 import com.intellij.codeInsight.actions.*;
 import com.intellij.database.psi.DbDataSource;
 import com.intellij.database.psi.DbTable;
@@ -12,10 +13,13 @@ import com.intellij.psi.PsiFile;
 import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.components.TextField;
 import com.lightbc.templatej.entity.Generate;
+import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.renderer.CustomJTreeRenderer;
 import com.lightbc.templatej.utils.*;
 import lombok.Data;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -62,13 +66,16 @@ public class PreviewUI {
     private DefaultMutableTreeNode schemaTreeNode;
     // 默认需要打开的数据库搜索节点
     private TreePath expandSchemaPath;
+    // 自定义数据源
+    private String customDataSourcePath;
 
-    public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil, boolean autoPreview) {
+    public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil, String customDataSourcePath, boolean autoPreview) {
         this.editorUtil = new EditorUtil();
         this.groupName = groupName;
         this.templateFileName = templateFileName;
         this.sourceCode = sourceCode;
         this.dataBaseUtil = dataBaseUtil;
+        this.customDataSourcePath = customDataSourcePath;
         this.autoPreview = autoPreview;
         init();
     }
@@ -187,6 +194,14 @@ public class PreviewUI {
     private void show() {
         GenerateJUtil generateJUtil = new GenerateJUtil();
         Map<String, Object> dataModel = generateJUtil.getCommonDataModel(null, ConfigInterface.DEFAULT_PACKAGE_NAME, null, new Generate(), null);
+        // 自定义数源导入
+        List customDataSourceContent = getCustomDataSourceContent();
+        if (StringUtils.isNotBlank(this.customDataSourcePath) && customDataSourceContent != null && customDataSourceContent.size() > 0) {
+            dataModel.put("customData", customDataSourceContent);
+        } else {
+            DialogUtil dialog = new DialogUtil();
+            dialog.showTipsDialog(this.mainPanel, Message.CUSTOM_DATASOURCE_EMPTY.getMsg(), Message.CUSTOM_DATASOURCE_EMPTY.getTitle());
+        }
         String curContent = generateJUtil.generate(templateFileName, sourceCode, dataModel);
         refreshEditor(templateFileName, curContent);
     }
@@ -299,6 +314,25 @@ public class PreviewUI {
                 }
             }
         });
+    }
+
+    /**
+     * 获取自定义数源内容
+     *
+     * @return list 自定义数源内容
+     */
+    private List getCustomDataSourceContent() {
+        List list = null;
+        try {
+            if (StringUtils.isNotBlank(this.customDataSourcePath)) {
+                FileUtil fileUtil = new FileUtil();
+                String res = fileUtil.read(this.customDataSourcePath);
+                list = JSONArray.parseArray(res);
+            }
+        } catch (Exception ignore) {
+        } finally {
+            return list;
+        }
     }
 
 }

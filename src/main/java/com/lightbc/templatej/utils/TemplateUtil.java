@@ -90,28 +90,6 @@ public class TemplateUtil {
     }
 
     /**
-     * 获取模板组全局配置信息
-     *
-     * @param template 模板
-     * @return string 全局配置信息
-     */
-    public String getGlobalConfig(Template template) {
-        return template != null ? template.getGlobalConfig() : null;
-    }
-
-    /**
-     * 设置全局配置信息
-     *
-     * @param template 模板
-     * @param content  配置内容
-     */
-    public void setGlobalConfig(Template template, String content) {
-        if (template != null && StringUtils.isNotBlank(content)) {
-            template.setGlobalConfig(content);
-        }
-    }
-
-    /**
      * 获取模板配置的类型映射数据
      *
      * @param template 模板
@@ -415,9 +393,14 @@ public class TemplateUtil {
                     s = s.trim();
                     if (!"".equals(s.trim()) && s.startsWith("##")) {
                         String param = s.substring(2).trim();
-                        if (param.contains(":")) {
-                            String[] params = param.split(":");
-                            map.put(params[0].trim().toUpperCase(), params[1].trim());
+                        if (StringUtils.isNotBlank(param)) {
+                            String key = param.substring(0, param.indexOf(":")).toUpperCase();
+                            String value = param.substring(param.indexOf(":") + 1);
+                            // 判断自定义数源导入文件路径是否符合规范
+                            if (key.equals(TemplateJInterface.CUSTOM_DATASOURCE) && !isAllowFileType(value)) {
+                                continue;
+                            }
+                            map.put(key, value);
                         }
                     }
                 }
@@ -466,6 +449,16 @@ public class TemplateUtil {
             }
         }
         return globalConfig.concat(templateCode).trim();
+    }
+
+    /**
+     * 自定义数据源文件允许的文件类型
+     *
+     * @param filePath 文件路径
+     * @return Boolean true-允许类型，false-不允许类型
+     */
+    private static boolean isAllowFileType(String filePath) {
+        return FileUtil.isFileType(filePath, ConfigInterface.CUSTOM_DATASOURCE_FILE_TYPE);
     }
 
 }
