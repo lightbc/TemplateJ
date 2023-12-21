@@ -18,17 +18,14 @@ public class DelListener {
 
     public DelListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
-        init();
+        loadCommonUI();
+        del();
     }
 
     private void loadCommonUI() {
         this.commonUI = new TemplateJCommonUI(this.templateJUI.getSettings(), this.templateJUI.getTemplateUtil());
     }
 
-    private void init(){
-        loadCommonUI();
-        del();
-    }
 
     /**
      * 删除模板组/模板文件监听功能

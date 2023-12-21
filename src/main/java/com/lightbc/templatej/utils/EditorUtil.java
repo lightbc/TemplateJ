@@ -202,17 +202,4 @@ public class EditorUtil {
             }
         });
     }
-
-    /***
-     * 获取编辑器文档名称
-     * @param editor 编辑器
-     * @return string 文档名称
-     */
-    public static String getPsiFileName(Editor editor) {
-        Document document = editor.getDocument();
-        Project project = ProjectUtil.getProject();
-        PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-        String name = psiFile.getName();
-        return name;
-    }
 }

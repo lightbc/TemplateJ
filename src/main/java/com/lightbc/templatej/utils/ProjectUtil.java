@@ -67,17 +67,6 @@ public class ProjectUtil {
     }
 
     /**
-     * 通过模块名称获取指定模块
-     *
-     * @param project 当前工程
-     * @param name    模块名称
-     * @return Module
-     */
-    public static Module getProjectModule(Project project, String name) {
-        return ModuleManager.getInstance(project).findModuleByName(name);
-    }
-
-    /**
      * 通过模块获取模板路径信息
      *
      * @param module 模块
@@ -91,5 +80,4 @@ public class ProjectUtil {
         ModuleRootManager manager = ModuleRootManager.getInstance(module);
         return manager.getModule().getProject().getBasePath();
     }
-
 }

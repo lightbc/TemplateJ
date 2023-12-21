@@ -7,6 +7,7 @@ import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.ui.ExportUI;
 import com.lightbc.templatej.ui.TemplateJUI;
+import com.lightbc.templatej.utils.CommonUtil;
 import com.lightbc.templatej.utils.DialogUtil;
 import com.lightbc.templatej.utils.FileUtil;
 import com.lightbc.templatej.utils.TemplateUtil;
@@ -103,6 +104,15 @@ public class ExportListener {
                         String filePath = dirPath.concat(File.separator).concat(ui.getGlobalBox().getText());
                         fileUtil.createFile(filePath);
                         fileUtil.write(filePath, globalConfig);
+                    }
+                }
+                // 导出API接口文档配置
+                if (ui.getApiDoc() != null && ui.getApiDoc().isSelected()) {
+                    String apiDoc = template.getApiDoc();
+                    if (StringUtils.isNotBlank(apiDoc)) {
+                        String filePath = dirPath.concat(File.separator).concat(CommonUtil.getUUID().concat(ConfigInterface.API_DOC_TYPE));
+                        fileUtil.createFile(filePath);
+                        fileUtil.write(filePath, apiDoc);
                     }
                 }
                 dialog.showTipsDialog(ui.getMainPanel(), Message.EXPORT_SUCCESS.getMsg(), Message.EXPORT_SUCCESS.getTitle());

@@ -1,5 +1,7 @@
 package com.lightbc.templatej.utils;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.intellij.database.model.DasColumn;
 import com.intellij.database.psi.DbTable;
 import com.intellij.database.util.DasUtil;
@@ -15,14 +17,15 @@ import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.entity.Table;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
-import com.lightbc.templatej.ui.TemplateJGenerateCommonUI;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 代码生成工具类
+ * 代码生成处理工具类
  */
 @Slf4j
 public class GenerateJUtil {
@@ -39,6 +42,9 @@ public class GenerateJUtil {
     @Getter
     private String encode = ConfigInterface.ENCODE_VALUE;
     private TemplateUtil templateUtil;
+    // 是否关闭提示消息，true-关闭，false-不关闭
+    @Setter
+    private boolean closeTips;
 
     public GenerateJUtil() {
         // 获取模板信息
@@ -53,9 +59,8 @@ public class GenerateJUtil {
      * @param saveFileName     保存文件名称
      * @param savePath         保存路径
      * @param dataModel        模板引擎的数据模型
-     * @param tips             是否关闭提示消息，true-关闭，false-不关闭
      */
-    public void generate(String groupName, String templateFileName, String saveFileName, String savePath, Map<String, Object> dataModel, boolean tips) {
+    public void generate(String groupName, String templateFileName, String saveFileName, String savePath, Map<String, Object> dataModel) {
         DialogUtil dialogUtil = new DialogUtil();
         String ext = ConfigInterface.DEFAULT_GENERATE_EXT;
         if (saveFileName.contains(".")) {
@@ -68,8 +73,8 @@ public class GenerateJUtil {
         // 生成字符串内容
         String generateContent = generate(templateFileName, sourceCode, dataModel);
         //template根据模板生成指定内容后，获取template处理后的数据模型，用于文件生成后续步骤
-        if (dataModel.containsKey("generate")) {
-            Generate generate = ((Generate) dataModel.get("generate"));
+        if (dataModel.containsKey(ConfigInterface.GENERATE_KEY_NAME)) {
+            Generate generate = ((Generate) dataModel.get(ConfigInterface.GENERATE_KEY_NAME));
             String customPath = savePath;
             // xml文件保存位置
             if (generate.getXmlSavePath() != null && !"".equals(generate.getXmlSavePath().trim())) {
@@ -94,8 +99,8 @@ public class GenerateJUtil {
             savePath = savePath.concat(File.separator).concat(saveFileName);
         }
         // 提示消息
-        if (!tips) {
-            boolean b = fileUtil.exist(savePath);
+        if (!this.closeTips) {
+            boolean b = this.fileUtil.exist(savePath);
             if (b) {
                 int c = dialogUtil.showConfirmDialog(null, String.format(Message.TEMPLATE_REPEAT_CREATE.getMsg(), saveFileName), Message.TEMPLATE_REPEAT_CREATE.getTitle());
                 if (c != 0) {
@@ -215,6 +220,9 @@ public class GenerateJUtil {
             // 数据类型
             String dataType = column.getDataType().typeName;
             cols.setDataType(dataType);
+            // 字段存储长度
+            int size = column.getDataType().size;
+            cols.setSize(size);
             // 获取对应的javaType数据类型
             cols.setJavaType(javaTypeMapper.get(dataType));
             // 获取对应的jdbcType数据类型
@@ -228,6 +236,7 @@ public class GenerateJUtil {
         table.setColumns(columnsList);
         table.setColumnNames(columnNames);
         table.setColumnType(columnType);
+        table.setDbTable(dt);
         return table;
     }
 
@@ -261,7 +270,9 @@ public class GenerateJUtil {
     public Map<String, Object> getDataModel(String groupName, DbTable table, String fileName, String rootPath, String packagePath, String generatePath) {
         Table t = getTable(groupName, table);
         Generate generate = new Generate();
-        fileName = t.getName().concat(fileName.substring(fileName.indexOf(".")));
+        if (StringUtils.isNotBlank(fileName)) {
+            fileName = t.getName().concat(fileName.substring(fileName.indexOf(".")));
+        }
         generate.setFileName(fileName);
         return getCommonDataModel(rootPath, packagePath, generatePath, generate, t);
     }
@@ -285,7 +296,7 @@ public class GenerateJUtil {
         map.put("table", t);
         map.put("tableName", t != null ? t.getName() : null);
         map.put("generatePath", generatePath);
-        map.put("generate", generate);
+        map.put(ConfigInterface.GENERATE_KEY_NAME, generate);
         return map;
     }
 
@@ -406,6 +417,51 @@ public class GenerateJUtil {
             return StringUtils.capitalize(s);
         }
         return s;
+    }
+
+    /**
+     * 添加自定义数据源到freemarker数据模型中
+     *
+     * @param parentComponent 父级组件
+     * @param sourcePath      自定义数据源文件来源路径
+     * @param dataModel       freemarker数据模型
+     */
+    public void addCustomDataSourceModel(Component parentComponent, String sourcePath, Map<String, Object> dataModel) {
+        DialogUtil dialog = new DialogUtil();
+        try {
+            if (StringUtils.isNotBlank(sourcePath)) {
+                FileUtil fileUtil = new FileUtil();
+                String res = fileUtil.read(sourcePath);
+                // 自定义数源内容/格式是否正确，true-不正确，false-正确
+                boolean isEmptyCustomDataSource = false;
+                // 自定义数源导入
+                if (StringUtils.isNotBlank(res)) {
+                    if (CommonUtil.isJsonObject(res)) {
+                        // 判断数据类型是json对象还是json数组
+                        JSONObject json = JSONObject.parseObject(res);
+                        if (json != null && json.size() > 0) {
+                            dataModel.put("customData", json);
+                        }
+                    } else if (CommonUtil.isJsonArray(res)) {
+                        JSONArray array = JSONArray.parseArray(res);
+                        if (array != null && array.size() > 0) {
+                            dataModel.put("customData", array);
+                        }
+                    } else {
+                        isEmptyCustomDataSource = true;
+                    }
+                } else {
+                    isEmptyCustomDataSource = true;
+                }
+                if (!this.closeTips && isEmptyCustomDataSource) {
+                    dialog.showTipsDialog(parentComponent, Message.CUSTOM_DATASOURCE_EMPTY.getMsg(), Message.CUSTOM_DATASOURCE_EMPTY.getTitle());
+                }
+            }
+        } catch (Exception ignore) {
+            if (!this.closeTips) {
+                dialog.showTipsDialog(parentComponent, Message.ADD_CUSTOM_DATASOURCE_ERROR.getMsg(), Message.ADD_CUSTOM_DATASOURCE_ERROR.getTitle());
+            }
+        }
     }
 
 }

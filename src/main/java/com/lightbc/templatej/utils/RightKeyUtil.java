@@ -1,21 +1,16 @@
 package com.lightbc.templatej.utils;
 
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
-import com.lightbc.templatej.action.ApiDocAction;
 import com.lightbc.templatej.action.CustomTemplateAction;
 import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.action.UsePluginConfigAction;
 import com.lightbc.templatej.interfaces.ActionNameInterface;
-import cucumber.api.java.it.Ma;
 
 /**
  * 鼠标右键功能处理工具类
  */
 public class RightKeyUtil {
-    private static ActionManager MANAGER = ActionManager.getInstance();
-
     /**
      * 获取插件主UI界面编辑器的右键菜单action项
      *
@@ -40,20 +35,21 @@ public class RightKeyUtil {
         return new AnAction[]{export};
     }
 
-    public static void enableApiDocEditorPopupMenu(String groupName, String content) {
-        ApiDocAction action = (ApiDocAction) MANAGER.getAction(ApiDocAction.ID);
-        action.setContent(content);
-        action.setGroupName(groupName);
-        action.getTemplatePresentation().setEnabled(true);
-        EditorPopupMenuActionGroup.setChildren(null);
+    /**
+     * 返回API接口文档编辑器右键菜单项
+     *
+     * @param editor 编辑器
+     * @return AnAction[]
+     */
+    static AnAction[] getApiDocActions(Editor editor) {
+        UsePluginConfigAction customDataSource = new UsePluginConfigAction(editor, ActionNameInterface.CUSTOM_DATASOURCE, 2);
+        return new AnAction[]{customDataSource};
     }
 
-    public static void disableApiDocEditorPopupMenu() {
-        MANAGER.getAction(ApiDocAction.ID).getTemplatePresentation().setEnabled(false);
-    }
-
+    /**
+     * 禁用编辑器属性菜单
+     */
     public static void disableEditorPopupMenu() {
-        disableApiDocEditorPopupMenu();
         EditorPopupMenuActionGroup.setChildren(null);
     }
 }

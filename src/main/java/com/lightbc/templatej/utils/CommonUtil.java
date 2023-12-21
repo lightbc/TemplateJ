@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class CommonUtil {
 
     /**
-     * 获取UUID
+     * 获取UUID，移除"-"
      *
      * @return string uuid
      */
@@ -77,7 +77,7 @@ public class CommonUtil {
      * @param s 判断字符串
      * @return Boolean true-json对象，false-非json对象
      */
-    public boolean isJsonObject(String s) {
+    static boolean isJsonObject(String s) {
         boolean b = false;
         try {
             JSONObject.parseObject(s);
@@ -94,7 +94,7 @@ public class CommonUtil {
      * @param s 判断字符串
      * @return Boolean true-json数组，false-非json数组
      */
-    public boolean isJsonArray(String s) {
+    static boolean isJsonArray(String s) {
         boolean b = false;
         try {
             JSONArray.parseArray(s);
@@ -103,5 +103,30 @@ public class CommonUtil {
         } finally {
             return b;
         }
+    }
+
+    /**
+     * 对象是否为空验证
+     *
+     * @param o 验证对象
+     * @return boolean 不为空：true，空：false
+     */
+    public static boolean validate(Object o) {
+        if (o == null) {
+            return false;
+        }
+        // 数组类型验证
+        if (o instanceof List) {
+            List list = (List) o;
+            if (list.size() > 0) {
+                return true;
+            }
+        }
+        // 字符串类型验证
+        if (o instanceof String) {
+            String s = String.valueOf(o);
+            return !"".equals(s.trim());
+        }
+        return false;
     }
 }

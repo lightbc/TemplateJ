@@ -11,7 +11,5 @@ public interface ActionNameInterface {
     String EDITOR_POPUP_MENU_GROUP = "TemplateJ Plugin...";
     // 自定义数源
     String CUSTOM_DATASOURCE = "Add Custom DataSource";
-    // API
-    String API_DOC_PREVIEW = "API Doc Preview";
 
 }

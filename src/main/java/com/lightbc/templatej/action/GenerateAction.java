@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.enums.Message;
+import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.ui.TemplateJGenerateCommonUI;
 import com.lightbc.templatej.ui.TemplateJGenerateUI;
 import com.lightbc.templatej.utils.*;
@@ -71,7 +72,7 @@ public class GenerateAction extends AnAction {
     }
 
     /**
-     * 执行生成操作
+     * 模板生成
      *
      * @param groupName     模板组名称
      * @param savePath      保存目录
@@ -87,39 +88,60 @@ public class GenerateAction extends AnAction {
         if (checkFileList == null) {
             return;
         }
+        String rootPath = ProjectUtil.getModulePath(this.generateUI.getSelectModule());
+        // 判断是否禁用报错提示
+        boolean closeTips = commonUI.getGenerateTips().isSelected();
+        GenerateJUtil generateJUtil = new GenerateJUtil();
+        generateJUtil.setCloseTips(closeTips);
         // 单表/多表选择，循环生成
         for (DbTable table : this.tableList) {
             // 使用选中的模板文件生成对应表的接口文件
             for (String fileName : checkFileList) {
-                // 模板文件名
-                GenerateJUtil generateJUtil = new GenerateJUtil();
-                // 判断是否禁用报错提示
-                boolean closeTips = commonUI.getGenerateTips().isSelected();
-                try {
-                    String rootPath = ProjectUtil.getModulePath(this.generateUI.getSelectModule());
-                    String packageName = commonUI.getPackagePath().getText();
-                    // 模板数据模型对象
-                    Map<String, Object> dataModel = generateJUtil.getDataModel(groupName, table, fileName, rootPath, packageName, commonUI.getGeneratePath());
-                    // 自定义的保存文件名
-                    String saveFileName = ((Generate) dataModel.get("generate")).getFileName();
-                    // 自定义保存路径部分
-                    String customPath = ((Generate) dataModel.get("generate")).getSavePath();
-                    // 拼接自定义路径部分，获取完整路径
-                    savePath = generateJUtil.getCompleteSavePath(savePath, customPath);
-                    if ("".equals(savePath.trim())) {
-                        savePath = commonUI.getGenerateRoot();
-                    }
-                    // 生成模板
-                    generateJUtil.generate(groupName, fileName, saveFileName, savePath, dataModel, closeTips);
-                } catch (Exception e) {
-                    if (!closeTips) {
-                        DialogUtil dialog = new DialogUtil();
-                        dialog.showTipsDialog(null, String.format(Message.GENERATE_ERROR.getMsg(), fileName, e.getCause()), Message.GENERATE_ERROR.getTitle());
-                    }
-                }
+                doGenerate(commonUI, generateJUtil, groupName, fileName, rootPath, savePath, table, closeTips);
+            }
+            // 生成API接口文档
+            if (commonUI.getApiDoc().isSelected()) {
+                commonUI.generateApiDoc(table, rootPath, generateJUtil);
             }
         }
     }
+
+    /**
+     * 执行模板生成操作
+     *
+     * @param commonUI      生成器通用UI对象
+     * @param generateJUtil 代码生成处理工具类对象
+     * @param groupName     模板组名称
+     * @param fileName      模板文件文件名称
+     * @param rootPath      项目模块的根路径
+     * @param savePath      保存路径
+     * @param table         数据表对象
+     * @param closeTips     是否关闭提示消息，true-关闭，false-不关闭
+     */
+    private synchronized void doGenerate(TemplateJGenerateCommonUI commonUI, GenerateJUtil generateJUtil, String groupName, String fileName, String rootPath, String savePath, DbTable table, boolean closeTips) {
+        try {
+            String packageName = commonUI.getPackagePath().getText();
+            // 模板数据模型对象
+            Map<String, Object> dataModel = generateJUtil.getDataModel(groupName, table, fileName, rootPath, packageName, commonUI.getGeneratePath());
+            // 自定义的保存文件名
+            String saveFileName = ((Generate) dataModel.get(ConfigInterface.GENERATE_KEY_NAME)).getFileName();
+            // 自定义保存路径部分
+            String customPath = ((Generate) dataModel.get(ConfigInterface.GENERATE_KEY_NAME)).getSavePath();
+            // 拼接自定义路径部分，获取完整路径
+            savePath = generateJUtil.getCompleteSavePath(savePath, customPath);
+            if ("".equals(savePath.trim())) {
+                savePath = commonUI.getGenerateRoot();
+            }
+            // 生成模板
+            generateJUtil.generate(groupName, fileName, saveFileName, savePath, dataModel);
+        } catch (Exception e) {
+            if (!closeTips) {
+                DialogUtil dialog = new DialogUtil();
+                dialog.showTipsDialog(null, String.format(Message.GENERATE_ERROR.getMsg(), fileName, e.getCause()), Message.GENERATE_ERROR.getTitle());
+            }
+        }
+    }
+
 
     /**
      * 生成器对话框，确认生成事件监听
@@ -140,7 +162,7 @@ public class GenerateAction extends AnAction {
                     // 模板组名称
                     String groupName = Objects.requireNonNull(ui.getGroupBox().getSelectedItem()).toString();
                     // 验证是否有模板被选择
-                    if (!validate(checkList)) {
+                    if (!CommonUtil.validate(checkList)) {
                         continue;
                     }
                     generate(groupName, ui.getGeneratePath(), checkList, ui);
@@ -155,31 +177,6 @@ public class GenerateAction extends AnAction {
                 dialog.showTipsDialog(this.generateUI.getMainPanel(), Message.NO_CONFIG_MODULE.getMsg(), Message.NO_CONFIG_MODULE.getTitle());
             }
         });
-    }
-
-    /**
-     * 对象是否为空验证
-     *
-     * @param o 验证对象
-     * @return boolean 不为空：true，空：false
-     */
-    private boolean validate(Object o) {
-        if (o == null) {
-            return false;
-        }
-        // 数组类型验证
-        if (o instanceof List) {
-            List list = (List) o;
-            if (list.size() > 0) {
-                return true;
-            }
-        }
-        // 字符串类型验证
-        if (o instanceof String) {
-            String s = String.valueOf(o);
-            return !"".equals(s.trim());
-        }
-        return false;
     }
 
 }

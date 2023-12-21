@@ -141,6 +141,12 @@ public class ImportListener {
                     String globalContent = readContent(globalPath);
                     template.setGlobalConfig(globalContent);
                 }
+                // API接口文档模板
+                String apiDocPath = ui.getApiDocButton().getText();
+                if (StringUtils.isNotBlank(apiDocPath)) {
+                    String apiDocContent = readContent(apiDocPath);
+                    template.setApiDoc(apiDocContent);
+                }
                 // 设置模板文件
                 template.setGroupFiles(fileList);
                 // 设置模板文件内容

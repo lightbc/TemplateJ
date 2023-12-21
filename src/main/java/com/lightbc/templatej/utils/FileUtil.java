@@ -336,10 +336,11 @@ public class FileUtil {
      * @return string
      */
     @SuppressWarnings({"finally", "ReturnInsideFinallyBlock", "ResultOfMethodCallIgnored"})
-    public static String getPluginCacheDir() {
+    static String getPluginCacheDir() {
         String re = null;
         try {
             String pluginPath = PluginUtil.getPluginSavePath();
+            assert pluginPath != null;
             File pluginFile = new File(pluginPath);
             if (pluginFile.exists() && pluginFile.isDirectory()) {
                 String cacheDir = pluginPath.concat(File.separator).concat(ConfigInterface.PLUGIN_CACHE_DIR);
@@ -349,7 +350,7 @@ public class FileUtil {
                 }
                 re = cacheFile.getAbsolutePath();
             }
-        } catch (Exception e) {
+        } catch (Exception ignore) {
         } finally {
             return re;
         }
@@ -403,7 +404,7 @@ public class FileUtil {
      * @param extension 拓展名
      * @return Boolean true-指定类型，false-非指定类型
      */
-    public static boolean isFileType(String filePath, String extension) {
+    static boolean isFileType(String filePath, String extension) {
         boolean b = false;
         try {
             // 判断文件路径和指定拓展名是否为空
@@ -422,6 +423,53 @@ public class FileUtil {
         } finally {
             return b;
         }
+    }
+
+    /**
+     * 根据路径判断是否是文件
+     *
+     * @param path 文件路径
+     * @return boolean 是-true，false-否
+     */
+    public static boolean isFile(String path) {
+        try {
+            File file = new File(path);
+            if (file.exists() && file.isFile()) {
+                return true;
+            }
+        } catch (Exception ignore) {
+        }
+        return false;
+    }
+
+    /**
+     * 根据路径判断是否是文件夹
+     *
+     * @param path 文件路径
+     * @return boolean true-是，false-否
+     */
+    public static boolean isDir(String path) {
+        try {
+            File file = new File(path);
+            if (file.exists() && file.isDirectory()) {
+                return true;
+            }
+        } catch (Exception ignore) {
+        }
+        return false;
+    }
+
+    /**
+     * 动态匹配分隔符
+     *
+     * @param path 文件路径
+     * @return string 路径分隔符
+     */
+    public static String getSeparator(String path) {
+        if (path != null && path.lastIndexOf("/") == -1) {
+            return "\\";
+        }
+        return "/";
     }
 
 }

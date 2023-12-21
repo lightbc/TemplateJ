@@ -2,6 +2,7 @@ package com.lightbc.templatej.utils;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import org.apache.commons.lang3.StringUtils;
@@ -42,11 +43,11 @@ public class PluginUtil {
         try {
             Path filePath = (Path) util.getMethod(IdeaPluginDescriptor.class, "getPluginPath").invoke(plugin, new Object[]{});
             path = filePath.toFile().getAbsolutePath();
-        } catch (Exception e) {
+        } catch (Exception ignore) {
             try {
                 File file = (File) util.getMethod(IdeaPluginDescriptor.class, "getPath").invoke(plugin, new Object[]{});
                 path = (String) util.getMethod(File.class, "getAbsolutePath").invoke(file, new Object[]{});
-            } catch (Exception e1) {
+            } catch (Exception ignore2) {
             }
         } finally {
             return path;
@@ -86,18 +87,49 @@ public class PluginUtil {
     }
 
     /**
+     * 保存API接口文档文件
+     *
+     * @param pdfName     pdf文件名称
+     * @param htmlContent api文档内容
+     * @param savePath    保存路径
+     * @return boolean true-保存成功，false-保存失败
+     */
+    public static boolean saveApiDoc(String pdfName, String htmlContent, String savePath) {
+        boolean rb = false;
+        try {
+            if (StringUtils.isNotBlank(savePath)) {
+                // 缓存目录路径
+                FileUtil fileUtil = new FileUtil();
+                // 缓存文件路径
+                String apiDocSavePath = savePath.concat(File.separator).concat(pdfName);
+                fileUtil.createFile(apiDocSavePath);
+                // 将HTML文档内容转换成PDF
+                PdfUtil pdfUtil = new PdfUtil();
+                boolean b = pdfUtil.htmlToPdf(apiDocSavePath, htmlContent);
+                if (b) {
+                    // 刷新工程目录结构
+                    VirtualFileManager.getInstance().syncRefresh();
+                    rb = true;
+                }
+            }
+        } catch (Exception ignore) {
+        } finally {
+            return rb;
+        }
+    }
+
+    /**
      * 缓存效果预览的api文档
      *
-     * @param groupName   模板组名称
+     * @param pdfName     pdf文件名称
      * @param htmlContent api文档内容
      */
-    public static void cacheApiDoc(String groupName, String htmlContent) {
+    public static void cacheApiDoc(String pdfName, String htmlContent) {
         // 缓存目录路径
         FileUtil fileUtil = new FileUtil();
         String apiDocCacheDir = FileUtil.getPluginCacheDir().concat(File.separator).concat(ConfigInterface.API_DOC_CACHE_DIR);
         fileUtil.createDirs(apiDocCacheDir);
         // 缓存文件路径
-        String pdfName = groupName.concat(ConfigInterface.PDF);
         String apiDocCacheFilePath = apiDocCacheDir.concat(File.separator).concat(pdfName);
         fileUtil.createFile(apiDocCacheFilePath);
         // 将HTML文档内容转换成PDF
@@ -123,6 +155,12 @@ public class PluginUtil {
 
     }
 
+    /**
+     * 执行cmd命令
+     *
+     * @param cmd 命令行
+     * @return Boolean true-成功，false-失败
+     */
     private static boolean runCmd(String cmd) {
         boolean b = false;
         try {
@@ -140,7 +178,7 @@ public class PluginUtil {
      *
      * @return string 字体目录路径
      */
-    public static String getWindowsFontsDir() {
+    static String getWindowsFontsDir() {
         String path = System.getenv("WINDIR");
         File fontDir = new File(path, "Fonts");
         return fontDir.getAbsolutePath();

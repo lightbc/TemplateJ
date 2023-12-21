@@ -80,12 +80,18 @@ public class TypeMapperUI implements Configurable {
         initTable();
     }
 
+    /**
+     * 初始化JdbcType数据映射表初始显示内容
+     */
     private void initJdbcTypeTable() {
         this.jdbcTypeMapper = this.jdbcTypeMapper != null ? this.jdbcTypeMapper : DefaultTemplateParams.getDefaultJdbcTypeTableData();
         this.tableModel = new DefaultTableModel(this.jdbcTypeMapper, DefaultTemplateParams.getDefaultJdbcTypeTableHeader());
         initTable();
     }
 
+    /**
+     * 初始化映射表
+     */
     private void initTable() {
         this.mainPanel.setLayout(new BorderLayout());
         this.table = new JTable(this.tableModel);
@@ -192,18 +198,31 @@ public class TypeMapperUI implements Configurable {
         }
     }
 
+    /**
+     * javaType映射类型表数据修改
+     *
+     * @return boolean true-修改，false-未修改
+     */
     private boolean javaTypeModified() {
         // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
         Object[][] objects = getTableData();
         return !this.typeMapper.equals(objects);
     }
 
+    /**
+     * jdbcType映射类型表数据修改
+     *
+     * @return Boolean true-修改，false-未修改
+     */
     private boolean jdbcTypeModified() {
         // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
         Object[][] objects = getTableData();
         return !this.jdbcTypeMapper.equals(objects);
     }
 
+    /**
+     * javaType类型映射变更应用
+     */
     private void javaTypeApply() {
         // 当前模板组，数据类型映射，最新配置数据持久化
         Object[][] objects = getTableData();
@@ -211,6 +230,9 @@ public class TypeMapperUI implements Configurable {
         this.templateJUI.getSettings().save();
     }
 
+    /**
+     * jdbcType类型映射变更应用
+     */
     private void jdbcTypeApply() {
         // 当前模板组，数据类型映射，最新配置数据持久化
         Object[][] objects = getTableData();

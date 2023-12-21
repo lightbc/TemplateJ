@@ -31,6 +31,7 @@ public class ExportUI {
     private JPanel globalConfigPanel;
     private JCheckBox javaType;
     private JCheckBox jdbcType;
+    private JCheckBox apiDoc;
     private TemplateJUI templateJUI;
     // 模板导出位置选择组件
     private TextFieldWithBrowseButton browseButton;

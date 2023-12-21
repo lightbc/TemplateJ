@@ -1,6 +1,5 @@
 package com.lightbc.templatej.utils;
 
-import com.alibaba.fastjson.JSONArray;
 import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.interfaces.ConfigInterface;
@@ -30,7 +29,7 @@ public class TemplateUtil {
      * @return boolean true-是，false-否
      */
     public static boolean isTemplateFile(Object selectGroupFile) {
-        return selectGroupFile == null || selectGroupFile.toString().equals(ConfigInterface.DEFAULT_GROUP_FILE_VALUE) ? false : true;
+        return selectGroupFile != null && !selectGroupFile.toString().equals(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
     }
 
     /**
@@ -95,7 +94,7 @@ public class TemplateUtil {
      * @param template 模板
      * @return object[][]
      */
-    public Object[][] getTypeMapper(Template template) {
+    Object[][] getTypeMapper(Template template) {
         return template != null ? template.getTypeMapper() : null;
     }
 
@@ -105,7 +104,7 @@ public class TemplateUtil {
      * @param template 模板
      * @return object[][]
      */
-    public Object[][] getJdbcTypeMapper(Template template) {
+    Object[][] getJdbcTypeMapper(Template template) {
         return template != null ? template.getJdbcTypeMapper() : null;
     }
 
@@ -396,7 +395,7 @@ public class TemplateUtil {
                         if (StringUtils.isNotBlank(param)) {
                             String key = param.substring(0, param.indexOf(":")).toUpperCase();
                             String value = param.substring(param.indexOf(":") + 1);
-                            // 判断自定义数源导入文件路径是否符合规范
+                            // 判断自定义数源导入文件类型是否符合规范
                             if (key.equals(TemplateJInterface.CUSTOM_DATASOURCE) && !isAllowFileType(value)) {
                                 continue;
                             }
@@ -433,6 +432,17 @@ public class TemplateUtil {
      * @return string
      */
     public static String getSourceCode(String globalConfig, String templateCode, PropertiesUtil util) {
+        return globalConfig.concat(getSourceCode(templateCode, util)).trim();
+    }
+
+    /**
+     * 获取模板代码，无全局配置项
+     *
+     * @param templateCode 模板内容
+     * @param util         属性工具类
+     * @return string
+     */
+    public static String getSourceCode(String templateCode, PropertiesUtil util) {
         setSettingProperties(templateCode, util);
         boolean b = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL)) || Boolean.parseBoolean(util.getValue(TemplateJInterface.AUTO_PREVIEW));
         if (b) {
@@ -448,7 +458,7 @@ public class TemplateUtil {
                 return builder.toString().trim();
             }
         }
-        return globalConfig.concat(templateCode).trim();
+        return templateCode;
     }
 
     /**
@@ -460,5 +470,4 @@ public class TemplateUtil {
     private static boolean isAllowFileType(String filePath) {
         return FileUtil.isFileType(filePath, ConfigInterface.CUSTOM_DATASOURCE_FILE_TYPE);
     }
-
 }

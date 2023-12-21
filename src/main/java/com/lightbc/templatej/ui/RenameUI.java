@@ -192,6 +192,7 @@ public class RenameUI implements Configurable {
                         }
                     }
                 }
+                assert this.templates != null;
                 this.templates.get(templateIndex).setGroupName(rename);
                 // 设置默认选择模板组
                 settings.setSelectGroup(rename);
@@ -200,7 +201,6 @@ public class RenameUI implements Configurable {
             }
         } else {
             dialogUtil.showTipsDialog(null, Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());
-            return;
         }
     }
 

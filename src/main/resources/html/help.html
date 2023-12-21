@@ -45,11 +45,15 @@
             font-size: 20px;
             font-weight: 700;
         }
+
+        .current-version-new-add {
+            color: red;
+        }
     </style>
 </head>
 <body>
 <div id="version">
-    <i>v1.3.3-RELEASE</i>
+    <i>v1.4.0-RELEASE</i>
 </div>
 <div>
     <h2>
@@ -231,8 +235,10 @@
                 插件主UI界面编辑器右键功能<br/>
                 步骤1：主UI界面的编辑器区域右键。<br/>
                 步骤2：出现下图（1）所示菜单项。<br/>
-                【TemplateJ Plugin...】->【Add Auto Preview Code(文档首行添加自动预览代码)/Add Ignore Global<br/>
-                Code（文档首行添加忽略全局模板配置）】。<br/>
+                【TemplateJ Plugin...】<br/>
+                1、Add Auto Preview Code(文档首行添加自动预览代码)。<br/>
+                2、Add Ignore Global Code（文档首行添加忽略全局模板配置）。<br/>
+                3、Add Custom DataSource（文档首航添加自定义数据源导入路径）。<br/>
                 点击菜单项后下图（2）的位置会出现对应要添加的代码。<br/>
                 <img src="/images/add_plugin_config_code.png">
             </li>
@@ -247,6 +253,12 @@
                 在下图（2）的位置点击选择需要导出到的文件目录路径信息。<br/>
                 步骤5：导出信息填写后，点击下图（3）【Ok】按钮，导出预览到的自定义模板内容。<br/>
                 <img src="/images/export_custom_template_ui.png">
+            </li>
+            <li class="current-version-new-add">
+                API接口文档配置<br/>
+                接口文档模板文件为HTML格式，生成器会根据HTML文件的内容将HTML文件转换成PDF文档格式。<br/>
+                接口文档模板支持自定义数据源（JSON对象/JSON数组）引用。<br/>
+                <img src="/images/api_doc_template_edit.png">
             </li>
             <li>
                 点击【帮助】按钮，将显示本页面。
@@ -274,6 +286,10 @@
                 步骤7：勾选【关闭提示】，不再显示模板生成过程中的报错信息。<br/>
                 步骤8：点击【Ok】按钮，确认开始进行模板生成。<br/>
                 <img src="/images/generate_ui.png"/>
+            </li>
+            <li class="current-version-new-add">
+                API接口文档生成功能，勾选会将API接口文档后，会将HTML模板内容生成、转换成PDF文件。<br/>
+                <img src="/images/api_doc_generate.png">
             </li>
             <li>
                 <p>
@@ -323,6 +339,9 @@
             </li>
             <li>
                 【${generatePath}】：获取生成的模板保存路径（保存路径选择器选择的路径）
+            </li>
+            <li class="current-version-new-add">
+                【${customData}】：导入的自定义数据源（JSON对象/JSON数组）
             </li>
             <li>
                 【${generate}】：模板生成时的自定义参数实例
@@ -401,6 +420,10 @@
                                 【${table.getColumns().get(index).setJdbcType(参数)}】：设置数据字段对应的Jdbc枚举类型<br/>
                                 【${table.getColumns().get(index).getJdbcType()}】：获取数据字段对应的Jdbc枚举类型<br/>
                             </li>
+                            <li class="current-version-new-add">
+                                【${table.getColumns().get(index).setSize(参数)}】：设置数据字段的存储长度<br/>
+                                【${table.getColumns().get(index).getSize()}】：获取数据字段的存储长度<br/>
+                            </li>
                         </ul>
                     </li>
                     <li>
@@ -410,6 +433,10 @@
                     <li>
                         【${table.setColumnType(参数)}】：设置数据类型映射集（设置类型：Map&lt;String[javaType],Object[columnType]&gt;）<br/>
                         【${table.getColumnType()}】：获取数据类型映射集（获取类型：Map&lt;String[javaType],Object[columnType]&gt;）<br/>
+                    </li>
+                    <li class="current-version-new-add">
+                        【${table.setDbTable(参数)}】：设置数据表的原始信息对象<br/>
+                        【${table.getDbTable()}】：获取数据表的原始信息对象<br/>
                     </li>
                 </ol>
             </li>
@@ -474,6 +501,10 @@
             <li>
                 单个模板忽略全局配置内容，可任意位置配置。（格式：## TemplateJ-Ignore-Global:[true|false]，key值忽略大小写）<br/>
                 <img src="/images/ignore_global.png"/>
+            </li>
+            <li class="current-version-new-add">
+                模板引入自定义数据源（暂仅支持JSON格式），可任意位置配置。（格式：## TemplateJ-Custom-DataSource:[JSON格式文件路径]，key值忽略大小写）<br/>
+                <img src="/images/custom_datasource.png"/>
             </li>
         </ol>
     </div>

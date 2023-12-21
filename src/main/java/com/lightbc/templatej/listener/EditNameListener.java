@@ -20,17 +20,15 @@ public class EditNameListener {
 
     public EditNameListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
-        init();
+        loadCommonUI();
+        editName();
+
     }
 
     private void loadCommonUI() {
         this.commonUI = new TemplateJCommonUI(this.templateJUI.getSettings(), this.templateJUI.getTemplateUtil());
     }
 
-    private void init() {
-        loadCommonUI();
-        editName();
-    }
 
     /**
      * 重命名功能
@@ -133,11 +131,10 @@ public class EditNameListener {
                 // 设置默认选择模板组
                 this.templateJUI.getSettings().setSelectGroup(rename);
             }
-            this.templateJUI.refresh();
         } else {
             dialogUtil.showTipsDialog(this.templateJUI.getMainPanel(), Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());
-            this.templateJUI.refresh();
         }
+        this.templateJUI.refresh();
     }
 
 }

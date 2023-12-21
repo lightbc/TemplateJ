@@ -11,7 +11,7 @@ public class ColumnInfo {
     private String originColumnName;
     //Java 字段名称（处理后）
     private String columnName;
-    //JavaType数据类型
+    //数据类型
     private String dataType;
     //字符编码
     private String charset;
@@ -21,4 +21,6 @@ public class ColumnInfo {
     private String javaType;
     //JdbcType数据类型
     private String jdbcType;
+    // 字段存储长度
+    private int size;
 }

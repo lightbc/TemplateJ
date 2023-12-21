@@ -1,5 +1,6 @@
 package com.lightbc.templatej.entity;
 
+import com.intellij.database.psi.DbTable;
 import lombok.Data;
 
 import java.util.List;
@@ -28,4 +29,6 @@ public class Table {
     private List<String> columnNames;
     //字段+类型Map
     private Map<String, Object> columnType;
+    // dbtable
+    private DbTable dbTable;
 }

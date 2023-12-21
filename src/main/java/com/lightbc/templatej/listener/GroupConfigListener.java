@@ -1,9 +1,5 @@
 package com.lightbc.templatej.listener;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.event.EditorMouseEvent;
-import com.intellij.openapi.editor.event.EditorMouseListener;
-import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
@@ -12,9 +8,6 @@ import com.lightbc.templatej.utils.DialogUtil;
 import com.lightbc.templatej.utils.RightKeyUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
-import java.awt.event.MouseEvent;
 
 /**
  * 全局配置项配置事件监听
@@ -57,7 +50,7 @@ public class GroupConfigListener {
                     // 保存编辑后的内容
                     template.setGlobalConfig(editedContent);
                 } else {
-                    util.showTipsDialog(null, Message.GLOBAL_CONFIG_EMPTY.getMsg(), Message.GLOBAL_CONFIG_EMPTY.getTitle());
+                    util.showTipsDialog(util.getEditor().getComponent(), Message.GLOBAL_CONFIG_EMPTY.getMsg(), Message.GLOBAL_CONFIG_EMPTY.getTitle());
                 }
             }
         }

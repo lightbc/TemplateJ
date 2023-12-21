@@ -2,8 +2,6 @@ package com.lightbc.templatej.utils;
 
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -20,7 +18,7 @@ import java.io.FileOutputStream;
  * @author lightbc
  * @version 1.0
  */
-public class PdfUtil {
+class PdfUtil {
 
     /**
      * html内容转换成pdf
@@ -29,7 +27,7 @@ public class PdfUtil {
      * @param htmlContent html文本内容
      * @return Boolean true-转换成功，false-转换失败
      */
-    public boolean htmlToPdf(String savePath, String htmlContent) {
+    boolean htmlToPdf(String savePath, String htmlContent) {
         boolean b = false;
         try {
             PdfWriter writer = new PdfWriter(new FileOutputStream(savePath));

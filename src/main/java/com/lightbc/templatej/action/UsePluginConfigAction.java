@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.utils.DialogUtil;
@@ -65,7 +64,7 @@ public class UsePluginConfigAction extends AnAction {
                         EditorUtil.processDocument(document, documentContent, dataSourceContent);
                     } else {
                         DialogUtil dialog = new DialogUtil();
-                        dialog.showTipsDialog(null, Message.CUSTOM_DATASOURCE_IMPORT_PATH_WARN.getMsg(), Message.CUSTOM_DATASOURCE_IMPORT_PATH_WARN.getTitle());
+                        dialog.showTipsDialog(this.editor.getComponent(), Message.CUSTOM_DATASOURCE_IMPORT_PATH_WARN.getMsg(), Message.CUSTOM_DATASOURCE_IMPORT_PATH_WARN.getTitle());
                     }
             }
         }

@@ -39,14 +39,17 @@ public enum Message {
     IMPORT_GROUP_EXIST("提示", "导入的模板组已经存在，请修改模板组名称后重试！"),
     IMPORT_TEMPLATE_FILE_NO_EXIST("提示", "选择的文件无效/文件夹目录下无有效的文件存在！"),
     IMPORT_IS_NOT_GLOBAL_CONFIG("提示", "选择的文件非指定格式（格式：模板组名称.tj）！"),
+    IMPORT_IS_NOT_API_DOC("提示","选择的API接口文档模板文件格式错误（格式：xxx.html）！"),
     ERROR_URL("网址打开错误", "尝试了【%s】次后，我选择了摆烂..."),
     FILENAME_EMPTY("警告", "文件名称为空！"),
     EXPORT_PATH_EMPTY("警告", "保存路径为空！"),
     MODULE_PATH_LOAD_ERROR("警告", "选择模块目录未加载到！"),
     CUSTOM_DATASOURCE_EMPTY("警告", "自定义数据源内容为空/指定格式不符合规范！"),
+    ADD_CUSTOM_DATASOURCE_ERROR("错误", "添加自定义数据源失败！"),
     CUSTOM_DATASOURCE_IMPORT_PATH_WARN("警告", "数源路径为空/无法解析！"),
     API_DOC_PREVIEW_ERROR("错误", "API文档效果预览出错，无法自动打开！"),
-    CHANGE_DIR_ERROR("错误", "目录切换失败！"),
+    API_DOC_GENERATE_ERROR("错误", "API文档生成错误！"),
+    UNABLE_TO_LOAD_A_CUSTOM_DATA_SOURCE_PATH("警告", "无法加载到自定义数据源路径!"),
 
     // 配置标题
     ADD_TEMPLATE("新增模板"),

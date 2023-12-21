@@ -52,4 +52,6 @@ public interface ConfigInterface {
     String PDF = ".pdf";
     // 图片缓存目录
     String IMAGES_CACHE_DIR = "images";
+    // 前端传参对象key
+    String GENERATE_KEY_NAME = "generate";
 }

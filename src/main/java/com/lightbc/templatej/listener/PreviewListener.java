@@ -23,10 +23,6 @@ public class PreviewListener {
     public PreviewListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
         this.commonUI = templateJUI.getCommonUI();
-        init();
-    }
-
-    private void init() {
         preview();
     }
 

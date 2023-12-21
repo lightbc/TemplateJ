@@ -2,13 +2,18 @@ package com.lightbc.templatej.utils;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.event.EditorMouseEvent;
+import com.intellij.openapi.editor.event.EditorMouseListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.enums.Message;
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * 对话框工具类
@@ -17,6 +22,7 @@ import java.awt.*;
 public class DialogUtil {
     // 编辑器
     private Editor editor;
+    private JComponent editorComponent;
     // 确定按钮
     private JButton okBtn;
     // 取消按钮
@@ -91,7 +97,9 @@ public class DialogUtil {
      * @return int ok：0，cancel：1
      */
     public int showApiDialog(String title, String fileName, String content) {
-        return showCommonDialog(title, fileName, content);
+        EditorUtil util = showCommonDialog(fileName, content);
+        editorPopupMenuListener(RightKeyUtil.getApiDocActions(this.editor));
+        return configDialogBuilder(title, this.editorComponent, util);
     }
 
     /**
@@ -103,24 +111,43 @@ public class DialogUtil {
      * @return int ok：0，cancel：1
      */
     public int showConfigDialog(String title, String fileName, String content) {
-        return showCommonDialog(title, fileName, content);
+        EditorUtil util = showCommonDialog(fileName, content);
+        RightKeyUtil.disableEditorPopupMenu();
+        return configDialogBuilder(title, this.editorComponent, util);
     }
 
     /**
      * api接口文档&全局配置通用对话框
      *
-     * @param title    对话框标题
      * @param fileName 编辑文件名
      * @param content  编辑内容
-     * @return int ok：0，cancel：1
+     * @return editorutil
      */
-    private int showCommonDialog(String title, String fileName, String content) {
+    private EditorUtil showCommonDialog(String fileName, String content) {
         EditorUtil util = new EditorUtil();
-        JComponent editor = initEditorComponent(util, fileName, content);
+        this.editorComponent = initEditorComponent(util, fileName, content);
         Project project = ProjectUtil.getProject();
         util.highLighter(fileName, project);
         this.editor = util.getEditor();
-        return configDialogBuilder(title, editor, util);
+        return util;
+    }
+
+    /**
+     * 编辑器右键属性菜单监听
+     *
+     * @param actions 菜单动作项
+     */
+    private void editorPopupMenuListener(AnAction[] actions) {
+        this.editor.addEditorMouseListener(new EditorMouseListener() {
+            @Override
+            public void mouseReleased(@NotNull EditorMouseEvent event) {
+                MouseEvent e = event.getMouseEvent();
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    // 右键菜单属性只显示自定义数源导入项
+                    EditorPopupMenuActionGroup.setChildren(actions);
+                }
+            }
+        });
     }
 
     /**
@@ -191,7 +218,7 @@ public class DialogUtil {
      */
     private JComponent initEditorComponent(EditorUtil util, String fileName, String content) {
         JComponent editor = util.getEditor(fileName, content, true);
-        Dimension dimension = new Dimension(700, 500);
+        Dimension dimension = new Dimension(800, 400);
         editor.setPreferredSize(dimension);
         return editor;
     }

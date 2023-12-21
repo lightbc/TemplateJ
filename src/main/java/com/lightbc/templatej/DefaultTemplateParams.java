@@ -35,9 +35,9 @@ public class DefaultTemplateParams {
                 "/**\n" +
                 "*\n" +
                 "* @Description ${tableName} table controller\n" +
-                "* @author ${author}\n" +
+                "* @Author ${author}\n" +
                 "* @Date ${date}\n" +
-                "* @since 1.0\n" +
+                "* @Since ${version}\n" +
                 "*\n" +
                 "*/\n" +
                 "@RestController\n" +
@@ -106,9 +106,9 @@ public class DefaultTemplateParams {
                 "/**\n" +
                 " *\n" +
                 " * @Description ${tableName} table entity\n" +
-                " * @author ${author}\n" +
+                " * @Author ${author}\n" +
                 " * @Date ${date}\n" +
-                " * @since 1.0\n" +
+                " * @Since ${version}\n" +
                 " *\n" +
                 " */\n" +
                 "public class ${fileName} implements Serializable{\n" +
@@ -150,9 +150,9 @@ public class DefaultTemplateParams {
                 "/**\n" +
                 " *\n" +
                 " * @Description ${tableName} table dao\n" +
-                " * @author ${author}\n" +
+                " * @Author ${author}\n" +
                 " * @Date ${date}\n" +
-                " * @since 1.0\n" +
+                " * @Since ${version}\n" +
                 " *\n" +
                 " */\n" +
                 "public interface ${fileName}{\n" +
@@ -347,9 +347,9 @@ public class DefaultTemplateParams {
                 "/**\n" +
                 " *\n" +
                 " * @Description ${tableName} table service\n" +
-                " * @author ${author}\n" +
+                " * @Author ${author}\n" +
                 " * @Date ${date}\n" +
-                " * @since 1.0\n" +
+                " * @Since ${version}\n" +
                 " *\n" +
                 " */\n" +
                 "public interface ${fileName}{\n" +
@@ -403,9 +403,9 @@ public class DefaultTemplateParams {
                 "/**\n" +
                 " *\n" +
                 " * @Description ${tableName} table service implement\n" +
-                " * @author ${author}\n" +
+                " * @Author ${author}\n" +
                 " * @Date ${date}\n" +
-                " * @since 1.0\n" +
+                " * @Since ${version}\n" +
                 " *\n" +
                 " */\n" +
                 "@Service(\"${serviceName}\")\n" +
@@ -471,7 +471,394 @@ public class DefaultTemplateParams {
      * @return string API接口文档内容
      */
     private static String getDefaultApiDoc() {
-        return "";
+        return "<#assign author=\"lightbc\">\n" +
+                "<#assign version=\"1.0.0\">\n" +
+                "<#assign description=\"初版\">\n" +
+                "<#assign editData=tools.getDate(\"yyyy-MM-dd\")>\n" +
+                "<#assign columns=table.getColumns()>\n" +
+                "<#assign pdfTitle=\"${table.getComment()!''}对接文档V${version}\">\n" +
+                "${generate.setFileName(pdfTitle)}\n" +
+                "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "    <style>\n" +
+                "        html,\n" +
+                "        body {\n" +
+                "            margin: 0;\n" +
+                "            padding: 0;\n" +
+                "        }\n" +
+                "\n" +
+                "        body {\n" +
+                "            padding: 15px;\n" +
+                "            color: #3C4B4B;\n" +
+                "        }\n" +
+                "\n" +
+                "        table {\n" +
+                "            margin-left: 30px;\n" +
+                "            width: 85%;\n" +
+                "        }\n" +
+                "\n" +
+                "        table th {\n" +
+                "            background-color: #F8F8F8;\n" +
+                "        }\n" +
+                "\n" +
+                "        table th,\n" +
+                "        td {\n" +
+                "            padding: 10px;\n" +
+                "            border: 1px solid lightgray;\n" +
+                "            text-align: center;\n" +
+                "        }\n" +
+                "\n" +
+                "        #doc-title {\n" +
+                "            text-align: center;\n" +
+                "        }\n" +
+                "\n" +
+                "        #doc-catalog {\n" +
+                "            margin: 140px 0;\n" +
+                "        }\n" +
+                "\n" +
+                "        #doc-content p,\n" +
+                "        h4 {\n" +
+                "            text-indent: 2em;\n" +
+                "        }\n" +
+                "\n" +
+                "        a {\n" +
+                "            color: #1E5A69;\n" +
+                "            text-decoration: none;\n" +
+                "        }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<div id=\"doc-title\">\n" +
+                "    <h1>\n" +
+                "        ${pdfTitle}\n" +
+                "    </h1>\n" +
+                "</div>\n" +
+                "<div id=\"doc-catalog\">\n" +
+                "    <h2>1.版本</h2>\n" +
+                "    <h2>2.编码格式</h2>\n" +
+                "    <h2>3.接口地址</h2>\n" +
+                "    <div>\n" +
+                "        <h2>4.新增</h2>\n" +
+                "        <h4><a href=\"#4.1\">4.1 路径地址：/${tableName}/add</a></h4>\n" +
+                "        <h4><a href=\"#4.2\">4.2 请求方式：POST</a></h4>\n" +
+                "        <h4><a href=\"#4.3\">4.3 Content-Type：application/x-www-form-urlencoded</a></h4>\n" +
+                "        <h4><a href=\"#4.4\">4.4 请求参数</a></h4>\n" +
+                "        <h4><a href=\"#4.5\">4.5 响应结果</a></h4>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>5.删除</h2>\n" +
+                "        <h4><a href=\"#5.1\">5.1 路径地址：/${tableName}/del</a></h4>\n" +
+                "        <h4><a href=\"#5.2\">5.2 请求方式：GET</a></h4>\n" +
+                "        <h4><a href=\"#5.3\">5.3 Content-Type：无</a></h4>\n" +
+                "        <h4><a href=\"#5.4\">5.4 请求参数</a></h4>\n" +
+                "        <h4><a href=\"#5.5\">5.5 响应结果</a></h4>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>6.修改</h2>\n" +
+                "        <h4><a href=\"#6.1\">6.1 路径地址：/${tableName}/update</a></h4>\n" +
+                "        <h4><a href=\"#6.2\">6.2 请求方式：POST</a></h4>\n" +
+                "        <h4><a href=\"#6.3\">6.3 Content-Type：application/x-www-form-urlencoded</a></h4>\n" +
+                "        <h4><a href=\"#6.4\">6.4 请求参数</a></h4>\n" +
+                "        <h4><a href=\"#6.5\">6.5 响应结果</a></h4>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>7.单条查询</h2>\n" +
+                "        <h4><a href=\"#7.1\">7.1 路径地址：/${tableName}/query/u</a></h4>\n" +
+                "        <h4><a href=\"#7.2\">7.2 请求方式：GET</a></h4>\n" +
+                "        <h4><a href=\"#7.3\">7.3 Content-Type：无</a></h4>\n" +
+                "        <h4><a href=\"#7.4\">7.4 请求参数</a></h4>\n" +
+                "        <h4><a href=\"#7.5\">7.5 响应结果</a></h4>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>8.多条查询</h2>\n" +
+                "        <h4><a href=\"#8.1\">8.1 路径地址：/${tableName}/query</a></h4>\n" +
+                "        <h4><a href=\"#8.2\">8.2 请求方式：GET</a></h4>\n" +
+                "        <h4><a href=\"#8.3\">8.3 Content-Type：无</a></h4>\n" +
+                "        <h4><a href=\"#8.4\">8.4 请求参数</a></h4>\n" +
+                "        <h4><a href=\"#8.5\">8.5 响应结果</a></h4>\n" +
+                "    </div>\n" +
+                "</div>\n" +
+                "<div id=\"doc-content\">\n" +
+                "    <div>\n" +
+                "        <h2>1. 版本</h2>\n" +
+                "        <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "            <thead>\n" +
+                "            <tr>\n" +
+                "                <th>版本</th>\n" +
+                "                <th>版本描述</th>\n" +
+                "                <th>修订人</th>\n" +
+                "                <th>修订时间</th>\n" +
+                "            </tr>\n" +
+                "            </thead>\n" +
+                "            <tbody>\n" +
+                "            <tr>\n" +
+                "                <td>${version}</td>\n" +
+                "                <td>${description}</td>\n" +
+                "                <td>${author}</td>\n" +
+                "                <td>${editData}</td>\n" +
+                "            </tr>\n" +
+                "            </tbody>\n" +
+                "        </table>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>2. 编码格式</h2>\n" +
+                "        <p>UTF-8</p>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>3. 接口地址</h2>\n" +
+                "        <p>\n" +
+                "            测试接口地址:https://ip:port\n" +
+                "        </p>\n" +
+                "        <p>\n" +
+                "            正式接口地址:https://ip:port\n" +
+                "        </p>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>4. 新增</h2>\n" +
+                "        <div>\n" +
+                "            <h4 id=\"4.1\">4.1 路径地址：/${tableName}/add</h4>\n" +
+                "            <h4 id=\"4.2\">4.2 请求方式：POST</h4>\n" +
+                "            <h4 id=\"4.3\">4.3 Content-Type：application/x-www-form-urlencoded</h4>\n" +
+                "            <h4 id=\"4.4\">4.4 请求参数</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>长度</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <#list columns as column>\n" +
+                "                <tr>\n" +
+                "                    <td>${column.columnName!''}</td>\n" +
+                "                    <td>${column.dataType!''}</td>\n" +
+                "                    <td>${column.size!''}</td>\n" +
+                "                    <td>${column.columnComment!''}</td>\n" +
+                "                </tr>\n" +
+                "                </#list>\n" +
+                "                </tbody>\n" +
+                "\n" +
+                "            </table>\n" +
+                "            <h4 id=\"4.5\">4.5 响应结果</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>无</td>\n" +
+                "                    <td>无</td>\n" +
+                "                    <td>无</td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "\n" +
+                "            </table>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>5. 删除</h2>\n" +
+                "        <div>\n" +
+                "            <h4 id=\"5.1\">5.1 路径地址：/${tableName}/del</h4>\n" +
+                "            <h4 id=\"5.2\">5.2 请求方式：GET</h4>\n" +
+                "            <h4 id=\"5.3\">5.3 Content-Type：无</h4>\n" +
+                "            <h4 id=\"5.4\">5.4 请求参数</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>长度</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>id</td>\n" +
+                "                    <td>varchar</td>\n" +
+                "                    <td>32</td>\n" +
+                "                    <td>业务主键</td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "\n" +
+                "            </table>\n" +
+                "            <h4 id=\"5.5\">5.5 响应结果</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>无</td>\n" +
+                "                    <td>无</td>\n" +
+                "                    <td>无</td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "\n" +
+                "            </table>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>6. 修改</h2>\n" +
+                "        <div>\n" +
+                "            <h4 id=\"6.1\">6.1 路径地址：/${tableName}/update</h4>\n" +
+                "            <h4 id=\"6.2\">6.2 请求方式：POST</h4>\n" +
+                "            <h4 id=\"6.3\">6.3 Content-Type：application/x-www-form-urlencoded</h4>\n" +
+                "            <h4 id=\"6.4\">6.4 请求参数</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>长度</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <#list columns as column>\n" +
+                "                <tr>\n" +
+                "                    <td>${column.columnName!''}</td>\n" +
+                "                    <td>${column.dataType!''}</td>\n" +
+                "                    <td>${column.size!''}</td>\n" +
+                "                    <td>${column.columnComment!''}</td>\n" +
+                "                </tr>\n" +
+                "                </#list>\n" +
+                "                </tbody>\n" +
+                "\n" +
+                "            </table>\n" +
+                "            <h4 id=\"6.5\">6.5 响应结果</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <tr>\n" +
+                "                    <td>无</td>\n" +
+                "                    <td>无</td>\n" +
+                "                    <td>无</td>\n" +
+                "                </tr>\n" +
+                "                </tbody>\n" +
+                "\n" +
+                "            </table>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>7. 单条查询</h2>\n" +
+                "        <div>\n" +
+                "            <h4 id=\"7.1\">7.1 路径地址：/${tableName}/query/u</h4>\n" +
+                "            <h4 id=\"7.2\">7.2 请求方式：GET</h4>\n" +
+                "            <h4 id=\"7.3\">7.3 Content-Type：无</h4>\n" +
+                "            <h4 id=\"7.4\">7.4 请求参数</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>长度</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <#list columns as column>\n" +
+                "                <tr>\n" +
+                "                    <td>${column.columnName!''}</td>\n" +
+                "                    <td>${column.dataType!''}</td>\n" +
+                "                    <td>${column.size!''}</td>\n" +
+                "                    <td>${column.columnComment!''}</td>\n" +
+                "                </tr>\n" +
+                "                </#list>\n" +
+                "                </tbody>\n" +
+                "\n" +
+                "            </table>\n" +
+                "            <h4 id=\"7.5\">7.5 响应结果</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <#list columns as column>\n" +
+                "                <tr>\n" +
+                "                    <td>${column.columnName!''}</td>\n" +
+                "                    <td>${column.javaType!''}</td>\n" +
+                "                    <td>${column.columnComment!''}</td>\n" +
+                "                </tr>\n" +
+                "                </#list>\n" +
+                "                </tbody>\n" +
+                "\n" +
+                "            </table>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "    <div>\n" +
+                "        <h2>8. 多条查询</h2>\n" +
+                "        <div>\n" +
+                "            <h4 id=\"8.1\">8.1 路径地址：/${tableName}/query</h4>\n" +
+                "            <h4 id=\"8.2\">8.2 请求方式：GET</h4>\n" +
+                "            <h4 id=\"8.3\">8.3 Content-Type：无</h4>\n" +
+                "            <h4 id=\"8.4\">8.4 请求参数</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>长度</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <#list columns as column>\n" +
+                "                <tr>\n" +
+                "                    <td>${column.columnName!''}</td>\n" +
+                "                    <td>${column.dataType!''}</td>\n" +
+                "                    <td>${column.size!''}</td>\n" +
+                "                    <td>${column.columnComment!''}</td>\n" +
+                "                </tr>\n" +
+                "                </#list>\n" +
+                "                </tbody>\n" +
+                "\n" +
+                "            </table>\n" +
+                "            <h4 id=\"8.5\">8.5 响应结果</h4>\n" +
+                "            <table cellpadding=\"0\" cellspacing=\"0\">\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <th>参数</th>\n" +
+                "                    <th>类型</th>\n" +
+                "                    <th>说明</th>\n" +
+                "                </tr>\n" +
+                "                </thead>\n" +
+                "                <tbody>\n" +
+                "                <#list columns as column>\n" +
+                "                <tr>\n" +
+                "                    <td>${column.columnName!''}</td>\n" +
+                "                    <td>${column.javaType!''}</td>\n" +
+                "                    <td>${column.columnComment!''}</td>\n" +
+                "                </tr>\n" +
+                "                </#list>\n" +
+                "                </tbody>\n" +
+                "            </table>\n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "</div>\n" +
+                "</body>\n" +
+                "</html>";
     }
 
     /**
@@ -481,6 +868,7 @@ public class DefaultTemplateParams {
      */
     private static String getDefaultGlobalConfig() {
         return "<#assign author=\"lightbc\">\n" +
+                "<#assign version=\"1.0.0\">\n" +
                 "<#assign date=tools.getDate(\"yyyy-MM-dd HH:mm:ss\")>\n" +
                 "\n" +
                 "<#assign serviceName=\"${tableName}Service\">\n" +

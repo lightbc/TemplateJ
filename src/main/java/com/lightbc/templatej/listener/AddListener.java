@@ -22,16 +22,12 @@ public class AddListener {
 
     public AddListener(TemplateJUI templateJUI) {
         this.templateJUI = templateJUI;
-        init();
+        loadCommonUI();
+        add();
     }
 
     private void loadCommonUI() {
         this.commonUI = new TemplateJCommonUI(this.templateJUI.getSettings(), this.templateJUI.getTemplateUtil());
-    }
-
-    private void init(){
-        loadCommonUI();
-        add();
     }
 
     /**

@@ -47,9 +47,9 @@ public class TemplateJGenerateUI {
         this.project = ProjectUtil.getProject();
         TemplateJSettings settings = TemplateJSettings.getInstance();
         this.templateUtil = new TemplateUtil(settings.getTemplates());
-        loadProjectModules();
-        loadGenerateCommonUI();
-        moduleSelectListener();
+        this.loadProjectModules();
+        this.loadGenerateCommonUI();
+        this.moduleSelectListener();
     }
 
 
@@ -71,16 +71,14 @@ public class TemplateJGenerateUI {
 
     /**
      * 加载模板生成器通用UI对象
-     *
-     * @return 模板生成器通用UI对象
      */
-    private synchronized TemplateJGenerateCommonUI loadGenerateCommonUI() {
+    private synchronized void loadGenerateCommonUI() {
         // 通用对象已存在，则返回，未存在则重新生成
         Module module = getSelectModule();
         if (this.commonUIMaps.containsKey(module.getName())) {
             TemplateJGenerateCommonUI ui = this.commonUIMaps.get(module.getName());
             updateCommonUI(ui);
-            return ui;
+            return;
         }
         TemplateJGenerateCommonUI ui = new TemplateJGenerateCommonUI(this);
         String rootPath = ProjectUtil.getModulePath(module);
@@ -88,7 +86,6 @@ public class TemplateJGenerateUI {
         ui.getSavePath().setText(rootPath);
         this.commonUIMaps.put(this.moduleName, ui);
         updateCommonUI(ui);
-        return ui;
     }
 
     /**
@@ -100,6 +97,7 @@ public class TemplateJGenerateUI {
         if (this.commonPanel != null) {
             this.commonPanel.removeAll();
         }
+        assert this.commonPanel != null;
         this.commonPanel.setLayout(new BorderLayout());
         this.commonPanel.add(commonUI.getMainPanel(), BorderLayout.CENTER);
         this.commonPanel.revalidate();

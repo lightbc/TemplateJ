@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.entity.Template;
-import com.lightbc.templatej.enums.Message;
-import com.lightbc.templatej.utils.DialogUtil;
 import com.lightbc.templatej.utils.FileUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;

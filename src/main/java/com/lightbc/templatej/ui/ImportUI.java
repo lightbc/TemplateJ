@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.utils.DialogUtil;
+import com.lightbc.templatej.utils.FileUtil;
 import com.lightbc.templatej.utils.ProjectUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,7 @@ public class ImportUI {
     private JPanel globalConfigPanel;
     private JCheckBox javaType;
     private JCheckBox jdbcType;
+    private JPanel apiDocPanel;
     // 导入路径选择组件
     private TextFieldWithBrowseButton browseButton;
     private JPanel importFileContainer;
@@ -40,6 +42,8 @@ public class ImportUI {
     private String parentDir;
     // 全局配置文件选择组件
     private TextFieldWithBrowseButton globalConfigButton;
+    // API接口文档选择组件
+    private TextFieldWithBrowseButton apiDocButton;
     private TemplateJUI templateJUI;
 
     public ImportUI(TemplateJUI templateJUI) {
@@ -52,6 +56,7 @@ public class ImportUI {
         loadComponent();
         importPathSelectListener();
         importGlobalConfigListener();
+        importApiDocListener();
     }
 
     /**
@@ -105,6 +110,12 @@ public class ImportUI {
         this.globalConfigButton = new TextFieldWithBrowseButton();
         this.globalConfigButton.setEditable(false);
         this.globalConfigPanel.add(this.globalConfigButton, BorderLayout.CENTER);
+
+        // 加载API接口文档导入组件
+        this.apiDocPanel.setLayout(new BorderLayout());
+        this.apiDocButton = new TextFieldWithBrowseButton();
+        this.apiDocButton.setEditable(false);
+        this.apiDocPanel.add(this.apiDocButton, BorderLayout.CENTER);
     }
 
     /**
@@ -184,6 +195,24 @@ public class ImportUI {
     }
 
     /**
+     * 导入API接口文档组件事件监听
+     */
+    private void importApiDocListener() {
+        this.apiDocButton.addActionListener(e -> {
+            String selectApiDocPath = getImportPath();
+            if (StringUtils.isNotBlank(selectApiDocPath)) {
+                // API接口文档文件格式的进行获取并显示，否则提示
+                if (selectApiDocPath.lastIndexOf(ConfigInterface.API_DOC_TYPE) != -1) {
+                    this.apiDocButton.setText(selectApiDocPath);
+                } else {
+                    DialogUtil dialogUtil = new DialogUtil();
+                    dialogUtil.showTipsDialog(this.mainPanel, Message.IMPORT_IS_NOT_API_DOC.getMsg(), Message.IMPORT_IS_NOT_API_DOC.getTitle());
+                }
+            }
+        });
+    }
+
+    /**
      * 判断选择的文件是否是全局配置文件的指定格式
      *
      * @param path 文件路径
@@ -191,7 +220,7 @@ public class ImportUI {
      */
     private boolean isGlobalConfig(String path) {
         try {
-            if (isFile(path)) {
+            if (FileUtil.isFile(path)) {
                 File file = new File(path);
                 String gn = this.groupName.getText();
                 if (StringUtils.isNotBlank(gn) && file.getName().equals(gn.concat(ConfigInterface.PLUGIN_DEFAULT_EXT))) {
@@ -203,39 +232,6 @@ public class ImportUI {
         return false;
     }
 
-    /**
-     * 根据路径判断是否是文件
-     *
-     * @param path 文件路径
-     * @return boolean 是-true，false-否
-     */
-    private boolean isFile(String path) {
-        try {
-            File file = new File(path);
-            if (file.exists() && file.isFile()) {
-                return true;
-            }
-        } catch (Exception e) {
-        }
-        return false;
-    }
-
-    /**
-     * 根据路径判断是否是文件夹
-     *
-     * @param path 文件路径
-     * @return boolean true-是，false-否
-     */
-    private boolean isDir(String path) {
-        try {
-            File file = new File(path);
-            if (file.exists() && file.isDirectory()) {
-                return true;
-            }
-        } catch (Exception e) {
-        }
-        return false;
-    }
 
     /**
      * 获取路径的上级目录名称
@@ -251,14 +247,14 @@ public class ImportUI {
             path = path.trim();
         }
         // 文件
-        if (isFile(path)) {
+        if (FileUtil.isFile(path)) {
             String parentPath = file.getParent();
-            nodeName = parentPath.substring(parentPath.lastIndexOf(getSeparator(parentPath)));
-            this.parentDir = parentPath.substring(0, parentPath.lastIndexOf(getSeparator(parentPath)));
+            nodeName = parentPath.substring(parentPath.lastIndexOf(FileUtil.getSeparator(parentPath)));
+            this.parentDir = parentPath.substring(0, parentPath.lastIndexOf(FileUtil.getSeparator(parentPath)));
         }
         // 文件夹
-        if (isDir(path)) {
-            nodeName = path.substring(path.lastIndexOf(getSeparator(path)));
+        if (FileUtil.isDir(path)) {
+            nodeName = path.substring(path.lastIndexOf(FileUtil.getSeparator(path)));
             String lastChar = path.substring(path.length() - 1);
             if (lastChar.equals("/") || lastChar.equals("\\")) {
                 this.parentDir = path.substring(0, path.length() - 1);
@@ -269,18 +265,6 @@ public class ImportUI {
         return nodeName.substring(1);
     }
 
-    /**
-     * 动态匹配分隔符
-     *
-     * @param path 文件路径
-     * @return string 路径分隔符
-     */
-    private String getSeparator(String path) {
-        if (path != null && path.lastIndexOf("/") == -1) {
-            return "\\";
-        }
-        return "/";
-    }
 
     /**
      * 获取复选框列表元素
@@ -291,11 +275,11 @@ public class ImportUI {
     private List<String> getCheckListElements(String path) {
         List<String> elements = null;
         File file = new File(path);
-        if (isFile(path)) {
+        if (FileUtil.isFile(path)) {
             elements = new ArrayList<>();
             addElement(file, elements);
         }
-        if (isDir(path)) {
+        if (FileUtil.isDir(path)) {
             elements = new ArrayList<>();
             File[] files = file.listFiles();
             if (files != null && files.length > 0) {

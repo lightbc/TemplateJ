@@ -1,5 +1,6 @@
 package com.lightbc.templatej.ui;
 
+import com.intellij.database.psi.DbTable;
 import com.intellij.ide.util.PackageChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -11,19 +12,21 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiPackage;
 import com.lightbc.templatej.config.TemplateJSettings;
+import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
+import com.lightbc.templatej.interfaces.TemplateJInterface;
 import com.lightbc.templatej.utils.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 
 /**
@@ -45,6 +48,7 @@ public class TemplateJGenerateCommonUI {
     // 生成过程中提示信息复选框
     private JCheckBox generateTips;
     private JPanel savePathPanel;
+    private JCheckBox apiDoc;
     // 包选择器系统组件-2019.1
     private TextFieldWithBrowseButton packagePath;
     // 保存位置系统组件-2019.1
@@ -59,7 +63,7 @@ public class TemplateJGenerateCommonUI {
     private Map<String, Module> moduleMap;
     private TemplateJGenerateUI generateUI;
 
-    public TemplateJGenerateCommonUI(TemplateJGenerateUI generateUI) {
+    TemplateJGenerateCommonUI(TemplateJGenerateUI generateUI) {
         this.generateUI = generateUI;
         init();
     }
@@ -71,13 +75,13 @@ public class TemplateJGenerateCommonUI {
         this.project = ProjectUtil.getProject();
         TemplateJSettings settings = TemplateJSettings.getInstance();
         this.templateUtil = new TemplateUtil(settings.getTemplates());
-        loadGroupItems();
-        loadPackage();
-        loadSavePath();
-        groupSelectListener();
-        packageChooseListener();
-        savePathListener();
-        allCheckListener();
+        this.loadGroupItems();
+        this.loadPackage();
+        this.loadSavePath();
+        this.groupSelectListener();
+        this.packageChooseListener();
+        this.savePathListener();
+        this.allCheckListener();
     }
 
     /**
@@ -301,9 +305,64 @@ public class TemplateJGenerateCommonUI {
         String pPath = this.packagePath.getText();
         if (!"".equals(pPath.trim())) {
             String nPackagePath = pPath.replaceAll("\\.", Matcher.quoteReplacement("/"));
+            assert moduleSourcesPath != null;
             return moduleSourcesPath.concat("/").concat(nPackagePath);
         }
         return moduleSourcesPath;
     }
 
+
+    /**
+     * 生成API接口文档文件
+     *
+     * @param table         数据表
+     * @param savePath      保存位置
+     * @param generateJUtil 代码生成处理工具类对象
+     */
+    public synchronized void generateApiDoc(DbTable table, String savePath, GenerateJUtil generateJUtil) {
+        DialogUtil dialog = new DialogUtil();
+        Object selectedItem = this.groupBox.getSelectedItem();
+        if (selectedItem == null && !this.generateTips.isSelected()) {
+            dialog.showTipsDialog(null, Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());
+            return;
+        }
+        assert selectedItem != null;
+        String groupName = selectedItem.toString();
+        Template template = this.generateUI.getTemplateUtil().getTemplate(groupName);
+        if (template == null && !this.generateTips.isSelected()) {
+            dialog.showTipsDialog(null, Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());
+            return;
+        }
+        assert template != null;
+        if (StringUtils.isBlank(template.getApiDoc()) && !this.generateTips.isSelected()) {
+            dialog.showTipsDialog(null, Message.API_DOC_EMPTY.getMsg(), Message.API_DOC_EMPTY.getTitle());
+            return;
+        }
+        // 处理API接口文档模板内容，获取模板中的属性
+        PropertiesUtil util = new PropertiesUtil();
+        String sourceCode = TemplateUtil.getSourceCode(template.getApiDoc(), util);
+        // 自定义数源文件路径
+        String customDataSourcePath = util.getValue(TemplateJInterface.CUSTOM_DATASOURCE);
+        Map<String, Object> dataModel = generateJUtil.getDataModel(groupName, table, null, savePath, null, null);
+        generateJUtil.addCustomDataSourceModel(null, customDataSourcePath, dataModel);
+        // pdf文件名称
+        String pdfName = CommonUtil.getUUID().concat(ConfigInterface.PDF);
+        // freemarker模板替换后的结果内容
+        String content = generateJUtil.generate(pdfName, sourceCode, dataModel);
+        // 获取pdf文档标题做为文件名
+        if (dataModel != null && dataModel.containsKey(ConfigInterface.GENERATE_KEY_NAME)) {
+            Generate generate = (Generate) dataModel.get(ConfigInterface.GENERATE_KEY_NAME);
+            if (generate != null) {
+                pdfName = generate.getFileName();
+                // 文件名中不包含pdf文件拓展名时，添加拓展名
+                if (pdfName.lastIndexOf(ConfigInterface.PDF) == -1) {
+                    pdfName = pdfName.concat(ConfigInterface.PDF);
+                }
+            }
+        }
+        boolean b = PluginUtil.saveApiDoc(pdfName, content, savePath);
+        if (!b && !this.generateTips.isSelected()) {
+            dialog.showTipsDialog(null, Message.API_DOC_GENERATE_ERROR.getMsg(), Message.API_DOC_GENERATE_ERROR.getTitle());
+        }
+    }
 }

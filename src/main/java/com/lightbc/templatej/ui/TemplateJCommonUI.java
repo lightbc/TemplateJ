@@ -89,13 +89,11 @@ public class TemplateJCommonUI {
     /**
      * 单选按钮组，使得一个获得焦点后，同组其它按钮失去焦点
      *
-     * @return ButtonGroup
      */
-    private ButtonGroup buttonGroup() {
+    private void buttonGroup() {
         this.group = new ButtonGroup();
         this.group.add(this.groupRadio);
         this.group.add(this.templateRadio);
-        return this.group;
     }
 
     /**
@@ -128,7 +126,7 @@ public class TemplateJCommonUI {
     /**
      * 显示下拉组件
      */
-    public void showSelector() {
+    void showSelector() {
         this.addType.setVisible(false);
         this.renamePanel.setVisible(false);
     }
@@ -165,7 +163,7 @@ public class TemplateJCommonUI {
     /**
      * 下拉选择可可用
      */
-    public void enable() {
+    void enable() {
         this.templateGroupSelector.setEnabled(true);
         this.templateFileSelector.setEnabled(true);
     }
