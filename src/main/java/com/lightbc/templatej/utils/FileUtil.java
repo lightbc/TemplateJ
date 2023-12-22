@@ -1,5 +1,9 @@
 package com.lightbc.templatej.utils;
 
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.lightbc.templatej.exception.NotExistException;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import lombok.extern.slf4j.Slf4j;
@@ -470,6 +474,74 @@ public class FileUtil {
             return "\\";
         }
         return "/";
+    }
+
+    /**
+     * 获取指定文件类型的虚拟文件路径
+     *
+     * @param ext 拓展名
+     * @return string 文件路径
+     */
+    public static String getVirtualFilePathByFileType(String ext) {
+        return getPath(0, ext);
+    }
+
+    /**
+     * 获取虚拟文件文件夹目录路径
+     *
+     * @return string 文件目录路径
+     */
+    public static String getVirtualFileDir() {
+        return getPath(1);
+    }
+
+    /**
+     * 获取虚拟文件/目录的路径
+     *
+     * @return string 路径
+     */
+    public static String getVirtualFilePathOrDir() {
+        return getPath(2);
+    }
+
+    /**
+     * 获取指定类型的路径
+     *
+     * @param type 0：指定文件类型文件路径，1：文件目录路径，2：文件/目录的路径（默认）
+     * @return string 路径
+     */
+    private static String getPath(int type) {
+        return getPath(type, null);
+    }
+
+    /**
+     * 获取指定类型的路径
+     *
+     * @param type 0：指定文件类型文件路径，1：文件目录路径，2：文件/目录的路径（默认）
+     * @param ext  文件拓展名
+     * @return string 路径
+     */
+    private static String getPath(int type, String ext) {
+        FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
+        switch (type) {
+            case 0:
+                descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(ext);
+                break;
+            case 1:
+                descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+                break;
+        }
+        VirtualFile vf = FileChooser.chooseFile(descriptor, ProjectUtil.getProject(), getVirtualFile());
+        return vf != null ? vf.getPath() : null;
+    }
+
+    /**
+     * 获取虚拟文件对象
+     *
+     * @return virtualfile
+     */
+    private static VirtualFile getVirtualFile() {
+        return ProjectUtil.getProject().getProjectFile();
     }
 
 }

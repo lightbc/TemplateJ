@@ -1,12 +1,9 @@
 package com.lightbc.templatej.ui;
 
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.interfaces.ConfigInterface;
-import com.lightbc.templatej.utils.ProjectUtil;
+import com.lightbc.templatej.utils.FileUtil;
 import com.lightbc.templatej.utils.SelectorUtil;
 import lombok.Data;
 
@@ -104,9 +101,7 @@ public class ExportUI {
     private void showGroupFileCheckList(List<String> elements) {
         if (elements != null && elements.size() > 0) {
             // 移除默认模板选择项
-            if (elements.contains(ConfigInterface.DEFAULT_GROUP_FILE_VALUE)) {
-                elements.remove(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
-            }
+            elements.remove(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
             // 移除子组件
             this.exportFilePanel.removeAll();
             this.exportFileContainer = new JPanel(new GridLayout(elements.size(), 1));
@@ -182,26 +177,11 @@ public class ExportUI {
      */
     private void exportPathSelectListener() {
         this.browseButton.addActionListener((e) -> {
-            String selectSavePath = getExportPath();
+            String selectSavePath = FileUtil.getVirtualFileDir();
             if (selectSavePath != null) {
                 this.browseButton.setText(selectSavePath);
             }
         });
-    }
-
-    /**
-     * 获取导出路径
-     *
-     * @return string 导出路径
-     */
-    private String getExportPath() {
-        VirtualFile virtualFile = ProjectUtil.getProject().getProjectFile();
-        // 只能选择文件夹
-        virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), ProjectUtil.getProject(), virtualFile);
-        if (virtualFile != null) {
-            return virtualFile.getPath();
-        }
-        return null;
     }
 
 }

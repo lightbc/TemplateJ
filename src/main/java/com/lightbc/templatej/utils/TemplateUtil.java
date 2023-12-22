@@ -431,12 +431,12 @@ public class TemplateUtil {
      * @param util         属性工具类
      * @return string
      */
-    public static String getSourceCode(String globalConfig, String templateCode, PropertiesUtil util) {
+    static String getSourceCode(String globalConfig, String templateCode, PropertiesUtil util) {
         return globalConfig.concat(getSourceCode(templateCode, util)).trim();
     }
 
     /**
-     * 获取模板代码，无全局配置项
+     * 获取模板代码，移除模板文件中插件属性配置项
      *
      * @param templateCode 模板内容
      * @param util         属性工具类
@@ -444,19 +444,17 @@ public class TemplateUtil {
      */
     public static String getSourceCode(String templateCode, PropertiesUtil util) {
         setSettingProperties(templateCode, util);
-        boolean b = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL)) || Boolean.parseBoolean(util.getValue(TemplateJInterface.AUTO_PREVIEW));
-        if (b) {
-            if (!"".equals(templateCode.trim()) && templateCode.contains("\n")) {
-                String[] tcs = templateCode.split("\n");
-                StringBuilder builder = new StringBuilder();
-                for (String s : tcs) {
-                    s = s.trim();
-                    if (!s.startsWith("##")) {
-                        builder.append(s).append("\n");
-                    }
+        if (StringUtils.isNotBlank(templateCode) && templateCode.contains("\n")) {
+            String[] tcs = templateCode.split("\n");
+            StringBuilder builder = new StringBuilder();
+            for (String s : tcs) {
+                s = s.trim();
+                // 移除模板文件中，##开头的所有插件属性配置项内容
+                if (!s.startsWith("##")) {
+                    builder.append(s).append("\n");
                 }
-                return builder.toString().trim();
             }
+            return builder.toString().trim();
         }
         return templateCode;
     }

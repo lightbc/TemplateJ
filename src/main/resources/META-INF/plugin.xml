@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.lightbc.templatej</id>
     <name>TemplateJ</name>
-    <version>1.4.0-RELEASE</version>
+    <version>1.4.1-RELEASE</version>
     <vendor email="lightbc@163.com" url="https://www.cnblogs.com/lightbc/">lightbc</vendor>
 
     <description>
@@ -24,26 +24,20 @@
 
     <change-notes>
         <![CDATA[
-        <h3>v1.4.0-RELEASE</h3>
+        <h3>v1.4.1-RELEASE</h3>
         <ol>
-            <li>Provide the function of importing custom data sources, and the data source files currently only support JSON format.</li>
-            <li>Provide API interface document template editing function based on template groups.</li>
-            <li>Add custom icons.</li>
-            <li>Partial UI function interface adjustments.</li>
-            <li>Code logic optimization for certain functionalities.</li>
-            <li>Remove some invalid code and files.</li>
-            <li>Fix some other known issues.</li>
+            <li>Fix the issue of template file addition ignoring global configuration not taking effect.</li>
+            <li>When importing templates, control the file selection type when selecting files.</li>
+            <li>Help adjust page content.</li>
+            <li>Partial functional code logic optimization and adjustment.</li>
         </ol>
 
-        <h3>v1.4.0-RELEASE</h3>
+        <h3>v1.4.1-RELEASE</h3>
         <ol>
-            <li>提供导入自定义数据源功能，数据源文件暂仅支持JSON格式。</li>
-            <li>提供基于模板组的API接口文档模板编辑功能。</li>
-            <li>添加自定义图标。</li>
-            <li>部分UI功能界面调整。</li>
-            <li>部分功能的代码逻辑优化。</li>
-            <li>移除一些无效的代码和文件。</li>
-            <li>一些其它已知问题的修复。</li>
+            <li>修复模板文件添加忽略全局配置未生效的问题。</li>
+            <li>模板导入时，文件选择时导入文件选择类型控制。</li>
+            <li>帮助页面内容调整。</li>
+            <li>部分功能代码逻辑优化调整。</li>
         </ol>
         ]]>
     </change-notes>

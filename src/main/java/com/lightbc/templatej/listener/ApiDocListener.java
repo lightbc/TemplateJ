@@ -38,7 +38,7 @@ public class ApiDocListener {
             DialogUtil util = new DialogUtil();
             String title = Message.API_DCO.getTitle().concat(groupName);
             // API文档文件名（含默认拓展名）
-            String fileName = groupName.concat(ConfigInterface.API_DOC_TYPE);
+            String fileName = groupName.concat(ConfigInterface.API_DOC_EXT);
             // 显示API文档配置对话框
             int c = util.showApiDialog(title, fileName, content);
             //ok按钮按下后进行的后续操作

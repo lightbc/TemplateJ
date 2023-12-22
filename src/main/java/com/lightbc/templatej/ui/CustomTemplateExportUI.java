@@ -1,10 +1,7 @@
 package com.lightbc.templatej.ui;
 
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.lightbc.templatej.utils.ProjectUtil;
+import com.lightbc.templatej.utils.FileUtil;
 import lombok.Data;
 
 import javax.swing.*;
@@ -51,14 +48,7 @@ public class CustomTemplateExportUI {
      * 导出路径选择器操作监听
      */
     private void exportButtonListener() {
-        this.exportBtn.addActionListener(e -> {
-            VirtualFile virtualFile = ProjectUtil.getProject().getProjectFile();
-            // 选择单个文件夹
-            virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), ProjectUtil.getProject(), virtualFile);
-            if (virtualFile != null) {
-                this.exportBtn.setText(virtualFile.getPath());
-            }
-        });
+        this.exportBtn.addActionListener(e -> this.exportBtn.setText(FileUtil.getVirtualFileDir()));
     }
 
 }

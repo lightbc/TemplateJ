@@ -2,14 +2,11 @@ package com.lightbc.templatej.ui;
 
 import com.intellij.database.psi.DbTable;
 import com.intellij.ide.util.PackageChooserDialog;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiPackage;
 import com.lightbc.templatej.config.TemplateJSettings;
 import com.lightbc.templatej.entity.Generate;
@@ -172,7 +169,7 @@ public class TemplateJGenerateCommonUI {
      * 保存位置组件事件监听
      */
     private void savePathListener() {
-        this.savePath.addActionListener(e -> savePathChoose());
+        this.savePath.addActionListener(e -> this.savePath.setText(FileUtil.getVirtualFileDir()));
     }
 
     /**
@@ -222,38 +219,12 @@ public class TemplateJGenerateCommonUI {
     }
 
     /**
-     * 选择保存位置
-     */
-    private void savePathChoose() {
-        VirtualFile virtualFile = getDefaultVirtualFile();
-        virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor(), ProjectUtil.getProject(), virtualFile);
-        if (virtualFile != null) {
-            this.savePath.setText(virtualFile.getPath());
-        }
-    }
-
-    /**
      * 保存位置
      *
      * @return String 模板生成路径
      */
     public String getGeneratePath() {
         return this.savePath.getText();
-    }
-
-    /**
-     * 获取默认虚拟文件对象
-     *
-     * @return VirtualFile
-     */
-    private VirtualFile getDefaultVirtualFile() {
-        VirtualFileManager manager = VirtualFileManager.getInstance();
-        Module module = this.generateUI.getSelectModule();
-        String modulePath = ProjectUtil.getModulePath(module);
-        if (modulePath != null && !"".equals(modulePath.trim())) {
-            return manager.findFileByUrl(modulePath);
-        }
-        return null;
     }
 
     /**

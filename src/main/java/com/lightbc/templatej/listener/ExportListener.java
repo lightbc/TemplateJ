@@ -110,7 +110,7 @@ public class ExportListener {
                 if (ui.getApiDoc() != null && ui.getApiDoc().isSelected()) {
                     String apiDoc = template.getApiDoc();
                     if (StringUtils.isNotBlank(apiDoc)) {
-                        String filePath = dirPath.concat(File.separator).concat(CommonUtil.getUUID().concat(ConfigInterface.API_DOC_TYPE));
+                        String filePath = dirPath.concat(File.separator).concat(CommonUtil.getUUID().concat(ConfigInterface.API_DOC_EXT));
                         fileUtil.createFile(filePath);
                         fileUtil.write(filePath, apiDoc);
                     }

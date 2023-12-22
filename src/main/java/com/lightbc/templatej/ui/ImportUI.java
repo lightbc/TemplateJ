@@ -1,14 +1,10 @@
 package com.lightbc.templatej.ui;
 
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.utils.DialogUtil;
 import com.lightbc.templatej.utils.FileUtil;
-import com.lightbc.templatej.utils.ProjectUtil;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -78,7 +74,7 @@ public class ImportUI {
         }
         List<String> fileList = getCheckListElements(importPath);
         // 显示导入的文件列表复选框，默认勾选状态
-        showGroupFileCheckList(fileList, true);
+        showGroupFileCheckList(fileList);
         if (fileList != null && fileList.size() > 0) {
             this.importTemplateGroupPanel.setVisible(true);
         } else {
@@ -122,21 +118,18 @@ public class ImportUI {
      * 显示模板文件复选框列表
      *
      * @param elements 模板文件
-     * @param isCheck  是否勾选，true-是，false-否
      */
-    private void showGroupFileCheckList(List<String> elements, boolean isCheck) {
+    private void showGroupFileCheckList(List<String> elements) {
         if (elements != null && elements.size() > 0) {
             // 移除默认模板选择项
-            if (elements.contains(ConfigInterface.DEFAULT_GROUP_FILE_VALUE)) {
-                elements.remove(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
-            }
+            elements.remove(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
             // 移除子组件
             this.templateFilePanel.removeAll();
             this.importFileContainer = new JPanel(new GridLayout(elements.size(), 1));
             for (String element : elements) {
                 JCheckBox checkBox = new JCheckBox();
                 checkBox.setText(element);
-                checkBox.setSelected(isCheck);
+                checkBox.setSelected(true);
                 this.importFileContainer.add(checkBox);
             }
             // 重绘组件
@@ -153,7 +146,7 @@ public class ImportUI {
      */
     private void importPathSelectListener() {
         this.browseButton.addActionListener(e -> {
-            String selectImportPath = getImportPath();
+            String selectImportPath = FileUtil.getVirtualFilePathOrDir();
             if (StringUtils.isNotBlank(selectImportPath)) {
                 this.browseButton.setText(selectImportPath);
                 showComponent();
@@ -162,26 +155,11 @@ public class ImportUI {
     }
 
     /**
-     * 获取导入模板路径
-     *
-     * @return string 导入路径
-     */
-    private String getImportPath() {
-        VirtualFile virtualFile = ProjectUtil.getProject().getProjectFile();
-        // 导入单个文件夹/文件
-        virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), ProjectUtil.getProject(), virtualFile);
-        if (virtualFile != null) {
-            return virtualFile.getPath();
-        }
-        return null;
-    }
-
-    /**
      * 导入全局配置文件组件事件监听
      */
     private void importGlobalConfigListener() {
         this.globalConfigButton.addActionListener(e -> {
-            String selectGlobalConfigPath = getImportPath();
+            String selectGlobalConfigPath = FileUtil.getVirtualFilePathByFileType(ConfigInterface.PLUGIN_DEFAULT_EXT_WITH_NO_DOT);
             if (StringUtils.isNotBlank(selectGlobalConfigPath)) {
                 // 全局配置文件格式的进行获取并显示，否则提示
                 if (isGlobalConfig(selectGlobalConfigPath)) {
@@ -199,10 +177,10 @@ public class ImportUI {
      */
     private void importApiDocListener() {
         this.apiDocButton.addActionListener(e -> {
-            String selectApiDocPath = getImportPath();
+            String selectApiDocPath = FileUtil.getVirtualFilePathByFileType(ConfigInterface.API_DOC_EXT_WITH_NO_DOT);
             if (StringUtils.isNotBlank(selectApiDocPath)) {
                 // API接口文档文件格式的进行获取并显示，否则提示
-                if (selectApiDocPath.lastIndexOf(ConfigInterface.API_DOC_TYPE) != -1) {
+                if (selectApiDocPath.lastIndexOf(ConfigInterface.API_DOC_EXT) != -1) {
                     this.apiDocButton.setText(selectApiDocPath);
                 } else {
                     DialogUtil dialogUtil = new DialogUtil();
@@ -262,7 +240,7 @@ public class ImportUI {
                 this.parentDir = path;
             }
         }
-        return nodeName.substring(1);
+        return nodeName != null ? nodeName.substring(1) : null;
     }
 
 

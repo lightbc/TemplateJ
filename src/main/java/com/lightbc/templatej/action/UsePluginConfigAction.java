@@ -4,13 +4,11 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.lightbc.templatej.enums.Message;
+import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.utils.DialogUtil;
 import com.lightbc.templatej.utils.EditorUtil;
-import com.lightbc.templatej.utils.ProjectUtil;
+import com.lightbc.templatej.utils.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +55,7 @@ public class UsePluginConfigAction extends AnAction {
                     break;
                 case 2:
                     // 向非数据接口类型自定义模板文件，添加自定义数据来源
-                    String selectImportPath = getImportDataSourcePath();
+                    String selectImportPath = FileUtil.getVirtualFilePathByFileType(ConfigInterface.CUSTOM_DATASOURCE_FILE_TYPE);
                     if (StringUtils.isNotBlank(selectImportPath)) {
                         String dataSourcePath = "## TemplateJ-Custom-DataSource:" + selectImportPath;
                         String dataSourceContent = dataSourcePath + "\n" + documentContent;
@@ -68,21 +66,6 @@ public class UsePluginConfigAction extends AnAction {
                     }
             }
         }
-    }
-
-    /**
-     * 获取导入数源文件路径
-     *
-     * @return string 导入路径
-     */
-    private String getImportDataSourcePath() {
-        VirtualFile virtualFile = ProjectUtil.getProject().getProjectFile();
-        // 导入json格式文件
-        virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileDescriptor("json"), ProjectUtil.getProject(), virtualFile);
-        if (virtualFile != null) {
-            return virtualFile.getPath();
-        }
-        return null;
     }
 
 }

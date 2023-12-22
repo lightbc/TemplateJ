@@ -46,11 +46,11 @@ public class PreviewListener {
                 }
                 // 获取完整模板信息（全局配置+单个模板）
                 PropertiesUtil util = new PropertiesUtil();
-                String sourceCode = TemplateUtil.getSourceCode(globalConfig, templateCode, util);
+                String sourceCode = TemplateUtil.getSourceCode(templateCode, util);
                 // 是否忽略全局配置
                 boolean ignoreGlobal = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL));
                 // // 非全局配置忽略时，全局配置信息为空校验
-                if (!ignoreGlobal && (globalConfig == null || "".equals(globalConfig.trim()))) {
+                if (!ignoreGlobal && "".equals(globalConfig.trim())) {
                     dialogUtil.showTipsDialog(null, Message.GLOBAL_CONFIG_EMPTY.getMsg(), Message.GLOBAL_CONFIG_EMPTY.getTitle());
                     return;
                 }
