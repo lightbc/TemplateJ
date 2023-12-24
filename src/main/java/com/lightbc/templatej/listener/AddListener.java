@@ -34,7 +34,7 @@ public class AddListener {
      * 新增模板组/模板文件监听功能
      */
 
-    public void add() {
+    private void add() {
         this.templateJUI.getAdd().addActionListener(e -> {
             loadCommonUI();
             this.commonUI.disable();

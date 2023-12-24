@@ -39,7 +39,7 @@ public class ExportListener {
     /**
      * 模板导出功能
      */
-    public void exportTemplate() {
+    private void exportTemplate() {
         this.templateJUI.getExportButton().addActionListener((e) -> showExport());
     }
 

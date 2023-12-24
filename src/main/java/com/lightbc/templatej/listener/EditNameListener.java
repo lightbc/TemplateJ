@@ -33,7 +33,7 @@ public class EditNameListener {
     /**
      * 重命名功能
      */
-    public void editName() {
+    private void editName() {
         this.templateJUI.getEditName().addActionListener((e) -> {
             loadCommonUI();
             this.commonUI.disable();

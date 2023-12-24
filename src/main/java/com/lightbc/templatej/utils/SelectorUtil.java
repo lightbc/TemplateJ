@@ -44,7 +44,7 @@ public class SelectorUtil {
             items = new ArrayList<>();
             items.add(ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
         }
-        if (items != null && !items.contains(ConfigInterface.DEFAULT_GROUP_FILE_VALUE)) {
+        if (!items.contains(ConfigInterface.DEFAULT_GROUP_FILE_VALUE)) {
             items.add(0, ConfigInterface.DEFAULT_GROUP_FILE_VALUE);
         }
         loadSelector(box, items, select);

@@ -23,7 +23,7 @@ public class TypeMapperListener {
     /**
      * javaType类型映射器功能监听
      */
-    public void javaTypeMapper() {
+    private void javaTypeMapper() {
         this.templateJUI.getTypeMapperBtn().addActionListener(e -> {
             TypeMapperUI ui = new TypeMapperUI(this.templateJUI, 0);
             ui.typeMapper();
@@ -33,7 +33,7 @@ public class TypeMapperListener {
     /**
      * jdbcType类型映射器功能监听
      */
-    public void jdbcTypeMapper() {
+    private void jdbcTypeMapper() {
         this.templateJUI.getJdbcType().addActionListener(e -> {
             TypeMapperUI ui = new TypeMapperUI(this.templateJUI, 1);
             ui.typeMapper();

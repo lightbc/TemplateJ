@@ -3,12 +3,10 @@ package com.lightbc.templatej.utils;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -115,61 +113,6 @@ public class PluginUtil {
         } catch (Exception ignore) {
         } finally {
             return rb;
-        }
-    }
-
-    /**
-     * 缓存效果预览的api文档
-     *
-     * @param pdfName     pdf文件名称
-     * @param htmlContent api文档内容
-     */
-    public static void cacheApiDoc(String pdfName, String htmlContent) {
-        // 缓存目录路径
-        FileUtil fileUtil = new FileUtil();
-        String apiDocCacheDir = FileUtil.getPluginCacheDir().concat(File.separator).concat(ConfigInterface.API_DOC_CACHE_DIR);
-        fileUtil.createDirs(apiDocCacheDir);
-        // 缓存文件路径
-        String apiDocCacheFilePath = apiDocCacheDir.concat(File.separator).concat(pdfName);
-        fileUtil.createFile(apiDocCacheFilePath);
-        // 将HTML文档内容转换成PDF
-        PdfUtil pdfUtil = new PdfUtil();
-        boolean b = pdfUtil.htmlToPdf(apiDocCacheFilePath, htmlContent);
-        if (b) {
-            String prefixCmd = "cmd /c ";
-            // 首次尝试chrome浏览器打开展示PDF效果
-            String cmd = prefixCmd + "start chrome.exe " + apiDocCacheFilePath;
-            boolean r = runCmd(cmd);
-            if (!r) {
-                // chrome浏览器打开PDF失败，再次尝试系统PDF软件打开展示效果
-                cmd = prefixCmd + "start " + apiDocCacheFilePath;
-                boolean rr = runCmd(cmd);
-                if (!rr) {
-                    // 两次效果预览都失败后，弹窗提示，可手动尝试
-                    DialogUtil dialog = new DialogUtil();
-                    dialog.showTipsDialog(null, Message.API_DOC_PREVIEW_ERROR.getMsg(), Message.API_DOC_PREVIEW_ERROR.getTitle());
-                }
-            }
-
-        }
-
-    }
-
-    /**
-     * 执行cmd命令
-     *
-     * @param cmd 命令行
-     * @return Boolean true-成功，false-失败
-     */
-    private static boolean runCmd(String cmd) {
-        boolean b = false;
-        try {
-            Runtime.getRuntime().exec(cmd);
-            b = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            return b;
         }
     }
 

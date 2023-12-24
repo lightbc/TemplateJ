@@ -27,15 +27,13 @@ public class CustomTemplateAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
-        doAction(event);
+        doAction();
     }
 
     /**
      * 执行action操作
-     *
-     * @param event
      */
-    private void doAction(@NotNull AnActionEvent event) {
+    private void doAction() {
         CustomTemplateExportUI exportUI = new CustomTemplateExportUI();
         DialogUtil dialogUtil = new DialogUtil();
         dialogUtil.setOkBtn(exportUI.getOkBtn());
@@ -109,9 +107,7 @@ public class CustomTemplateAction extends AnAction {
     private boolean exportIsNotEmpty() {
         if (this.editor != null) {
             String content = this.editor.getDocument().getText();
-            if (StringUtils.isNotBlank(content)) {
-                return true;
-            }
+            return StringUtils.isNotBlank(content);
         }
         return false;
     }

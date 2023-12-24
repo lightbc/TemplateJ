@@ -38,7 +38,7 @@ public class ImportListener {
     /**
      * 模板导入
      */
-    public void importTemplate() {
+    private void importTemplate() {
         this.templateJUI.getImportButton().addActionListener((e) -> {
             DialogUtil dialogUtil = new DialogUtil();
             ImportUI importUI = new ImportUI(this.templateJUI);

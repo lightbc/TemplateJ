@@ -181,7 +181,7 @@ public class PreviewUI {
      * 树形结构事件监听
      */
     private void treeListener() {
-        tree.addTreeSelectionListener(e -> editorShow(e));
+        tree.addTreeSelectionListener(this::editorShow);
     }
 
     /**

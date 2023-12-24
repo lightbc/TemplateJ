@@ -424,15 +424,14 @@ public class TemplateUtil {
     }
 
     /**
-     * 获取模板代码
+     * 获取模板代码，包含全局配置内容
      *
      * @param globalConfig 全局配置
      * @param templateCode 模板内容
-     * @param util         属性工具类
      * @return string
      */
-    static String getSourceCode(String globalConfig, String templateCode, PropertiesUtil util) {
-        return globalConfig.concat(getSourceCode(templateCode, util)).trim();
+    public static String getSourceCodeWithGlobalConfig(String globalConfig, String templateCode) {
+        return globalConfig.concat(templateCode).trim();
     }
 
     /**

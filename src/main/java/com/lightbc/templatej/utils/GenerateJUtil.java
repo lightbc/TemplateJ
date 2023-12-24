@@ -17,6 +17,7 @@ import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.entity.Table;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
+import com.lightbc.templatej.interfaces.TemplateJInterface;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -69,7 +70,15 @@ public class GenerateJUtil {
         com.lightbc.templatej.entity.Template template = this.templateUtil.getTemplate(groupName);
         String templateCode = this.templateUtil.getTemplateContent(template, templateFileName);
         String globalConfig = template.getGlobalConfig();
-        String sourceCode = TemplateUtil.getSourceCode(globalConfig, templateCode, new PropertiesUtil());
+        // 获取完整模板信息（全局配置+单个模板）
+        PropertiesUtil util = new PropertiesUtil();
+        String sourceCode = TemplateUtil.getSourceCode(templateCode, util);
+        // 是否忽略全局配置
+        boolean ignoreGlobal = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL));
+        // 非全局配置忽略时，添加全局配置项内容
+        if (!ignoreGlobal) {
+            sourceCode = TemplateUtil.getSourceCodeWithGlobalConfig(globalConfig, sourceCode);
+        }
         // 生成字符串内容
         String generateContent = generate(templateFileName, sourceCode, dataModel);
         //template根据模板生成指定内容后，获取template处理后的数据模型，用于文件生成后续步骤

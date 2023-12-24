@@ -73,7 +73,6 @@ public class TypeMapperUI implements Configurable {
     /**
      * 初始化数据类型映射表初始显示内容
      */
-    @SuppressWarnings({"BoundFieldAssignment", "UndesirableClassUsage"})
     private void initJavaTypeTable() {
         this.typeMapper = this.typeMapper != null ? this.typeMapper : DefaultTemplateParams.getDefaultTableData();
         this.tableModel = new DefaultTableModel(this.typeMapper, DefaultTemplateParams.getDefaultJavaTypeTableHeader());
@@ -206,7 +205,7 @@ public class TypeMapperUI implements Configurable {
     private boolean javaTypeModified() {
         // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
         Object[][] objects = getTableData();
-        return !this.typeMapper.equals(objects);
+        return !Arrays.deepEquals(this.typeMapper, objects);
     }
 
     /**
@@ -217,7 +216,7 @@ public class TypeMapperUI implements Configurable {
     private boolean jdbcTypeModified() {
         // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
         Object[][] objects = getTableData();
-        return !this.jdbcTypeMapper.equals(objects);
+        return !Arrays.deepEquals(this.jdbcTypeMapper, objects);
     }
 
     /**

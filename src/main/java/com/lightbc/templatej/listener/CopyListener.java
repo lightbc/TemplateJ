@@ -31,7 +31,7 @@ public class CopyListener {
      * 复制模板组/模板文件监听功能
      */
 
-    public void copy() {
+    private void copy() {
         this.templateJUI.getCopy().addActionListener(e -> {
             loadCommonUI();
             this.commonUI.disable();

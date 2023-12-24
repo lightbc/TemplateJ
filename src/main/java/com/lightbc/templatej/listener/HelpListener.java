@@ -130,11 +130,13 @@ public class HelpListener {
             Runtime.getRuntime().exec("cmd /c start " + explorer + " " + path);
         } catch (IOException e) {
             if (retryCount < 3) {
-                openNetHyperLink(explorer, path, retryCount++);
+                retryCount++;
+                openNetHyperLink(explorer, path, retryCount);
             } else if (retryCount < 6) {
-                openNetHyperLink(RETRY_EXPLORER, path, retryCount++);
+                retryCount++;
+                openNetHyperLink(RETRY_EXPLORER, path, retryCount);
             } else {
-                dialogUtil.showTipsDialog(null, String.format(Message.ERROR_URL.getMsg()), Message.ERROR_URL.getTitle());
+                dialogUtil.showTipsDialog(null, String.format(Message.ERROR_URL.getMsg(), retryCount), Message.ERROR_URL.getTitle());
             }
         }
     }

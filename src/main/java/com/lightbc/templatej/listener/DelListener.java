@@ -31,7 +31,7 @@ public class DelListener {
      * 删除模板组/模板文件监听功能
      */
 
-    public void del() {
+    private void del() {
         this.templateJUI.getDel().addActionListener(e -> {
             loadCommonUI();
             this.commonUI.disable();
