@@ -42,13 +42,13 @@ public interface ConfigInterface {
     String TEMPLATE_EXPORT = "模板导出";
     // 插件默认文件拓展名
     String PLUGIN_DEFAULT_EXT = ".tj";
-    // 插件默认文件拓展名，无逗号
+    // 插件默认文件拓展名，无点
     String PLUGIN_DEFAULT_EXT_WITH_NO_DOT = "tj";
     // 自定义数源文件允许的文件类型
     String CUSTOM_DATASOURCE_FILE_TYPE = "json";
     // API文档文件类型
     String API_DOC_EXT = ".html";
-    // API文档文件类型，无逗号
+    // API文档文件类型，无点
     String API_DOC_EXT_WITH_NO_DOT = "html";
     // api 文档缓存目录
     String API_DOC_CACHE_DIR = "api";

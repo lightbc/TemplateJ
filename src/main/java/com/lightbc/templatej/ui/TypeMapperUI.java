@@ -108,16 +108,6 @@ public class TypeMapperUI implements Configurable {
     }
 
     /**
-     * 初始化按钮显示图标，系统图标（2019.1）
-     */
-    private void initIcons() {
-        // 新增图标
-        this.add.setIcon(AllIcons.General.Add);
-        // 删除图标
-        this.del.setIcon(AllIcons.General.Remove);
-    }
-
-    /**
      * 操作功能事件监听
      */
     private void operateListener() {
@@ -237,5 +227,15 @@ public class TypeMapperUI implements Configurable {
         Object[][] objects = getTableData();
         this.templateJUI.getTemplateUtil().getTemplate(this.groupName).setJdbcTypeMapper(objects);
         this.templateJUI.getSettings().save();
+    }
+
+    /**
+     * 初始化按钮显示图标，系统图标（2019.1）
+     */
+    private void initIcons() {
+        // 新增图标
+        this.add.setIcon(AllIcons.General.Add);
+        // 删除图标
+        this.del.setIcon(AllIcons.General.Remove);
     }
 }
