@@ -88,7 +88,6 @@ public class TemplateJCommonUI {
 
     /**
      * 单选按钮组，使得一个获得焦点后，同组其它按钮失去焦点
-     *
      */
     private void buttonGroup() {
         this.group = new ButtonGroup();
@@ -182,8 +181,7 @@ public class TemplateJCommonUI {
      * @return string 模板组名称
      */
     public String getGroupName() {
-        Object obj = this.templateGroupSelector.getSelectedItem();
-        return obj != null ? obj.toString() : null;
+        return this.getName(this.templateGroupSelector);
     }
 
     /**
@@ -192,7 +190,17 @@ public class TemplateJCommonUI {
      * @return string 模板文件名称
      */
     public String getGroupFileName() {
-        Object obj = this.templateFileSelector.getSelectedItem();
+        return this.getName(this.templateFileSelector);
+    }
+
+    /**
+     * 获取选择的名称
+     *
+     * @param box 下拉选择框对象
+     * @return string 选择项名称
+     */
+    private synchronized String getName(JComboBox box) {
+        Object obj = box.getSelectedItem();
         return obj != null ? obj.toString() : null;
     }
 }

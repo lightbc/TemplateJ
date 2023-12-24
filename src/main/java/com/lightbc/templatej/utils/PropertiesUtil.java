@@ -57,7 +57,7 @@ public class PropertiesUtil {
      * @param key   键
      * @param value 值
      */
-    public void set(String key, String value) {
+    void set(String key, String value) {
         properties.setProperty(key, value);
     }
 

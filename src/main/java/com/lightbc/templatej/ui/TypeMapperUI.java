@@ -73,7 +73,6 @@ public class TypeMapperUI implements Configurable {
     /**
      * 初始化数据类型映射表初始显示内容
      */
-    @SuppressWarnings({"BoundFieldAssignment", "UndesirableClassUsage"})
     private void initJavaTypeTable() {
         this.typeMapper = this.typeMapper != null ? this.typeMapper : DefaultTemplateParams.getDefaultTableData();
         this.tableModel = new DefaultTableModel(this.typeMapper, DefaultTemplateParams.getDefaultJavaTypeTableHeader());
@@ -106,16 +105,6 @@ public class TypeMapperUI implements Configurable {
         this.mainPanel.add(this.scrollPane, BorderLayout.CENTER);
         this.mainPanel.add(this.operatePanel, BorderLayout.EAST);
         this.mainPanel.setVisible(true);
-    }
-
-    /**
-     * 初始化按钮显示图标，系统图标（2019.1）
-     */
-    private void initIcons() {
-        // 新增图标
-        this.add.setIcon(AllIcons.General.Add);
-        // 删除图标
-        this.del.setIcon(AllIcons.General.Remove);
     }
 
     /**
@@ -206,7 +195,7 @@ public class TypeMapperUI implements Configurable {
     private boolean javaTypeModified() {
         // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
         Object[][] objects = getTableData();
-        return !this.typeMapper.equals(objects);
+        return !Arrays.deepEquals(this.typeMapper, objects);
     }
 
     /**
@@ -217,7 +206,7 @@ public class TypeMapperUI implements Configurable {
     private boolean jdbcTypeModified() {
         // 判断数据类型映射器中的配置信息是否存在修改，存在修改，启用apply按钮功能
         Object[][] objects = getTableData();
-        return !this.jdbcTypeMapper.equals(objects);
+        return !Arrays.deepEquals(this.jdbcTypeMapper, objects);
     }
 
     /**
@@ -238,5 +227,15 @@ public class TypeMapperUI implements Configurable {
         Object[][] objects = getTableData();
         this.templateJUI.getTemplateUtil().getTemplate(this.groupName).setJdbcTypeMapper(objects);
         this.templateJUI.getSettings().save();
+    }
+
+    /**
+     * 初始化按钮显示图标，系统图标（2019.1）
+     */
+    private void initIcons() {
+        // 新增图标
+        this.add.setIcon(AllIcons.General.Add);
+        // 删除图标
+        this.del.setIcon(AllIcons.General.Remove);
     }
 }

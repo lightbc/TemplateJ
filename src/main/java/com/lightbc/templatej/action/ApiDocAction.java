@@ -1,15 +1,10 @@
 package com.lightbc.templatej.action;
 
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.psi.PsiFile;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.utils.DialogUtil;
 import com.lightbc.templatej.utils.PluginUtil;
-import com.lightbc.templatej.utils.RightKeyUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +24,6 @@ public class ApiDocAction extends AnAction {
     @Setter
     @Getter
     private String groupName;
-    public static final String ID = "Com.Lightbc.Templatej.ApiDocAction";
 
     public ApiDocAction() {
     }
