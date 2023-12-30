@@ -179,6 +179,7 @@ public class TemplateUtil {
         tp.setGroupName(rename);
         tp.setGroupFiles(template.getGroupFiles());
         tp.setFileContentMap(template.getFileContentMap());
+        tp.setApiDoc(template.getApiDoc());
         tp.setGlobalConfig(template.getGlobalConfig());
         // 复制原模板组配置的JavaType类型映射信息
         tp.setTypeMapper(template.getTypeMapper());
@@ -430,7 +431,7 @@ public class TemplateUtil {
      * @param util         属性工具类
      * @return string
      */
-    public static String getSourceCode(String templateCode,String globalConfig, PropertiesUtil util) {
+    public static String getSourceCode(String templateCode, String globalConfig, PropertiesUtil util) {
         if (StringUtils.isNotBlank(templateCode) && templateCode.contains("\n")) {
             setSettingProperties(templateCode, util);
             String[] tcs = templateCode.split("\n");
