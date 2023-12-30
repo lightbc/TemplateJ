@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.lightbc.templatej</id>
     <name>TemplateJ</name>
-    <version>1.4.1-RELEASE</version>
+    <version>1.4.2-RELEASE</version>
     <vendor email="lightbc@163.com" url="https://www.cnblogs.com/lightbc/">lightbc</vendor>
 
     <description>
@@ -24,20 +24,20 @@
 
     <change-notes>
         <![CDATA[
-        <h3>v1.4.1-RELEASE</h3>
+        <h3>v1.4.2-RELEASE</h3>
         <ol>
-            <li>Fix the issue of template file addition ignoring global configuration not taking effect.</li>
-            <li>When importing templates, control the file selection type when selecting files.</li>
-            <li>Help adjust page content.</li>
-            <li>Partial functional code logic optimization and adjustment.</li>
+            <li>API interface document export/import logic adjustment.</li>
+            <li>Remove reprocessing when automatically adding plugin properties to the template file.</li>
+            <li>Partial code logic adjustment.</li>
+            <li>Fix other known issues.</li>
         </ol>
 
-        <h3>v1.4.1-RELEASE</h3>
+        <h3>v1.4.2-RELEASE</h3>
         <ol>
-            <li>修复模板文件添加忽略全局配置未生效的问题。</li>
-            <li>模板导入时，文件选择时导入文件选择类型控制。</li>
-            <li>帮助页面内容调整。</li>
-            <li>部分功能代码逻辑优化调整。</li>
+            <li>API接口文档导出/导入逻辑调整。</li>
+            <li>模板文件中自动添加插件属性时去重处理。</li>
+            <li>部分代码逻辑调整。</li>
+            <li>其它已知问题修复。</li>
         </ol>
         ]]>
     </change-notes>

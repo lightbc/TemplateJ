@@ -69,11 +69,7 @@ public class ExportUI {
             // 重置
             this.allCheck.setSelected(false);
             this.globalBox.setSelected(false);
-            Object selectGroupName = this.templateGroup.getSelectedItem();
-            if (selectGroupName != null) {
-                String checkTxt = selectGroupName.toString().concat(ConfigInterface.PLUGIN_DEFAULT_EXT);
-                this.globalBox.setText(checkTxt);
-            }
+            loadCheckBoxDefaultName();
             this.browseButton.setText("");
         });
     }
@@ -149,27 +145,28 @@ public class ExportUI {
     }
 
     /**
-     * 全局配置文件复选框组件
-     */
-    private void globalComponent() {
-        this.globalConfigPanel.setLayout(new GridLayout(1, 1));
-        Object globalObj = this.templateGroup.getSelectedItem();
-        if (globalObj != null) {
-            String globalName = globalObj.toString().concat(ConfigInterface.PLUGIN_DEFAULT_EXT);
-            globalBox = new JCheckBox(globalName);
-            this.globalConfigPanel.add(globalBox);
-        }
-    }
-
-    /**
      * 加载组件
      */
     private void loadComponent() {
         this.exportPath.setLayout(new BorderLayout());
         this.browseButton = new TextFieldWithBrowseButton();
         this.exportPath.add(browseButton, BorderLayout.CENTER);
-        globalComponent();
+        loadCheckBoxDefaultName();
         exportPathSelectListener();
+    }
+
+    /**
+     * 加载复选框默认名称
+     */
+    private void loadCheckBoxDefaultName() {
+        Object groupName = this.templateGroup.getSelectedItem();
+        if (groupName != null) {
+            String name = groupName.toString();
+            // 设置模板组全局配置文件导出名称
+            this.globalBox.setText(name.concat(ConfigInterface.PLUGIN_DEFAULT_EXT));
+            // 设置模板组API接口文档文件导出名称
+            this.apiDoc.setText(name.concat(ConfigInterface.API_DOC_EXT));
+        }
     }
 
     /**

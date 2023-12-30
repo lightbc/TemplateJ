@@ -424,26 +424,15 @@ public class TemplateUtil {
     }
 
     /**
-     * 获取模板代码，包含全局配置内容
-     *
-     * @param globalConfig 全局配置
-     * @param templateCode 模板内容
-     * @return string
-     */
-    public static String getSourceCodeWithGlobalConfig(String globalConfig, String templateCode) {
-        return globalConfig.concat(templateCode).trim();
-    }
-
-    /**
      * 获取模板代码，移除模板文件中插件属性配置项
      *
      * @param templateCode 模板内容
      * @param util         属性工具类
      * @return string
      */
-    public static String getSourceCode(String templateCode, PropertiesUtil util) {
-        setSettingProperties(templateCode, util);
+    public static String getSourceCode(String templateCode,String globalConfig, PropertiesUtil util) {
         if (StringUtils.isNotBlank(templateCode) && templateCode.contains("\n")) {
+            setSettingProperties(templateCode, util);
             String[] tcs = templateCode.split("\n");
             StringBuilder builder = new StringBuilder();
             for (String s : tcs) {
@@ -453,7 +442,13 @@ public class TemplateUtil {
                     builder.append(s).append("\n");
                 }
             }
-            return builder.toString().trim();
+            templateCode = builder.toString().trim();
+        }
+        // 是否忽略全局配置
+        boolean ignoreGlobal = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL));
+        // 非全局配置忽略时，添加全局配置项内容
+        if (!ignoreGlobal) {
+            templateCode = globalConfig.concat(templateCode).trim();
         }
         return templateCode;
     }

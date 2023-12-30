@@ -1,26 +1,26 @@
 package com.lightbc.templatej.utils;
 
-import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.EditorSettings;
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.highlighter.EditorHighlighter;
-import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.testFramework.LightVirtualFile;
-import com.lightbc.templatej.interfaces.ConfigInterface;
-import lombok.Getter;
+        import com.intellij.ide.fileTemplates.FileTemplateManager;
+        import com.intellij.openapi.command.WriteCommandAction;
+        import com.intellij.openapi.editor.Document;
+        import com.intellij.openapi.editor.Editor;
+        import com.intellij.openapi.editor.EditorFactory;
+        import com.intellij.openapi.editor.EditorSettings;
+        import com.intellij.openapi.editor.ex.EditorEx;
+        import com.intellij.openapi.editor.highlighter.EditorHighlighter;
+        import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory;
+        import com.intellij.openapi.fileTypes.FileType;
+        import com.intellij.openapi.fileTypes.FileTypeManager;
+        import com.intellij.openapi.project.Project;
+        import com.intellij.psi.PsiDocumentManager;
+        import com.intellij.psi.PsiFile;
+        import com.intellij.psi.PsiFileFactory;
+        import com.intellij.testFramework.LightVirtualFile;
+        import com.lightbc.templatej.interfaces.ConfigInterface;
+        import lombok.Getter;
 
-import javax.swing.*;
-import java.util.Properties;
+        import javax.swing.*;
+        import java.util.Properties;
 
 /**
  * 编辑工具类
@@ -186,18 +186,14 @@ public class EditorUtil {
     /**
      * 处理文档内容
      *
-     * @param document        文档对象
-     * @param documentContent 当前文档内容
-     * @param replaceContent  替换内容
+     * @param document       文档对象
+     * @param replaceContent 替换内容
      */
-    public static void processDocument(Document document, String documentContent, String replaceContent) {
+    public static void processDocument(Document document, String replaceContent) {
         WriteCommandAction.runWriteCommandAction(ProjectUtil.getProject(), () -> {
             if (document != null) {
-                document.deleteString(0, documentContent.length());
-            }
-        });
-        WriteCommandAction.runWriteCommandAction(ProjectUtil.getProject(), () -> {
-            if (document != null) {
+                // 文档内容置空，再插入新内容，使编辑器滑块一直处于滚动条顶端
+                document.setText("");
                 document.insertString(0, replaceContent);
             }
         });

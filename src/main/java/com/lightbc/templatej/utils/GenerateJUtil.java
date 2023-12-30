@@ -17,7 +17,6 @@ import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.entity.Table;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
-import com.lightbc.templatej.interfaces.TemplateJInterface;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -72,13 +71,7 @@ public class GenerateJUtil {
         String globalConfig = template.getGlobalConfig();
         // 获取完整模板信息（全局配置+单个模板）
         PropertiesUtil util = new PropertiesUtil();
-        String sourceCode = TemplateUtil.getSourceCode(templateCode, util);
-        // 是否忽略全局配置
-        boolean ignoreGlobal = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL));
-        // 非全局配置忽略时，添加全局配置项内容
-        if (!ignoreGlobal) {
-            sourceCode = TemplateUtil.getSourceCodeWithGlobalConfig(globalConfig, sourceCode);
-        }
+        String sourceCode = TemplateUtil.getSourceCode(templateCode, globalConfig, util);
         // 生成字符串内容
         String generateContent = generate(templateFileName, sourceCode, dataModel);
         //template根据模板生成指定内容后，获取template处理后的数据模型，用于文件生成后续步骤
@@ -86,9 +79,9 @@ public class GenerateJUtil {
             Generate generate = ((Generate) dataModel.get(ConfigInterface.GENERATE_KEY_NAME));
             String customPath = savePath;
             // xml文件保存位置
-            if (generate.getXmlSavePath() != null && !"".equals(generate.getXmlSavePath().trim())) {
+            if (StringUtils.isNotBlank(generate.getXmlSavePath())) {
                 customPath = generate.getXmlSavePath();
-            } else if (generate.getSavePath() != null && !"".equals(generate.getSavePath().trim())) {
+            } else if (StringUtils.isNotBlank(generate.getSavePath())) {
                 String generatePath = generate.getSavePath();
                 if (generatePath.substring(0, 1).equals(File.separator)) {
                     generatePath = generatePath.substring(1);
@@ -98,7 +91,7 @@ public class GenerateJUtil {
             if (!fileUtil.exist(customPath)) {
                 fileUtil.createDirs(customPath);
             }
-            if (generate.getFileName() != null && !"".equals(generate.getFileName().trim())) {
+            if (StringUtils.isNotBlank(generate.getFileName())) {
                 saveFileName = generate.getFileName();
                 //自定义文件名中如果不包含指定文件拓展名，使用默认文件拓展名
                 if (!saveFileName.contains(".")) saveFileName = saveFileName.concat(ext);

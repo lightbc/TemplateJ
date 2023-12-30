@@ -284,13 +284,19 @@ public class ImportUI {
         if (this.groupName != null && StringUtils.isNotBlank(this.groupName.getText())) {
             gn = this.groupName.getText();
         }
-        // 移除*.tj文件
-        if (name.lastIndexOf(ConfigInterface.PLUGIN_DEFAULT_EXT) == -1) {
-            list.add(name);
-        }
         // 匹配导入的文件中是否包含全局配置文件，存在则默认显示
         if (name.equals(gn.concat(ConfigInterface.PLUGIN_DEFAULT_EXT))) {
             this.globalConfigButton.setText(file.getAbsolutePath());
+            return;
+        }
+        // 匹配导入的文件中是否包含API接口文档文件，存在则默认显示
+        if (name.equals(gn.concat(ConfigInterface.API_DOC_EXT))) {
+            this.apiDocButton.setText(file.getAbsolutePath());
+            return;
+        }
+        // 移除*.tj文件
+        if (name.lastIndexOf(ConfigInterface.PLUGIN_DEFAULT_EXT) == -1) {
+            list.add(name);
         }
     }
 

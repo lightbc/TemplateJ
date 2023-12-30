@@ -311,7 +311,7 @@ public class TemplateJGenerateCommonUI {
         }
         // 处理API接口文档模板内容，获取模板中的属性
         PropertiesUtil util = new PropertiesUtil();
-        String sourceCode = TemplateUtil.getSourceCode(template.getApiDoc(), util);
+        String sourceCode = TemplateUtil.getSourceCode(template.getApiDoc(), template.getGlobalConfig(), util);
         // 自定义数源文件路径
         String customDataSourcePath = util.getValue(TemplateJInterface.CUSTOM_DATASOURCE);
         Map<String, Object> dataModel = generateJUtil.getDataModel(groupName, table, null, savePath, null, null);

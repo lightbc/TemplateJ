@@ -46,13 +46,7 @@ public class PreviewListener {
                 }
                 // 获取完整模板信息（全局配置+单个模板）
                 PropertiesUtil util = new PropertiesUtil();
-                String sourceCode = TemplateUtil.getSourceCode(templateCode, util);
-                // 是否忽略全局配置
-                boolean ignoreGlobal = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL));
-                // 非全局配置忽略时，添加全局配置项内容
-                if (!ignoreGlobal) {
-                    sourceCode = TemplateUtil.getSourceCodeWithGlobalConfig(globalConfig, sourceCode);
-                }
+                String sourceCode = TemplateUtil.getSourceCode(templateCode, globalConfig, util);
                 // 预览
                 preview(groupName, templateFileName, sourceCode, util);
             } else {

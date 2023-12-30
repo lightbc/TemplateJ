@@ -7,7 +7,6 @@ import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.ui.ExportUI;
 import com.lightbc.templatej.ui.TemplateJUI;
-import com.lightbc.templatej.utils.CommonUtil;
 import com.lightbc.templatej.utils.DialogUtil;
 import com.lightbc.templatej.utils.FileUtil;
 import com.lightbc.templatej.utils.TemplateUtil;
@@ -101,7 +100,8 @@ public class ExportListener {
                 if (ui.getGlobalBox() != null && ui.getGlobalBox().isSelected()) {
                     String globalConfig = template.getGlobalConfig();
                     if (StringUtils.isNotBlank(globalConfig)) {
-                        String filePath = dirPath.concat(File.separator).concat(ui.getGlobalBox().getText());
+                        String fileName = ui.getGlobalBox().getText();
+                        String filePath = dirPath.concat(File.separator).concat(fileName);
                         fileUtil.createFile(filePath);
                         fileUtil.write(filePath, globalConfig);
                     }
@@ -110,7 +110,8 @@ public class ExportListener {
                 if (ui.getApiDoc() != null && ui.getApiDoc().isSelected()) {
                     String apiDoc = template.getApiDoc();
                     if (StringUtils.isNotBlank(apiDoc)) {
-                        String filePath = dirPath.concat(File.separator).concat(CommonUtil.getUUID().concat(ConfigInterface.API_DOC_EXT));
+                        String fileName = ui.getApiDoc().getText();
+                        String filePath = dirPath.concat(File.separator).concat(fileName);
                         fileUtil.createFile(filePath);
                         fileUtil.write(filePath, apiDoc);
                     }
