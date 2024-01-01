@@ -13,6 +13,7 @@ import com.lightbc.templatej.action.EditorPopupMenuActionGroup;
 import com.lightbc.templatej.components.TextField;
 import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.interfaces.ConfigInterface;
+import com.lightbc.templatej.interfaces.TemplateJInterface;
 import com.lightbc.templatej.renderer.CustomJTreeRenderer;
 import com.lightbc.templatej.utils.*;
 import lombok.Data;
@@ -62,17 +63,17 @@ public class PreviewUI {
     private DefaultMutableTreeNode schemaTreeNode;
     // 默认需要打开的数据库搜索节点
     private TreePath expandSchemaPath;
-    // 自定义数据源
-    private String customDataSourcePath;
+    // 插件自定义属性
+    private PropertiesUtil propUtil;
 
-    public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil, String customDataSourcePath, boolean autoPreview) {
+    public PreviewUI(String groupName, String templateFileName, String sourceCode, DataBaseUtil dataBaseUtil, PropertiesUtil propUtil) {
         this.editorUtil = new EditorUtil();
         this.groupName = groupName;
         this.templateFileName = templateFileName;
         this.sourceCode = sourceCode;
         this.dataBaseUtil = dataBaseUtil;
-        this.customDataSourcePath = customDataSourcePath;
-        this.autoPreview = autoPreview;
+        this.propUtil = propUtil;
+        this.autoPreview = Boolean.parseBoolean(this.propUtil.getValue(TemplateJInterface.AUTO_PREVIEW));
         init();
     }
 
@@ -190,8 +191,7 @@ public class PreviewUI {
     private void show() {
         GenerateJUtil generateJUtil = new GenerateJUtil();
         Map<String, Object> dataModel = generateJUtil.getCommonDataModel(null, ConfigInterface.DEFAULT_PACKAGE_NAME, null, new Generate(), null);
-        generateJUtil.addCustomDataSourceModel(this.mainPanel, this.customDataSourcePath, dataModel);
-        String curContent = generateJUtil.generate(templateFileName, sourceCode, dataModel);
+        String curContent = generateJUtil.generate(templateFileName, sourceCode, dataModel, this.propUtil);
         refreshEditor(templateFileName, curContent);
     }
 
@@ -231,7 +231,7 @@ public class PreviewUI {
                 GenerateJUtil generateJUtil = new GenerateJUtil();
                 // 获取数据模型
                 Map<String, Object> dataModel = generateJUtil.getPreviewDataModel(groupName, dbTable);
-                curContent = generateJUtil.generate(templateFileName, sourceCode, dataModel);
+                curContent = generateJUtil.generate(templateFileName, sourceCode, dataModel, this.propUtil);
             }
         } catch (InvocationTargetException e) {
             curContent += "InvocationTargetException[消息内容：" + e.getMessage() + "\n诱发原因：" + e.getCause() + "]\n";

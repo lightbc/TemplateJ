@@ -17,6 +17,7 @@ import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.entity.Table;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
+import com.lightbc.templatej.interfaces.TemplateJInterface;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -25,7 +26,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +60,7 @@ public class GenerateJUtil {
      * @param savePath         保存路径
      * @param dataModel        模板引擎的数据模型
      */
-    public void generate(String groupName, String templateFileName, String saveFileName, String savePath, Map<String, Object> dataModel) {
+    public synchronized void generate(String groupName, String templateFileName, String saveFileName, String savePath, Map<String, Object> dataModel) {
         DialogUtil dialogUtil = new DialogUtil();
         String ext = ConfigInterface.DEFAULT_GENERATE_EXT;
         if (saveFileName.contains(".")) {
@@ -70,10 +70,9 @@ public class GenerateJUtil {
         String templateCode = this.templateUtil.getTemplateContent(template, templateFileName);
         String globalConfig = template.getGlobalConfig();
         // 获取完整模板信息（全局配置+单个模板）
-        PropertiesUtil util = new PropertiesUtil();
-        String sourceCode = TemplateUtil.getSourceCode(templateCode, globalConfig, util);
+        String sourceCode = this.templateUtil.getSourceCode(templateCode, globalConfig);
         // 生成字符串内容
-        String generateContent = generate(templateFileName, sourceCode, dataModel);
+        String generateContent = generate(templateFileName, sourceCode, dataModel, this.templateUtil.getPropUtil());
         //template根据模板生成指定内容后，获取template处理后的数据模型，用于文件生成后续步骤
         if (dataModel.containsKey(ConfigInterface.GENERATE_KEY_NAME)) {
             Generate generate = ((Generate) dataModel.get(ConfigInterface.GENERATE_KEY_NAME));
@@ -123,12 +122,14 @@ public class GenerateJUtil {
      * @param templateFileName 模板名称
      * @param sourceCode       模板内容
      * @param dataModel        模板模型数据
+     * @param propUtil         插件自定义属性对象
      * @return 生成内容字符串
      */
     @SuppressWarnings({"finally", "ReturnInsideFinallyBlock"})
-    public String generate(String templateFileName, String sourceCode, Map<String, Object> dataModel) {
+    public synchronized String generate(String templateFileName, String sourceCode, Map<String, Object> dataModel, PropertiesUtil propUtil) {
         StringWriter writer = null;
         try {
+            addCustomDataSourceModel(dataModel, propUtil);
             Template template = getTemplate(templateFileName, sourceCode);
             writer = new StringWriter();
             template.process(dataModel, writer);
@@ -424,13 +425,16 @@ public class GenerateJUtil {
     /**
      * 添加自定义数据源到freemarker数据模型中
      *
-     * @param parentComponent 父级组件
-     * @param sourcePath      自定义数据源文件来源路径
-     * @param dataModel       freemarker数据模型
+     * @param dataModel freemarker数据模型
+     * @param propUtil  插件自定义属性对象
      */
-    public void addCustomDataSourceModel(Component parentComponent, String sourcePath, Map<String, Object> dataModel) {
+    private synchronized void addCustomDataSourceModel(Map<String, Object> dataModel, PropertiesUtil propUtil) {
+        if (dataModel == null || propUtil == null) {
+            return;
+        }
         DialogUtil dialog = new DialogUtil();
         try {
+            String sourcePath = propUtil.getValue(TemplateJInterface.CUSTOM_DATASOURCE);
             if (StringUtils.isNotBlank(sourcePath)) {
                 FileUtil fileUtil = new FileUtil();
                 String res = fileUtil.read(sourcePath);
@@ -456,12 +460,12 @@ public class GenerateJUtil {
                     isEmptyCustomDataSource = true;
                 }
                 if (!this.closeTips && isEmptyCustomDataSource) {
-                    dialog.showTipsDialog(parentComponent, Message.CUSTOM_DATASOURCE_EMPTY.getMsg(), Message.CUSTOM_DATASOURCE_EMPTY.getTitle());
+                    dialog.showTipsDialog(null, Message.CUSTOM_DATASOURCE_EMPTY.getMsg(), Message.CUSTOM_DATASOURCE_EMPTY.getTitle());
                 }
             }
         } catch (Exception ignore) {
             if (!this.closeTips) {
-                dialog.showTipsDialog(parentComponent, Message.ADD_CUSTOM_DATASOURCE_ERROR.getMsg(), Message.ADD_CUSTOM_DATASOURCE_ERROR.getTitle());
+                dialog.showTipsDialog(null, Message.ADD_CUSTOM_DATASOURCE_ERROR.getMsg(), Message.ADD_CUSTOM_DATASOURCE_ERROR.getTitle());
             }
         }
     }

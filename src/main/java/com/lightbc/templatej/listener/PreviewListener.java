@@ -2,7 +2,6 @@ package com.lightbc.templatej.listener;
 
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
-import com.lightbc.templatej.interfaces.TemplateJInterface;
 import com.lightbc.templatej.ui.PreviewUI;
 import com.lightbc.templatej.ui.TemplateJCommonUI;
 import com.lightbc.templatej.ui.TemplateJUI;
@@ -36,8 +35,9 @@ public class PreviewListener {
             if (TemplateUtil.isTemplateFile(this.commonUI.getGroupFileName())) {
                 String groupName = this.commonUI.getGroupName();
                 String templateFileName = this.commonUI.getGroupFileName();
-                Template template = this.templateJUI.getTemplateUtil().getTemplate(groupName);
-                String templateCode = this.templateJUI.getTemplateUtil().getTemplateContent(template, templateFileName);
+                TemplateUtil templateUtil = this.templateJUI.getTemplateUtil();
+                Template template = templateUtil.getTemplate(groupName);
+                String templateCode = templateUtil.getTemplateContent(template, templateFileName);
                 String globalConfig = template.getGlobalConfig();
                 // 模板文件内容为空提示
                 if (templateCode == null || "".equals(templateCode.trim())) {
@@ -45,10 +45,9 @@ public class PreviewListener {
                     return;
                 }
                 // 获取完整模板信息（全局配置+单个模板）
-                PropertiesUtil util = new PropertiesUtil();
-                String sourceCode = TemplateUtil.getSourceCode(templateCode, globalConfig, util);
+                String sourceCode = templateUtil.getSourceCode(templateCode, globalConfig);
                 // 预览
-                preview(groupName, templateFileName, sourceCode, util);
+                doPreview(groupName, templateFileName, sourceCode, templateUtil.getPropUtil());
             } else {
                 dialogUtil.showTipsDialog(null, Message.PREVIEW_CHOICE_TIP.getMsg(), Message.PREVIEW_CHOICE_TIP.getTitle());
             }
@@ -63,7 +62,7 @@ public class PreviewListener {
      * @param sourceCode       模板内容
      * @param util             插件属性工具
      */
-    private void preview(String groupName, String templateFileName, String sourceCode, PropertiesUtil util) {
+    private void doPreview(String groupName, String templateFileName, String sourceCode, PropertiesUtil util) {
         DialogUtil dialogUtil = new DialogUtil();
         // 获取database已连接数据库连接信息
         DataBaseUtil dataBaseUtil = new DataBaseUtil();
@@ -72,11 +71,7 @@ public class PreviewListener {
             dialogUtil.showTipsDialog(null, Message.DATABASE_NOT_CONNECT.getMsg(), Message.DATABASE_NOT_CONNECT.getTitle());
             return;
         }
-        // 显示效果预览组件
-        boolean auto = Boolean.parseBoolean(util.getValue(TemplateJInterface.AUTO_PREVIEW));
-        // 自定义数源文件路径
-        String customDataSourcePath = util.getValue(TemplateJInterface.CUSTOM_DATASOURCE);
-        PreviewUI previewUI = new PreviewUI(groupName, templateFileName, sourceCode, dataBaseUtil, customDataSourcePath, auto);
+        PreviewUI previewUI = new PreviewUI(groupName, templateFileName, sourceCode, dataBaseUtil, util);
         dialogUtil.showPreviewDialog(Message.PREVIEW_TEMPLATE.getTitle(), previewUI.getMainPanel(), previewUI.getEditorUtil());
     }
 }

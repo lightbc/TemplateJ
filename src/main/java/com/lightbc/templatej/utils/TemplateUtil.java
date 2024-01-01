@@ -4,6 +4,7 @@ import com.lightbc.templatej.DefaultTemplateParams;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.interfaces.TemplateJInterface;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.Map;
 public class TemplateUtil {
     // 模板组
     private List<Template> templates;
+    @Getter
+    private PropertiesUtil propUtil;
 
     public TemplateUtil(List<Template> templates) {
         this.templates = templates;
@@ -428,12 +431,12 @@ public class TemplateUtil {
      * 获取模板代码，移除模板文件中插件属性配置项
      *
      * @param templateCode 模板内容
-     * @param util         属性工具类
      * @return string
      */
-    public static String getSourceCode(String templateCode, String globalConfig, PropertiesUtil util) {
+    public synchronized String getSourceCode(String templateCode, String globalConfig) {
         if (StringUtils.isNotBlank(templateCode) && templateCode.contains("\n")) {
-            setSettingProperties(templateCode, util);
+            this.propUtil = new PropertiesUtil();
+            setSettingProperties(templateCode, this.propUtil);
             String[] tcs = templateCode.split("\n");
             StringBuilder builder = new StringBuilder();
             for (String s : tcs) {
@@ -444,12 +447,12 @@ public class TemplateUtil {
                 }
             }
             templateCode = builder.toString().trim();
-        }
-        // 是否忽略全局配置
-        boolean ignoreGlobal = Boolean.parseBoolean(util.getValue(TemplateJInterface.IGNORE_GLOBAL));
-        // 非全局配置忽略时，添加全局配置项内容
-        if (!ignoreGlobal) {
-            templateCode = globalConfig.concat(templateCode).trim();
+            // 是否忽略全局配置
+            boolean ignoreGlobal = Boolean.parseBoolean(this.propUtil.getValue(TemplateJInterface.IGNORE_GLOBAL));
+            // 非全局配置忽略时，添加全局配置项内容
+            if (!ignoreGlobal && StringUtils.isNotBlank(globalConfig)) {
+                templateCode = globalConfig.concat(templateCode).trim();
+            }
         }
         return templateCode;
     }

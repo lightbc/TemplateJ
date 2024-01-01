@@ -13,7 +13,6 @@ import com.lightbc.templatej.entity.Generate;
 import com.lightbc.templatej.entity.Template;
 import com.lightbc.templatej.enums.Message;
 import com.lightbc.templatej.interfaces.ConfigInterface;
-import com.lightbc.templatej.interfaces.TemplateJInterface;
 import com.lightbc.templatej.utils.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -293,33 +292,37 @@ public class TemplateJGenerateCommonUI {
     public synchronized void generateApiDoc(DbTable table, String savePath, GenerateJUtil generateJUtil) {
         DialogUtil dialog = new DialogUtil();
         Object selectedItem = this.groupBox.getSelectedItem();
-        if (selectedItem == null && !this.generateTips.isSelected()) {
-            dialog.showTipsDialog(null, Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());
+        if (selectedItem == null) {
+            if (!this.generateTips.isSelected()) {
+                dialog.showTipsDialog(null, Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());
+                return;
+            }
             return;
         }
-        assert selectedItem != null;
         String groupName = selectedItem.toString();
-        Template template = this.generateUI.getTemplateUtil().getTemplate(groupName);
-        if (template == null && !this.generateTips.isSelected()) {
-            dialog.showTipsDialog(null, Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());
+        TemplateUtil templateUtil = this.generateUI.getTemplateUtil();
+        Template template = templateUtil.getTemplate(groupName);
+        if (template == null) {
+            if (!this.generateTips.isSelected()) {
+                dialog.showTipsDialog(null, Message.OPERATE_TEMPLATE_NOT_EXIST.getMsg(), Message.OPERATE_TEMPLATE_NOT_EXIST.getTitle());
+                return;
+            }
             return;
         }
-        assert template != null;
-        if (StringUtils.isBlank(template.getApiDoc()) && !this.generateTips.isSelected()) {
-            dialog.showTipsDialog(null, Message.API_DOC_EMPTY.getMsg(), Message.API_DOC_EMPTY.getTitle());
+        if (StringUtils.isBlank(template.getApiDoc())) {
+            if (!this.generateTips.isSelected()) {
+                dialog.showTipsDialog(null, Message.API_DOC_EMPTY.getMsg(), Message.API_DOC_EMPTY.getTitle());
+                return;
+            }
             return;
         }
         // 处理API接口文档模板内容，获取模板中的属性
-        PropertiesUtil util = new PropertiesUtil();
-        String sourceCode = TemplateUtil.getSourceCode(template.getApiDoc(), template.getGlobalConfig(), util);
-        // 自定义数源文件路径
-        String customDataSourcePath = util.getValue(TemplateJInterface.CUSTOM_DATASOURCE);
+        String sourceCode = templateUtil.getSourceCode(template.getApiDoc(), null);
         Map<String, Object> dataModel = generateJUtil.getDataModel(groupName, table, null, savePath, null, null);
-        generateJUtil.addCustomDataSourceModel(null, customDataSourcePath, dataModel);
         // pdf文件名称
         String pdfName = CommonUtil.getUUID().concat(ConfigInterface.PDF);
         // freemarker模板替换后的结果内容
-        String content = generateJUtil.generate(pdfName, sourceCode, dataModel);
+        String content = generateJUtil.generate(pdfName, sourceCode, dataModel, templateUtil.getPropUtil());
         // 获取pdf文档标题做为文件名
         if (dataModel != null && dataModel.containsKey(ConfigInterface.GENERATE_KEY_NAME)) {
             Generate generate = (Generate) dataModel.get(ConfigInterface.GENERATE_KEY_NAME);
