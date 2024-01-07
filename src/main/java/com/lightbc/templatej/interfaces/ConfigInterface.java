@@ -50,12 +50,12 @@ public interface ConfigInterface {
     String API_DOC_EXT = ".html";
     // API文档文件类型，无点
     String API_DOC_EXT_WITH_NO_DOT = "html";
-    // api 文档缓存目录
-    String API_DOC_CACHE_DIR = "api";
     // pdf
     String PDF = ".pdf";
     // 图片缓存目录
     String IMAGES_CACHE_DIR = "images";
     // 前端传参对象key
     String GENERATE_KEY_NAME = "generate";
+    // 日志
+    String PLUGIN_LOGGING = "日志记录";
 }

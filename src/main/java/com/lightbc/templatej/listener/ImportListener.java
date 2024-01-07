@@ -41,11 +41,11 @@ public class ImportListener {
     private void importTemplate() {
         this.templateJUI.getImportButton().addActionListener((e) -> {
             DialogUtil dialogUtil = new DialogUtil();
-            ImportUI importUI = new ImportUI(this.templateJUI);
+            ImportUI importUI = new ImportUI(this.templateJUI,dialogUtil);
             dialogUtil.setOkBtn(importUI.getOk());
             dialogUtil.setCancelBtn(importUI.getCancel());
             confirmListener(importUI, dialogUtil, dialogUtil.getOkBtn());
-            dialogUtil.showCustomDialog(ConfigInterface.TEMPLATE_IMPORT, importUI.getMainPanel(), templateJUI.getMainPanel(), new Dimension(550, 400), false);
+            dialogUtil.showCustomDialog(ConfigInterface.TEMPLATE_IMPORT, importUI.getMainPanel(), templateJUI.getMainPanel(), new Dimension(550, 120), false);
         });
     }
 

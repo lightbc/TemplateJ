@@ -15,7 +15,6 @@ import com.lightbc.templatej.interfaces.ConfigInterface;
 import com.lightbc.templatej.listener.*;
 import com.lightbc.templatej.utils.*;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +29,6 @@ import java.util.Map;
  * TemplateJ 模板生成工具主配置UI界面
  */
 @Data
-@Slf4j
 public class TemplateJUI implements Configurable {
     // 主UI界面
     private JPanel mainPanel;
@@ -70,6 +68,7 @@ public class TemplateJUI implements Configurable {
     private JPanel selectorPanel;
     private JButton jdbcType;
     private JButton api;
+    private JButton pluginLogs;
     // 通用组件
     private TemplateJCommonUI commonUI;
 
@@ -124,26 +123,28 @@ public class TemplateJUI implements Configurable {
         groupListener();
         // 模板文件选择器选择事件监听
         fileListener();
+        // 重命名点击事件监听
+        new EditNameListener(this);
+        // 预览功能事件监听
+        new PreviewListener(this);
         // 复制功能事件监听
         new CopyListener(this);
         // 新增功能事件监听
         new AddListener(this);
         // 删除功能事件监听
         new DelListener(this);
-        // 重命名点击事件监听
-        new EditNameListener(this);
-        // 预览功能事件监听
-        new PreviewListener(this);
-        // API接口文档配置时间监听
-        new ApiDocListener(this);
-        // 模板组全局配置事件监听
-        new GroupConfigListener(this);
         // 数据类型映射器功能事件监听
         new TypeMapperListener(this);
         // 模板导入功能事件监听
         new ImportListener(this);
         // 模板导出功能事件监听
         new ExportListener(this);
+        // API接口文档配置时间监听
+        new ApiDocListener(this);
+        // 模板组全局配置事件监听
+        new GroupConfigListener(this);
+        // 日志功能
+        new LogListener(this);
         // 帮助功能事件监听
         new HelpListener().help(this.help);
     }
@@ -314,6 +315,8 @@ public class TemplateJUI implements Configurable {
         this.preview.setIcon(AllIcons.General.InspectionsEye);
         // 功能重置按钮图标
         this.reset.setIcon(AllIcons.General.Reset);
+        // 日志记录按钮图标
+        this.pluginLogs.setIcon(AllIcons.Actions.EditSource);
 
         // 自定义图标
         // API文档按钮图标

@@ -47,9 +47,7 @@ public enum Message {
     CUSTOM_DATASOURCE_EMPTY("警告", "自定义数据源内容为空/指定格式不符合规范！"),
     ADD_CUSTOM_DATASOURCE_ERROR("错误", "添加自定义数据源失败！"),
     CUSTOM_DATASOURCE_IMPORT_PATH_WARN("警告", "数源路径为空/无法解析！"),
-    API_DOC_PREVIEW_ERROR("错误", "API文档效果预览出错，无法自动打开！"),
     API_DOC_GENERATE_ERROR("错误", "API文档生成错误！"),
-    UNABLE_TO_LOAD_A_CUSTOM_DATA_SOURCE_PATH("警告", "无法加载到自定义数据源路径!"),
 
     // 配置标题
     ADD_TEMPLATE("新增模板"),

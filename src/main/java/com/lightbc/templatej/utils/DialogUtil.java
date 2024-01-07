@@ -97,7 +97,7 @@ public class DialogUtil {
      * @return int ok：0，cancel：1
      */
     public int showApiDialog(String title, String fileName, String content) {
-        EditorUtil util = showCommonDialog(fileName, content);
+        EditorUtil util = showCommonEditorDialog(fileName, content);
         editorPopupMenuListener(RightKeyUtil.getApiDocActions(this.editor));
         return configDialogBuilder(title, this.editorComponent, util);
     }
@@ -111,7 +111,7 @@ public class DialogUtil {
      * @return int ok：0，cancel：1
      */
     public int showConfigDialog(String title, String fileName, String content) {
-        EditorUtil util = showCommonDialog(fileName, content);
+        EditorUtil util = showCommonEditorDialog(fileName, content);
         RightKeyUtil.disableEditorPopupMenu();
         return configDialogBuilder(title, this.editorComponent, util);
     }
@@ -123,7 +123,7 @@ public class DialogUtil {
      * @param content  编辑内容
      * @return editorutil
      */
-    private EditorUtil showCommonDialog(String fileName, String content) {
+    private EditorUtil showCommonEditorDialog(String fileName, String content) {
         EditorUtil util = new EditorUtil();
         this.editorComponent = initEditorComponent(util, fileName, content);
         Project project = ProjectUtil.getProject();
@@ -255,6 +255,30 @@ public class DialogUtil {
     }
 
     /**
+     * 显示无操作按钮的对话框组件
+     *
+     * @param title     标题
+     * @param parent    父级窗体
+     * @param component 组件
+     * @param dimension 大小
+     */
+    public void showNoButtonDialog(String title, JComponent parent, JComponent component, Dimension dimension) {
+        JDialog dg = new JDialog();
+        dg.setLayout(new BorderLayout());
+        dg.setTitle(title);
+        if (dimension != null) {
+            dg.setSize(dimension);
+        }
+        dg.setLocationRelativeTo(parent);
+        dg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        JPanel center = new JPanel(new BorderLayout());
+        center.add(component, BorderLayout.CENTER);
+        dg.add(center, BorderLayout.CENTER);
+        dg.setModal(true);
+        dg.setVisible(true);
+    }
+
+    /**
      * 确认事件监听
      *
      * @param button 确认按钮
@@ -284,4 +308,17 @@ public class DialogUtil {
         }
     }
 
+    /**
+     * 调整对话框窗体大小
+     *
+     * @param w      宽
+     * @param h      高
+     * @param parent 居中窗体对象
+     */
+    public void resize(int w, int h, Component parent) {
+        if (this.dialog != null) {
+            this.dialog.resize(w, h);
+            this.dialog.setLocationRelativeTo(parent);
+        }
+    }
 }

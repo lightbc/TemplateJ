@@ -41,9 +41,11 @@ public class ImportUI {
     // API接口文档选择组件
     private TextFieldWithBrowseButton apiDocButton;
     private TemplateJUI templateJUI;
+    private DialogUtil dialogUtil;
 
-    public ImportUI(TemplateJUI templateJUI) {
+    public ImportUI(TemplateJUI templateJUI, DialogUtil dialogUtil) {
         this.templateJUI = templateJUI;
+        this.dialogUtil = dialogUtil;
         init();
     }
 
@@ -149,6 +151,10 @@ public class ImportUI {
             String selectImportPath = FileUtil.getVirtualFilePathOrDir();
             if (StringUtils.isNotBlank(selectImportPath)) {
                 this.browseButton.setText(selectImportPath);
+                // 选择模板导入文件夹路径后，调整对话框大小及位置
+                if (this.dialogUtil != null) {
+                    this.dialogUtil.resize(550, 370, this.mainPanel);
+                }
                 showComponent();
             }
         });
