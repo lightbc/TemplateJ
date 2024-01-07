@@ -45,7 +45,7 @@ public class ImportListener {
             dialogUtil.setOkBtn(importUI.getOk());
             dialogUtil.setCancelBtn(importUI.getCancel());
             confirmListener(importUI, dialogUtil, dialogUtil.getOkBtn());
-            dialogUtil.showCustomDialog(ConfigInterface.TEMPLATE_IMPORT, importUI.getMainPanel(), templateJUI.getMainPanel(), new Dimension(550, 120), false);
+            dialogUtil.showCustomDialog(ConfigInterface.TEMPLATE_IMPORT, importUI.getMainPanel(), templateJUI.getMainPanel(), new Dimension(550, 130), false);
         });
     }
 
